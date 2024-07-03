@@ -30,12 +30,12 @@ export default defineConfig(({ mode }) => {
     ],
     define: {
       NETWORKS: JSON.parse(env.VITE_SSV_NETWORKS),
-      'import.meta.env.VITE_SSV_NETWORKS': JSON.parse(env.VITE_SSV_NETWORKS),
+      "import.meta.env.VITE_SSV_NETWORKS": JSON.parse(env.VITE_SSV_NETWORKS),
       ...(mode === "development" ? { global: {} } : undefined),
     },
     resolve: {
       alias: {
-        "@": path.resolve(__dirname, "./src"),
+        "@/": path.resolve(__dirname, "./src"),
       },
     },
   };

@@ -1,9 +1,9 @@
 import { useSSVNetworkDetails } from "@/hooks/useSSVNetworkDetails";
 import { ConnectButton, useChainModal } from "@rainbow-me/rainbowkit";
 import { useState } from "react";
-import "./App.css";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
+import "@/global.css";
 
 function App() {
   const [count, setCount] = useState(0);
