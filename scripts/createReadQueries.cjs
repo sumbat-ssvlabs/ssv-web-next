@@ -8,9 +8,9 @@
   const babelParser = require("prettier/parser-babel");
   const { isEqual } = await import("lodash-es");
 
-  const mainnetAbi = require("../src/abi/mainnet/v4/setter.json");
+  const mainnetAbi = require("../src/lib/abi/mainnet/v4/setter.json");
 
-  const holeskyAbi = require("../src/abi/holesky/v4/setter.json").filter(
+  const holeskyAbi = require("../src/lib/abi/holesky/v4/setter.json").filter(
     (item) => {
       const mainnetItem = mainnetAbi.find((f) => f?.name === item?.name);
       return !isEqual(mainnetItem, item);
@@ -19,7 +19,7 @@
 
   const folder = path.join(
     path.dirname(__dirname),
-    "src/contract-interactions/write"
+    "src/lib/contract-interactions/write"
   );
 
   if (!fs.existsSync(folder)) {
