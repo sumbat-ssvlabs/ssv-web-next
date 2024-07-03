@@ -21,7 +21,7 @@ const getPrompts = () => {
       name: "path",
       // Prompt to display on command line
       message: "Which folder?",
-      default: "src/components/ui",
+      default: "src/components/",
       // choices: uiComponents,
     },
     {
@@ -48,7 +48,7 @@ const getPrompts = () => {
       name: "wantFolder",
       // Prompt to display on command line
       message: "Should it be in a folder of its own?",
-      default: false,
+      default: true,
       // choices: uiComponents,
     },
   ];
@@ -69,8 +69,8 @@ const getActions = (template) => (data) => {
     },
   ];
 };
-
-export default (plop) => {
+// eslint-disable-next-line no-undef
+module.exports = (plop) => {
   plop.setGenerator("cmp", {
     description: "Create a component",
     prompts: getPrompts(Templates.FC),

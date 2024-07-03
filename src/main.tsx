@@ -10,6 +10,7 @@ import { RainbowKitProvider } from "@/lib/providers/RainbowKit/index.tsx";
 import { config } from "./wagmi/config";
 
 import { Buffer } from "buffer";
+import { Layout } from "@/components/Layout/Layout.tsx";
 globalThis.Buffer = Buffer;
 
 const queryClient = new QueryClient();
@@ -29,7 +30,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider>
-          <RouterProvider router={router} />
+          <Layout>
+            <RouterProvider router={router} />
+          </Layout>
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>

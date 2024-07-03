@@ -36,7 +36,6 @@ export const WalletButton = () => {
 
         return (
           <div
-            className="w-full"
             {...(!mounted && {
               "aria-hidden": true,
               style: {
