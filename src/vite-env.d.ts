@@ -8,7 +8,7 @@ interface ImportMetaEnv {
     apiNetwork: string;
     explorerUrl: string;
     insufficientBalanceUrl: string;
-    googleTagSecret: string;
+    googleTagSecret?: string;
     tokenAddress: `0x${string}`;
     setterContractAddress: `0x${string}`;
     getterContractAddress: `0x${string}`;
