@@ -6,7 +6,7 @@ import { WagmiProvider } from "wagmi";
 
 import App from "./App.tsx";
 
-import { RainbowKitProvider } from "@/providers/RainbowKit/index.tsx";
+import { RainbowKitProvider } from "@/lib/providers/RainbowKit/index.tsx";
 import { config } from "./wagmi/config";
 
 import { Buffer } from "buffer";
