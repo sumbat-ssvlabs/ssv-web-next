@@ -1,5 +1,24 @@
 /// <reference types="vite/client" />
 
+interface ImportMetaEnv {
+  readonly VITE_SSV_NETWORKS: {
+    networkId: number;
+    api: string;
+    apiVersion: string;
+    apiNetwork: string;
+    explorerUrl: string;
+    insufficientBalanceUrl: string;
+    googleTagSecret: string;
+    tokenAddress: `0x${string}`;
+    setterContractAddress: `0x${string}`;
+    getterContractAddress: `0x${string}`;
+  }[];
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+}
+
 declare module "*.avif" {
   const src: string;
   export default src;

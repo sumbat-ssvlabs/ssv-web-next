@@ -1,15 +1,20 @@
+import { useSSVNetworkDetails } from "@/hooks/useSSVNetworkDetails";
+import { ConnectButton, useChainModal } from "@rainbow-me/rainbowkit";
 import { useState } from "react";
+import "./App.css";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
-import "./App.css";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 function App() {
   const [count, setCount] = useState(0);
+  const network = useSSVNetworkDetails();
+  console.log("network:", network);
+  const { openChainModal } = useChainModal();
 
   return (
     <>
       <div>
+        <button onClick={openChainModal}>switch</button>
         <ConnectButton />
         <a href="https://vitejs.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />

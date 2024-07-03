@@ -25,7 +25,9 @@ export const RainbowKitProvider: FC<{ children: React.ReactNode }> = ({
         appName: "RainbowKit Demo",
         disclaimer: Disclaimer,
       }}
-      theme={true ? rainbowKitTheme.dark : rainbowKitTheme.light}
+      theme={
+        children?.toString() ? rainbowKitTheme.dark : rainbowKitTheme.light
+      }
     >
       {children}
     </OriginalRainbowKitProvider>
