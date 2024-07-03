@@ -64,7 +64,7 @@
 // ------------------------------------------------
 
 import { useWriteContract } from "wagmi";
-import {useSSVNetworkDetails} from '@/hooks/useSSVNetworkDetails';
+import {useSSVNetworkDetails} from '@/lib/hooks/useSSVNetworkDetails';
 import { ${abiName} } from "@/abi/${networkName}/v4/setter";${
       hasInputs
         ? `

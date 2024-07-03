@@ -1,6 +1,6 @@
 import { WalletButton } from "@/components/ConnectWalletButton";
 import "@/global.css";
-import { useSSVNetworkDetails } from "@/hooks/useSSVNetworkDetails";
+import { useSSVNetworkDetails } from "@/lib/hooks/useSSVNetworkDetails";
 
 function App() {
   const network = useSSVNetworkDetails();
