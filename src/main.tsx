@@ -18,10 +18,11 @@ import "@fontsource/manrope/800.css";
 
 import "@/global.css";
 
-import { Buffer } from "buffer";
 import { DashboardRoute } from "@/app/routes/DashboardRoute/DashboardRoute";
 import { ValidatorsRoute } from "@/app/routes/DashboardRoute/ValidatorsRoute";
 import { OperatorsRoute } from "@/app/routes/DashboardRoute/OperatorsRoute";
+
+import { Buffer } from "buffer";
 globalThis.Buffer = Buffer;
 
 const queryClient = new QueryClient();
