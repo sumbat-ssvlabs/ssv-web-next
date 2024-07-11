@@ -154,3 +154,16 @@
     @apply bg-background text-foreground;
   }
 }
+body {
+  background: var(--gray-200);
+}
+#root {
+  font-family: "Manrope", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  height: 100vh;
+}
+
+#root > [data-rk] {
+  @apply flex flex-col h-full;
+}

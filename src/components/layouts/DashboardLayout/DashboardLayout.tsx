@@ -7,9 +7,9 @@ export const DashboardLayout: FC<ComponentPropsWithoutRef<"div">> = ({
   ...props
 }) => {
   return (
-    <div className={cn(className, "flex flex-col")} {...props}>
+    <div className={cn(className, "flex flex-col min-h-full")} {...props}>
       <Navbar />
-      <main>{props.children}</main>
+      <main className="p-6">{props.children}</main>
     </div>
   );
 };

@@ -122,6 +122,7 @@ export const ${hookName} = (options?: MutationOptions<${eventTypeName}>) => {
     const isLoading = mutation.isPending || wait.isPending;
 
   return {
+    error: mutation.error || wait.error,
     isLoading,
     mutation,
     write,
