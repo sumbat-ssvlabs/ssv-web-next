@@ -2,36 +2,38 @@ import { isAddress } from "viem";
 import { useAccount, useChainId } from "wagmi";
 import { z } from "zod";
 
-const networkSchema = z.object({
-  networkId: z.number(),
-  api: z.string(),
-  apiVersion: z.string(),
-  apiNetwork: z.string(),
-  explorerUrl: z.string(),
-  insufficientBalanceUrl: z.string(),
-  googleTagSecret: z.string().optional(),
-  tokenAddress: z.string().refine(isAddress).optional(),
-  setterContractAddress: z.string().refine(isAddress).optional(),
-  getterContractAddress: z.string().refine(isAddress).optional(),
-});
+const networks = import.meta.env.VITE_SSV_NETWORKS;
 
-if (!import.meta.env.VITE_SSV_NETWORKS) {
+const networkSchema = z
+  .array(
+    z.object({
+      networkId: z.number(),
+      api: z.string(),
+      apiVersion: z.string(),
+      apiNetwork: z.string(),
+      explorerUrl: z.string(),
+      insufficientBalanceUrl: z.string(),
+      googleTagSecret: z.string().optional(),
+      tokenAddress: z.string().refine(isAddress).optional(),
+      setterContractAddress: z.string().refine(isAddress).optional(),
+      getterContractAddress: z.string().refine(isAddress).optional(),
+    }),
+  )
+  .min(1);
+
+if (!networks) {
   throw new Error(
     "VITE_SSV_NETWORKS is not defined in the environment variables",
   );
 }
 
-const parsed = import.meta.env.VITE_SSV_NETWORKS.map((network) =>
-  networkSchema.safeParse(network),
-);
+const parsed = networkSchema.safeParse(networks);
 
-const badSchema = parsed.find((network) => !network.success);
-
-if (badSchema) {
+if (!parsed.success) {
   throw new Error(
     `
 Invalid network schema in VITE_SSV_NETWORKS environment variable:
-\t${badSchema.error?.errors
+\t${parsed.error?.errors
       .map((error) => `${error.path.join(".")} -> ${error.message}`)
       .join("\n\t")}
     `,

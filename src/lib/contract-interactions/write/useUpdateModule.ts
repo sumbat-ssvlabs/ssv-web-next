@@ -4,24 +4,27 @@
 
 import { useWriteContract } from "wagmi";
 import { useSSVNetworkDetails } from "@/lib/hooks/useSSVNetworkDetails";
-import { MainnetV4SetterABI } from "@/abi/mainnet/v4/setter";
-import type {
-  ExtractAbiFunction,
-  AbiParametersToPrimitiveTypes,
-} from "abitype";
+import { MainnetV4SetterABI } from "@/lib/abi/mainnet/v4/setter";
+import type { ExtractAbiFunction } from "abitype";
+import {
+  AbiInputsToParams,
+  paramsToArray,
+  extractAbiFunction,
+} from "@/lib/contract-interactions/utils";
 
 type Fn = ExtractAbiFunction<typeof MainnetV4SetterABI, "updateModule">;
+const abiFunction = extractAbiFunction(MainnetV4SetterABI, "updateModule");
 
 export const useUpdateModule = () => {
   const { setterContractAddress } = useSSVNetworkDetails();
   const mutation = useWriteContract();
 
-  const write = (args: AbiParametersToPrimitiveTypes<Fn["inputs"]>) => {
+  const write = (params: AbiInputsToParams<Fn["inputs"]>) => {
     return mutation.writeContract({
       abi: MainnetV4SetterABI,
       address: setterContractAddress,
       functionName: "updateModule",
-      args,
+      args: paramsToArray({ params, abiFunction }),
     });
   };
 

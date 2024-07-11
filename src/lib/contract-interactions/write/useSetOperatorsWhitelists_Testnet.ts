@@ -4,27 +4,33 @@
 
 import { useWriteContract } from "wagmi";
 import { useSSVNetworkDetails } from "@/lib/hooks/useSSVNetworkDetails";
-import { HoleskyV4SetterABI } from "@/abi/holesky/v4/setter";
-import type {
-  ExtractAbiFunction,
-  AbiParametersToPrimitiveTypes,
-} from "abitype";
+import { HoleskyV4SetterABI } from "@/lib/abi/holesky/v4/setter";
+import type { ExtractAbiFunction } from "abitype";
+import {
+  AbiInputsToParams,
+  paramsToArray,
+  extractAbiFunction,
+} from "@/lib/contract-interactions/utils";
 
 type Fn = ExtractAbiFunction<
   typeof HoleskyV4SetterABI,
   "setOperatorsWhitelists"
 >;
+const abiFunction = extractAbiFunction(
+  HoleskyV4SetterABI,
+  "setOperatorsWhitelists",
+);
 
 export const useSetOperatorsWhitelists_Testnet = () => {
   const { setterContractAddress } = useSSVNetworkDetails();
   const mutation = useWriteContract();
 
-  const write = (args: AbiParametersToPrimitiveTypes<Fn["inputs"]>) => {
+  const write = (params: AbiInputsToParams<Fn["inputs"]>) => {
     return mutation.writeContract({
       abi: HoleskyV4SetterABI,
       address: setterContractAddress,
       functionName: "setOperatorsWhitelists",
-      args,
+      args: paramsToArray({ params, abiFunction }),
     });
   };
 

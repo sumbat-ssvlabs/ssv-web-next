@@ -52,6 +52,8 @@
     const filePath = path.join(folder, fileName);
     const hasInputs = Boolean(item.inputs?.length);
 
+    const args = item.inputs;
+
     const networkName = isTestnet ? "holesky" : "mainnet";
 
     const isPayable = item.stateMutability === "payable";
@@ -65,26 +67,28 @@
 
 import { useWriteContract } from "wagmi";
 import {useSSVNetworkDetails} from '@/lib/hooks/useSSVNetworkDetails';
-import { ${abiName} } from "@/abi/${networkName}/v4/setter";${
+import { ${abiName} } from "@/lib/abi/${networkName}/v4/setter";${
       hasInputs
         ? `
-  import type { ExtractAbiFunction, AbiParametersToPrimitiveTypes } from "abitype";`
+import type { ExtractAbiFunction } from "abitype";
+import  { AbiInputsToParams, paramsToArray, extractAbiFunction } from "@/lib/contract-interactions/utils";`
         : ""
     }
 
 ${hasInputs ? `type Fn = ExtractAbiFunction<typeof ${abiName}, "${functionName}">;` : ""}
+${hasInputs ? `const abiFunction = extractAbiFunction(${abiName},"${functionName}");` : ""}
 
 export const ${hookName} = () => {
   const { setterContractAddress } = useSSVNetworkDetails()
  const mutation = useWriteContract();
 
-  const write = (${hasInputs ? 'args: AbiParametersToPrimitiveTypes<Fn["inputs"]>' : ""}${isPayable ? ",value?: bigint" : ""}) => {
+  const write = (${hasInputs ? 'params: AbiInputsToParams<Fn["inputs"]>' : ""}${isPayable ? ",value?: bigint" : ""}) => {
     return mutation.writeContract({
     ${isPayable ? "value," : ""}
       abi: ${abiName},
       address: setterContractAddress,
       functionName: "${functionName}",
-      ${hasInputs ? "args" : ""}
+      ${hasInputs ? "args: paramsToArray({ params, abiFunction })" : ""}
     });
   };
 

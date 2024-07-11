@@ -9,19 +9,25 @@ import App from "./App.tsx";
 import { RainbowKitProvider } from "@/lib/providers/RainbowKit/index.tsx";
 import { config } from "./wagmi/config";
 
+import { Login } from "@/components/Login/Login.tsx";
+import { DashboardLayout } from "@/components/layouts/DashboardLayout/DashboardLayout.tsx";
 import { Buffer } from "buffer";
-import { Layout } from "@/components/Layout/Layout.tsx";
+import { ProtectedRoute } from "@/components/ProtectedRoute.tsx";
 globalThis.Buffer = Buffer;
 
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: (
+      <ProtectedRoute>
+        <App />
+      </ProtectedRoute>
+    ),
   },
   {
-    path: "about",
-    element: <div>About</div>,
+    path: "/join",
+    element: <Login />,
   },
 ]);
 
@@ -30,9 +36,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider>
-          <Layout>
+          <DashboardLayout>
             <RouterProvider router={router} />
-          </Layout>
+          </DashboardLayout>
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>

@@ -5,11 +5,7 @@ export const Spacer: FC<ComponentPropsWithoutRef<"div">> = ({
   className,
   ...props
 }) => {
-  return (
-    <div className={cn(className, "flex-1")} {...props}>
-      Spacer
-    </div>
-  );
+  return <div className={cn(className, "flex-1")} {...props} />;
 };
 
 Spacer.displayName = "Spacer";

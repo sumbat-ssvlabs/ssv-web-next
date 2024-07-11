@@ -4,7 +4,7 @@
 
 import { useWriteContract } from "wagmi";
 import { useSSVNetworkDetails } from "@/lib/hooks/useSSVNetworkDetails";
-import { MainnetV4SetterABI } from "@/abi/mainnet/v4/setter";
+import { MainnetV4SetterABI } from "@/lib/abi/mainnet/v4/setter";
 
 export const useRenounceOwnership = () => {
   const { setterContractAddress } = useSSVNetworkDetails();
