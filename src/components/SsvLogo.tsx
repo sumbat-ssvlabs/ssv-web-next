@@ -6,7 +6,11 @@ export const SsvLogo: FC<ComponentPropsWithoutRef<"img">> = ({
   ...props
 }) => {
   return (
-    <img className={cn(className)} {...props} src="/images/logo/dark.svg" />
+    <img
+      className={cn(className, "h-7")}
+      {...props}
+      src="https://app.stage.ssv.network/images/logo/dark.svg"
+    />
   );
 };
 

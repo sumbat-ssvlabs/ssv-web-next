@@ -18,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Tooltip } from "@/components/ui/tooltip";
+import { Text } from "@/components/ui/text";
 
 export type NavbarProps = {
   // TODO: Add props or remove this type
@@ -37,9 +38,9 @@ export const Navbar: FCProps = ({ className, ...props }) => {
       {...props}
     >
       <SsvLogo className="h-full" />
-      <p>My Account</p>
-      <p>Explorer</p>
-      <p>Docs</p>
+      <Text variant="body-3-medium">My Account</Text>
+      <Text variant="body-3-medium">Explorer</Text>
+      <Text variant="body-3-medium">Docs</Text>
       <DropdownMenu>
         <DropdownMenuTrigger>
           <Button variant="ghost" size="icon">
