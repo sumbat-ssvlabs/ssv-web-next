@@ -1,11 +1,26 @@
 import { HoleskyV4SetterABI } from "@/lib/abi/holesky/v4/setter";
 import { MainnetV4SetterABI } from "@/lib/abi/mainnet/v4/setter";
 import { useMutation } from "@tanstack/react-query";
-import { decodeEventLog, DecodeEventLogReturnType } from "viem";
+import {
+  Address,
+  decodeEventLog,
+  DecodeEventLogReturnType,
+  TransactionReceipt,
+  WaitForTransactionReceiptErrorType,
+} from "viem";
 import { usePublicClient } from "wagmi";
 
-type MainnetEvents = DecodeEventLogReturnType<typeof MainnetV4SetterABI>;
-type TestnetEvents = DecodeEventLogReturnType<typeof HoleskyV4SetterABI>;
+import type { WriteContractErrorType } from "@wagmi/core";
+
+export type MainnetEvent = DecodeEventLogReturnType<typeof MainnetV4SetterABI>;
+export type TestnetEvent = DecodeEventLogReturnType<typeof HoleskyV4SetterABI>;
+
+export type MutationOptions<T extends MainnetEvent | TestnetEvent> = {
+  onConfirmed?: (hash: Address) => void;
+  onConfirmationError?: (error: WriteContractErrorType) => void;
+  onMined?: (receipt: TransactionReceipt & { events: T[] }) => void;
+  onMiningError?: (error: WaitForTransactionReceiptErrorType) => void;
+};
 
 export const useWaitForTransactionReceipt = () => {
   const client = usePublicClient();
@@ -29,7 +44,7 @@ export const useWaitForTransactionReceipt = () => {
             console.error(e);
           }
           return acc;
-        }, [] as MainnetEvents[]),
+        }, [] as MainnetEvent[]),
       }));
     },
   });
@@ -57,7 +72,7 @@ export const useWaitForTransactionReceipt_Testnet = () => {
             console.error(e);
           }
           return acc;
-        }, [] as TestnetEvents[]),
+        }, [] as TestnetEvent[]),
       }));
     },
   });

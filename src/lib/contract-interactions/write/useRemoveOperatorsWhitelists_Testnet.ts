@@ -4,6 +4,11 @@
 
 import { useWriteContract } from "wagmi";
 import { useSSVNetworkDetails } from "@/lib/hooks/useSSVNetworkDetails";
+import {
+  TestnetEvent,
+  MutationOptions,
+  useWaitForTransactionReceipt_Testnet,
+} from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
 import { HoleskyV4SetterABI } from "@/lib/abi/holesky/v4/setter";
 import type { ExtractAbiFunction } from "abitype";
 import {
@@ -11,6 +16,7 @@ import {
   paramsToArray,
   extractAbiFunction,
 } from "@/lib/contract-interactions/utils";
+import type { WriteContractErrorType } from "@wagmi/core";
 
 type Fn = ExtractAbiFunction<
   typeof HoleskyV4SetterABI,
@@ -20,10 +26,28 @@ const abiFunction = extractAbiFunction(
   HoleskyV4SetterABI,
   "removeOperatorsWhitelists",
 );
+// type State = "idle" | "confirming" | "mining" | "mined" | "error";
 
-export const useRemoveOperatorsWhitelists_Testnet = () => {
+export const useRemoveOperatorsWhitelists_Testnet = (
+  options?: MutationOptions<TestnetEvent>,
+) => {
   const { setterContractAddress } = useSSVNetworkDetails();
-  const mutation = useWriteContract();
+
+  const wait = useWaitForTransactionReceipt_Testnet();
+  const mutation = useWriteContract({
+    mutation: {
+      onSuccess: (result) => {
+        wait.mutate(result, {
+          onSuccess: (receipt) => {
+            options?.onMined?.(receipt);
+          },
+        });
+        options?.onConfirmed?.(result);
+      },
+      onError: (error) =>
+        options?.onConfirmationError?.(error as WriteContractErrorType),
+    },
+  });
 
   const write = (params: AbiInputsToParams<Fn["inputs"]>) => {
     return mutation.writeContract({
@@ -34,7 +58,10 @@ export const useRemoveOperatorsWhitelists_Testnet = () => {
     });
   };
 
+  const isLoading = mutation.isPending || wait.isPending;
+
   return {
+    isLoading,
     mutation,
     write,
   };

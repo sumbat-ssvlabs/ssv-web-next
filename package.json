@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "prepare": "husky install",
     "type-check": "tsc --noEmit",
-    "lint-staged": "lint-staged"
+    "lint-staged": "lint-staged",
+    "preinstall": "npx only-allow pnpm"
   },
   "lint-staged": {
     "src/**/*.{ts,tsx,js,json}": [
@@ -30,6 +31,7 @@
     "@radix-ui/react-tooltip": "^1.1.2",
     "@rainbow-me/rainbowkit": "^2.1.3",
     "@tanstack/react-query": "^5.49.2",
+    "@wagmi/core": "^2.11.7",
     "abitype": "^1.0.5",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",

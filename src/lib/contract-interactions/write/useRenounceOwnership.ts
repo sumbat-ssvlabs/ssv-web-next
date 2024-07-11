@@ -4,11 +4,36 @@
 
 import { useWriteContract } from "wagmi";
 import { useSSVNetworkDetails } from "@/lib/hooks/useSSVNetworkDetails";
+import {
+  MainnetEvent,
+  MutationOptions,
+  useWaitForTransactionReceipt,
+} from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
 import { MainnetV4SetterABI } from "@/lib/abi/mainnet/v4/setter";
+import type { WriteContractErrorType } from "@wagmi/core";
 
-export const useRenounceOwnership = () => {
+// type State = "idle" | "confirming" | "mining" | "mined" | "error";
+
+export const useRenounceOwnership = (
+  options?: MutationOptions<MainnetEvent>,
+) => {
   const { setterContractAddress } = useSSVNetworkDetails();
-  const mutation = useWriteContract();
+
+  const wait = useWaitForTransactionReceipt();
+  const mutation = useWriteContract({
+    mutation: {
+      onSuccess: (result) => {
+        wait.mutate(result, {
+          onSuccess: (receipt) => {
+            options?.onMined?.(receipt);
+          },
+        });
+        options?.onConfirmed?.(result);
+      },
+      onError: (error) =>
+        options?.onConfirmationError?.(error as WriteContractErrorType),
+    },
+  });
 
   const write = () => {
     return mutation.writeContract({
@@ -18,7 +43,10 @@ export const useRenounceOwnership = () => {
     });
   };
 
+  const isLoading = mutation.isPending || wait.isPending;
+
   return {
+    isLoading,
     mutation,
     write,
   };
