@@ -48,8 +48,8 @@
   const createWriteFn = (isTestnet, item) => {
     const functionName = item.name;
     const hookName = `use${capitalizeFirstLetter(functionName)}${isTestnet ? "_Testnet" : ""}`;
-    const fileName = `${hookName}.ts`;
-    const filePath = path.join(folder, `${kebabCase(fileName)}.ts`);
+    const fileName = `${kebabCase(hookName)}.ts`;
+    const filePath = path.join(folder, `${fileName}`);
     const hasInputs = Boolean(item.inputs?.length);
 
     const args = item.inputs;

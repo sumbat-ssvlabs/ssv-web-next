@@ -8,9 +8,9 @@
   const babelParser = require("prettier/parser-babel");
   const { isEqual, kebabCase } = await import("lodash-es");
 
-  const mainnetAbi = require("../src/lib/abi/mainnet/v4/setter.json");
+  const mainnetAbi = require("../src/lib/abi/mainnet/v4/getter.json");
 
-  const holeskyAbi = require("../src/lib/abi/holesky/v4/setter.json").filter(
+  const holeskyAbi = require("../src/lib/abi/holesky/v4/getter.json").filter(
     (item) => {
       const mainnetItem = mainnetAbi.find((f) => f?.name === item?.name);
       return !isEqual(mainnetItem, item);
@@ -19,7 +19,7 @@
 
   const folder = path.join(
     path.dirname(__dirname),
-    "src/lib/contract-interactions/write"
+    "src/lib/contract-interactions/read"
   );
 
   if (!fs.existsSync(folder)) {
@@ -46,21 +46,13 @@
   const createWriteFn = (isTestnet, item) => {
     const functionName = item.name;
     const hookName = `use${capitalizeFirstLetter(functionName)}${isTestnet ? "_Testnet" : ""}`;
-    const fileName = `${hookName}.ts`;
-    const filePath = path.join(folder, `${kebabCase(fileName)}.ts`);
+    const fileName = `${kebabCase(hookName)}.ts`;
+    const filePath = path.join(folder, `${fileName}`);
     const hasInputs = Boolean(item.inputs?.length);
-
-    const args = item.inputs;
 
     const networkName = isTestnet ? "holesky" : "mainnet";
 
-    const isPayable = item.stateMutability === "payable";
-
-    const abiName = isTestnet ? "HoleskyV4SetterABI" : "MainnetV4SetterABI";
-
-    const eventTypeName = isTestnet ? "TestnetEvent" : "MainnetEvent";
-
-    const useWaitForTxHookName = `useWaitForTransactionReceipt${isTestnet ? "_Testnet" : ""}`;
+    const abiName = isTestnet ? "HoleskyV4GetterABI" : "MainnetV4GetterABI";
 
     const content = `
 // ------------------------------------------------
@@ -68,50 +60,34 @@
 // ------------------------------------------------
 
 import { useReadContract } from "wagmi";
-import {useSSVNetworkDetails} from '@/lib/hooks/use-ssv-network-details';
-import {
-  ${eventTypeName},
-  MutationOptions,
-  ${useWaitForTxHookName},
-} from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
-import { ${abiName} } from "@/lib/abi/${networkName}/v4/setter";${
+import { useSSVNetworkDetails } from '@/lib/hooks/use-ssv-network-details';
+import { ${abiName} } from "@/lib/abi/${networkName}/v4/getter";${
       hasInputs
         ? `
 import type {  ExtractAbiFunction } from "abitype";
 import  { AbiInputsToParams, paramsToArray, extractAbiFunction } from "@/lib/contract-interactions/utils";`
         : ""
     }
-import type { WriteContractErrorType } from "@wagmi/core";
-
 
 ${hasInputs ? `type Fn = ExtractAbiFunction<typeof ${abiName}, "${functionName}">;` : ""}
 ${hasInputs ? `const abiFunction = extractAbiFunction(${abiName},"${functionName}");` : ""}
-// type State = "idle" | "confirming" | "mining" | "mined" | "error";
 
-export const ${hookName} = (options?: MutationOptions<${eventTypeName}>) => {
-  const { setterContractAddress } = useSSVNetworkDetails()
+export const ${hookName} = (${hasInputs ? 'params: AbiInputsToParams<Fn["inputs"]>' : ""}) => {
+  const { getterContractAddress } = useSSVNetworkDetails()
 
- const wait = ${useWaitForTxHookName}();
-  const mutation = useReadContract();
-
-  const write = (${hasInputs ? 'params: AbiInputsToParams<Fn["inputs"]>' : ""}${isPayable ? ",value?: bigint" : ""}) => {
-    return mutation.writeContract({
-    ${isPayable ? "value," : ""}
+  return useReadContract({
       abi: ${abiName},
-      address: setterContractAddress,
+      address: getterContractAddress,
       functionName: "${functionName}",
-      ${hasInputs ? "args: paramsToArray({ params, abiFunction })" : ""}
+      ${hasInputs ? "args: paramsToArray({ params, abiFunction })," : ""}
+       ${
+         hasInputs
+           ? `query: {
+        enabled: Boolean(params),
+      },`
+           : ""
+       }
     });
-  };
-
-    const isLoading = mutation.isPending || wait.isPending;
-
-  return {
-    error: mutation.error || wait.error,
-    isLoading,
-    mutation,
-    write,
-  };
 };
 `;
     fs.mkdirSync(folder, { recursive: true });
