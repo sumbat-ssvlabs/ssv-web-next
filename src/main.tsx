@@ -4,11 +4,9 @@ import ReactDOM from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { WagmiProvider } from "wagmi";
 
-import { RainbowKitProvider } from "@/lib/providers/RainbowKit/index.tsx";
+import { RainbowKitProvider } from "@/lib/providers/rainbot-kit";
 import { config } from "./wagmi/config";
 
-import { ConnectWalletRoute } from "@/app/routes/ConnectWalletRoute/ConnectWalletRoute.tsx";
-import { ProtectedRoute } from "@/components/ProtectedRoute.tsx";
 import { DashboardLayout } from "@/components/layouts/DashboardLayout/DashboardLayout.tsx";
 
 import "@fontsource/manrope/400.css";
@@ -18,9 +16,13 @@ import "@fontsource/manrope/800.css";
 
 import "@/global.css";
 
-import { DashboardRoute } from "@/app/routes/DashboardRoute/DashboardRoute";
-import { ValidatorsRoute } from "@/app/routes/DashboardRoute/ValidatorsRoute";
-import { OperatorsRoute } from "@/app/routes/DashboardRoute/OperatorsRoute";
+import { Dashboard } from "@/app/routes/dashboard/dashboard";
+import { Operator } from "@/app/routes/dashboard/operators/operator";
+import { OperatorSettings } from "@/app/routes/dashboard/operators/operator-settings/operator-settings";
+import { Operators } from "@/app/routes/dashboard/operators/operators";
+import { Validators } from "@/app/routes/dashboard/validators/validators";
+import { ProtectedRoute } from "@/components/protected-route";
+import { ConnectWallet } from "@/app/routes/connect-wallet/connect-wallet";
 
 import { Buffer } from "buffer";
 globalThis.Buffer = Buffer;
@@ -31,23 +33,31 @@ const router = createBrowserRouter([
     path: "/",
     element: (
       <ProtectedRoute>
-        <DashboardRoute />
+        <Dashboard />
       </ProtectedRoute>
     ),
     children: [
       {
         path: "validators",
-        element: <ValidatorsRoute />,
+        element: <Validators />,
       },
       {
         path: "operators",
-        element: <OperatorsRoute />,
+        element: <Operators />,
+      },
+      {
+        path: "operator/:id",
+        element: <Operator />,
+      },
+      {
+        path: "operator/:id/settings",
+        element: <OperatorSettings />,
       },
     ],
   },
   {
     path: "/join",
-    element: <ConnectWalletRoute />,
+    element: <ConnectWallet />,
   },
 ]);
 

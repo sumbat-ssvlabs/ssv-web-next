@@ -1,7 +1,3 @@
-import { ConnectWalletBtn } from "@/components/ConnectWalletBtn";
-import { NetworkSwitchBtn } from "@/components/NetworkSwitchBtn";
-import { SsvLogo } from "@/components/SsvLogo";
-import { Spacer } from "@/components/ui/spacer";
 import { cn } from "@/lib/utils/tw";
 import type { ComponentPropsWithoutRef, FC } from "react";
 import { FaDiscord } from "react-icons/fa";
@@ -9,6 +5,9 @@ import { FaXTwitter } from "react-icons/fa6";
 import { HiOutlineExternalLink, HiOutlineGlobeAlt } from "react-icons/hi";
 import { TbDots } from "react-icons/tb";
 
+import { ConnectWalletBtn } from "@/components/connect-wallet-btn";
+import { NetworkSwitchBtn } from "@/components/network-switch-btn";
+import { SsvLogo } from "@/components/ssv-logo";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -17,8 +16,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Tooltip } from "@/components/ui/tooltip";
+import { Spacer } from "@/components/ui/spacer";
 import { Text } from "@/components/ui/text";
+import { Tooltip } from "@/components/ui/tooltip";
 
 export type NavbarProps = {
   // TODO: Add props or remove this type
