@@ -1,20 +1,28 @@
+import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 import {
-  UseMutationOptions,
   DefaultOptions,
   QueryClient,
+  UseMutationOptions,
 } from "@tanstack/react-query";
+import { deserialize, serialize } from "wagmi";
 
 export const queryConfig = {
   queries: {
-    // throwOnError: true,
-    refetchOnWindowFocus: false,
     retry: false,
-    staleTime: 1000 * 60,
+    refetchOnMount: false,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    gcTime: 1000 * 60 * 60 * 24, // 24 hours
   },
 } satisfies DefaultOptions;
 
 export const queryClient = new QueryClient({
   defaultOptions: queryConfig,
+});
+
+export const persister = createSyncStoragePersister({
+  serialize,
+  storage: window.localStorage,
+  deserialize,
 });
 
 export type ApiFnReturnType<

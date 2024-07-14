@@ -2,14 +2,14 @@ import { queryOptions, useQuery } from "@tanstack/react-query";
 
 import { QueryConfig } from "@/lib/react-query";
 import { api } from "@/lib/api-client";
-import { getAPI } from "@/lib/hooks/use-ssv-network-details";
+import { endpoint } from "@/lib/hooks/use-ssv-network-details";
 
 export type Cluster = {
   // TODO: Add type or remove this type
 };
 
 export const getCluster = (): Promise<Cluster[]> => {
-  return api.get(getAPI());
+  return api.get(endpoint());
 };
 
 export const getClusterQueryOptions = () => {

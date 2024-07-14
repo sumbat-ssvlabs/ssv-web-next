@@ -42,7 +42,7 @@ export const Navbar: FCProps = ({ className, ...props }) => {
       <Text variant="body-3-medium">Explorer</Text>
       <Text variant="body-3-medium">Docs</Text>
       <DropdownMenu>
-        <DropdownMenuTrigger>
+        <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon">
             <TbDots className="size-5" />
           </Button>

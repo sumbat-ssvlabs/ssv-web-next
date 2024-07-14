@@ -1,18 +1,19 @@
-import type { FC, ComponentPropsWithoutRef } from "react";
+import { useOperator } from "@/lib/hooks/get-operator";
 import { cn } from "@/lib/utils/tw";
+import type { ComponentPropsWithoutRef, FC } from "react";
 import { Link } from "react-router-dom";
-import { useRemoveOperator } from "@/lib/contract-interactions/write/use-remove-operator-ts";
 
 export const Operator: FC<ComponentPropsWithoutRef<"div">> = ({
   className,
   ...props
 }) => {
-  const data = useRemoveOperator();
-  console.log("data:", data);
+  const operator = useOperator(473);
+  console.log("operator:", operator.data);
   return (
     <div className={cn(className)} {...props}>
       Operator
       <Link to="settings">1</Link>
+      <pre>{JSON.stringify(operator.data, null, 2)}</pre>
     </div>
   );
 };

@@ -1,4 +1,3 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
@@ -16,18 +15,21 @@ import "@fontsource/manrope/800.css";
 
 import "@/global.css";
 
+import { ConnectWallet } from "@/app/routes/connect-wallet/connect-wallet";
 import { Dashboard } from "@/app/routes/dashboard/dashboard";
 import { Operator } from "@/app/routes/dashboard/operators/operator";
 import { OperatorSettings } from "@/app/routes/dashboard/operators/operator-settings/operator-settings";
 import { Operators } from "@/app/routes/dashboard/operators/operators";
 import { Validators } from "@/app/routes/dashboard/validators/validators";
 import { ProtectedRoute } from "@/components/protected-route";
-import { ConnectWallet } from "@/app/routes/connect-wallet/connect-wallet";
+
+import { queryClient, persister } from "@/lib/react-query";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { Buffer } from "buffer";
 globalThis.Buffer = Buffer;
 
-const queryClient = new QueryClient();
 const router = createBrowserRouter([
   {
     path: "/",
@@ -42,7 +44,8 @@ const router = createBrowserRouter([
         element: <Validators />,
       },
       {
-        path: "operators",
+        index: true,
+        path: "",
         element: <Operators />,
       },
       {
@@ -64,13 +67,20 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
+      <PersistQueryClientProvider
+        client={queryClient}
+        persistOptions={{ persister }}
+        onSuccess={(...args) => {
+          console.log("Query client persisted", args);
+        }}
+      >
         <RainbowKitProvider>
+          <ReactQueryDevtools buttonPosition="top-right" />
           <DashboardLayout>
             <RouterProvider router={router} />
           </DashboardLayout>
         </RainbowKitProvider>
-      </QueryClientProvider>
+      </PersistQueryClientProvider>
     </WagmiProvider>
   </React.StrictMode>,
 );
