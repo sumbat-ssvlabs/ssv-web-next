@@ -45,11 +45,11 @@ export type Operator = {
   updated_at: number;
 };
 
-export const getOperator = (id: number): Promise<Operator> => {
+export const getOperator = (id: number | string): Promise<Operator> => {
   return api.get(endpoint("operators", id)).then((res) => res.data);
 };
 
-export const getOperatorQueryOptions = (id: number) => {
+export const getOperatorQueryOptions = (id: number | string) => {
   return queryOptions({
     queryKey: ["operator", id],
     queryFn: () => getOperator(id),
@@ -62,7 +62,7 @@ type UseOperatorOptions = {
 };
 
 export const useOperator = (
-  id: number,
+  id: number | string,
   { options }: UseOperatorOptions = {},
 ) => {
   return useQuery({
