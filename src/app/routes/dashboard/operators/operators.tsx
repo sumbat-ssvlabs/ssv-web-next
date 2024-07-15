@@ -1,15 +1,14 @@
-import type { FC, ComponentPropsWithoutRef } from "react";
+import { OperatorPicker } from "@/features/operator/operator-picker/operator-picker";
 import { cn } from "@/lib/utils/tw";
-import { Link } from "react-router-dom";
+import type { ComponentPropsWithoutRef, FC } from "react";
 
 export const Operators: FC<ComponentPropsWithoutRef<"div">> = ({
   className,
   ...props
 }) => {
   return (
-    <div className={cn(className)} {...props}>
-      OperatorsRoute
-      <Link to="/operator/1">1</Link>
+    <div className={cn(className, "flex flex-col h-full")} {...props}>
+      <OperatorPicker className="flex-1" />
     </div>
   );
 };

@@ -6,24 +6,24 @@ export type {{pascalCase name}} = {
   // TODO: Add type or remove this type
 }
 
-export const get{{pascalCase name}} = (): Promise<{{pascalCase name}}[]> => {
+export const {{camelCase name}} = (): Promise<{{pascalCase name}}[]> => {
   return // TODO: Add fetch logic
 };
 
-export const get{{pascalCase name}}QueryOptions = () => {
+export const {{camelCase name}}QueryOptions = () => {
   return queryOptions({
     queryKey: ['{{kebabCase name}}'],
-    queryFn: () => get{{pascalCase name}}(),
+    queryFn: () => {{camelCase name}}(),
   });
 };
 
 type Use{{pascalCase name}}Options = {
-  options?: QueryConfig<typeof get{{pascalCase name}}QueryOptions>;
+  options?: QueryConfig<typeof {{camelCase name}}QueryOptions>;
 };
 
 export const use{{pascalCase name}} = ({ options }: Use{{pascalCase name}}Options = {}) => {
   return useQuery({
-    ...get{{pascalCase name}}QueryOptions(),
+    ...{{camelCase name}}QueryOptions(),
     ...options,
   });
 };

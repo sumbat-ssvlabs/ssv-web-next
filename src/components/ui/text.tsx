@@ -2,7 +2,7 @@ import type { FC, ComponentPropsWithoutRef, ElementType } from "react";
 import { cn } from "@/lib/utils/tw";
 import { cva, type VariantProps } from "class-variance-authority";
 
-const variants = cva("text-gray-800", {
+const variants = cva("", {
   variants: {
     variant: {
       title: "text-[40px] font-extrabold",

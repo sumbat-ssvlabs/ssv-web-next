@@ -49,7 +49,7 @@ const getPrompts = () => {
       name: "wantFolder",
       // Prompt to display on command line
       message: "Should it be in a folder of its own?",
-      default: true,
+      default: false,
       // choices: uiComponents,
     },
   ];

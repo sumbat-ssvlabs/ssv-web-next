@@ -3,7 +3,7 @@
 // ------------------------------------------------
 
 import { useReadContract } from "wagmi";
-import { useSSVNetworkDetails } from "@/lib/hooks/use-ssv-network-details";
+import { useSSVNetworkDetails } from "@/hooks/use-ssv-network-details";
 import { MainnetV4GetterABI } from "@/lib/abi/mainnet/v4/getter";
 
 export const useGetMaximumOperatorFee = () => {

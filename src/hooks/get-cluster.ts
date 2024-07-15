@@ -2,7 +2,7 @@ import { queryOptions, useQuery } from "@tanstack/react-query";
 
 import { QueryConfig } from "@/lib/react-query";
 import { api } from "@/lib/api-client";
-import { endpoint } from "@/lib/hooks/use-ssv-network-details";
+import { endpoint } from "@/api";
 
 export type Cluster = {
   // TODO: Add type or remove this type

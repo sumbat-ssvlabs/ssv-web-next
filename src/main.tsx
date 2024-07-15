@@ -1,68 +1,25 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import { WagmiProvider } from "wagmi";
 
-import { RainbowKitProvider } from "@/lib/providers/rainbot-kit";
+import { RainbowKitProvider } from "@/lib/providers/rainbow-kit";
+import { persister, queryClient } from "@/lib/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import { WagmiProvider } from "wagmi";
 import { config } from "./wagmi/config";
 
-import { DashboardLayout } from "@/components/layouts/DashboardLayout/DashboardLayout.tsx";
+import { router } from "@/app/routes";
+import { RouterProvider } from "react-router-dom";
+import { DashboardLayout } from "@/app/layouts/dashboard/dashboard";
 
+import "@/global.css";
 import "@fontsource/manrope/400.css";
 import "@fontsource/manrope/500.css";
 import "@fontsource/manrope/700.css";
 import "@fontsource/manrope/800.css";
 
-import "@/global.css";
-
-import { ConnectWallet } from "@/app/routes/connect-wallet/connect-wallet";
-import { Dashboard } from "@/app/routes/dashboard/dashboard";
-import { Operator } from "@/app/routes/dashboard/operators/operator";
-import { OperatorSettings } from "@/app/routes/dashboard/operators/operator-settings/operator-settings";
-import { Operators } from "@/app/routes/dashboard/operators/operators";
-import { Validators } from "@/app/routes/dashboard/validators/validators";
-import { ProtectedRoute } from "@/components/protected-route";
-
-import { queryClient, persister } from "@/lib/react-query";
-import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-
 import { Buffer } from "buffer";
 globalThis.Buffer = Buffer;
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: (
-      <ProtectedRoute>
-        <Dashboard />
-      </ProtectedRoute>
-    ),
-    children: [
-      {
-        path: "validators",
-        element: <Validators />,
-      },
-      {
-        index: true,
-        path: "",
-        element: <Operators />,
-      },
-      {
-        path: "operator/:id",
-        element: <Operator />,
-      },
-      {
-        path: "operator/:id/settings",
-        element: <OperatorSettings />,
-      },
-    ],
-  },
-  {
-    path: "/join",
-    element: <ConnectWallet />,
-  },
-]);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -75,7 +32,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         }}
       >
         <RainbowKitProvider>
-          <ReactQueryDevtools buttonPosition="top-right" />
+          <ReactQueryDevtools buttonPosition="bottom-right" />
           <DashboardLayout>
             <RouterProvider router={router} />
           </DashboardLayout>

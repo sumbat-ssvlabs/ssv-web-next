@@ -8,9 +8,7 @@ import { deserialize, serialize } from "wagmi";
 
 export const queryConfig = {
   queries: {
-    retry: false,
-    refetchOnMount: false,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 1000 * 60, // 1 minutes
     gcTime: 1000 * 60 * 60 * 24, // 24 hours
   },
 } satisfies DefaultOptions;

@@ -5,9 +5,8 @@ import { FaXTwitter } from "react-icons/fa6";
 import { HiOutlineExternalLink, HiOutlineGlobeAlt } from "react-icons/hi";
 import { TbDots } from "react-icons/tb";
 
-import { ConnectWalletBtn } from "@/components/connect-wallet-btn";
-import { NetworkSwitchBtn } from "@/components/network-switch-btn";
-import { SsvLogo } from "@/components/ssv-logo";
+import { ConnectWalletBtn } from "@/features/connect-wallet/connect-wallet-btn";
+import { NetworkSwitchBtn } from "@/features/connect-wallet/network-switch-btn";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -19,6 +18,7 @@ import {
 import { Spacer } from "@/components/ui/spacer";
 import { Text } from "@/components/ui/text";
 import { Tooltip } from "@/components/ui/tooltip";
+import { SsvLogo } from "@/components/ui/ssv-logo";
 
 export type NavbarProps = {
   // TODO: Add props or remove this type

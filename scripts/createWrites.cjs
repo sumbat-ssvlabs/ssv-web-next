@@ -71,7 +71,7 @@
 
   
 import { Config, useWriteContract, UseWriteContractParameters } from "wagmi";
-import {useSSVNetworkDetails} from '@/lib/hooks/use-ssv-network-details';
+import {useSSVNetworkDetails} from '@/hooks/use-ssv-network-details';
 import {
   ${eventTypeName},
   MutationOptions,

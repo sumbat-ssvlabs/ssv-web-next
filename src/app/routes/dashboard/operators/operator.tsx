@@ -1,4 +1,4 @@
-import { useOperator } from "@/lib/hooks/get-operator";
+import { useOperator } from "@/hooks/use-operator";
 import { cn } from "@/lib/utils/tw";
 import type { ComponentPropsWithoutRef, FC } from "react";
 import { Link, useParams } from "react-router-dom";

@@ -1,10 +1,9 @@
 import { isAddress } from "viem";
 import { useAccount, useChainId } from "wagmi";
 import { z } from "zod";
-import path from "path";
 
-import { getAccount, getChainId } from "@wagmi/core";
 import { config } from "@/wagmi/config";
+import { getAccount, getChainId } from "@wagmi/core";
 
 const networks = import.meta.env.VITE_SSV_NETWORKS;
 
@@ -50,16 +49,6 @@ export const getSSVNetworkDetails = (chainId?: number) => {
   return parsed.data.find(
     (network) => network.networkId === (isConnected ? _chainId : 17000),
   )!;
-};
-
-export const endpoint = (...paths: (string | number)[]) => {
-  const ssvNetwork = getSSVNetworkDetails();
-  return path.join(
-    ssvNetwork.api,
-    ssvNetwork.apiVersion,
-    ssvNetwork.apiNetwork,
-    ...paths.map(String),
-  );
 };
 
 export const useSSVNetworkDetails = () => {
