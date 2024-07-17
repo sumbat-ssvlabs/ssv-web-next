@@ -1,5 +1,6 @@
 import { endpoint } from "@/api";
 import { api } from "@/lib/api-client";
+import { add0x } from "@/lib/utils/strings";
 
 export interface IsRegisteredValidatorResponse {
   type: string;
@@ -37,7 +38,7 @@ export interface IsRegisteredValidatorResponse {
 export const getIsRegisteredValidator = async (publicKey: string) => {
   return await api
     .get<IsRegisteredValidatorResponse>(
-      endpoint("validators", "isRegisteredValidator", publicKey),
+      endpoint("validators", "isRegisteredValidator", add0x(publicKey)),
     )
     .then((res) => res.data);
 };
