@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { ms } from "@/lib/utils/number";
 import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 import {
   DefaultOptions,
@@ -8,8 +10,8 @@ import { deserialize, serialize } from "wagmi";
 
 export const queryConfig = {
   queries: {
-    staleTime: 10000, // 1 minutes
-    gcTime: 1000 * 60 * 60 * 24, // 24 hours
+    staleTime: ms(10, "seconds"),
+    gcTime: ms(24, "hours"),
   },
 } satisfies DefaultOptions;
 
@@ -23,17 +25,16 @@ export const persister = createSyncStoragePersister({
   deserialize,
 });
 
-export type ApiFnReturnType<
-  FnType extends (...args: unknown[]) => Promise<unknown>,
-> = Awaited<ReturnType<FnType>>;
+export type ApiFnReturnType<FnType extends (...args: any) => Promise<any>> =
+  Awaited<ReturnType<FnType>>;
 
-export type QueryConfig<T extends (...args: unknown[]) => unknown> = Omit<
+export type QueryConfig<T extends (...args: any) => any> = Omit<
   ReturnType<T>,
   "queryKey" | "queryFn"
 >;
 
 export type MutationConfig<
-  MutationFnType extends (...args: unknown[]) => Promise<unknown>,
+  MutationFnType extends (...args: any) => Promise<any>,
 > = UseMutationOptions<
   ApiFnReturnType<MutationFnType>,
   Error,

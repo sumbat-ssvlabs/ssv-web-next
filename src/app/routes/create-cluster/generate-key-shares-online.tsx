@@ -4,7 +4,7 @@ import {
   FileUploaderContent,
   FileUploaderItem,
 } from "@/components/ui/file-upload";
-import { useKeystoreValidation } from "@/hooks/use-keystore-validation";
+import { useKeystoreValidation } from "@/hooks/use-keystores-validity";
 import { createClusterFlow } from "@/signals/create-cluster-signals";
 import { Paperclip } from "lucide-react";
 import { type ComponentPropsWithoutRef, type FC } from "react";
@@ -61,9 +61,7 @@ export const GenerateKeySharesOnline: FCProps = () => {
     ? [createClusterFlow.keystoreFile.value]
     : null;
 
-  const validation = useKeystoreValidation(
-    createClusterFlow.keystoreFile.value,
-  );
+  const { state } = useKeystoreValidation(createClusterFlow.keystoreFile.value);
 
   return (
     <FileUploader
@@ -76,10 +74,10 @@ export const GenerateKeySharesOnline: FCProps = () => {
     >
       <FileInput className="outline-dashed outline-1 outline-white">
         <div className="flex items-center justify-center flex-col pt-3 pb-4 w-full ">
-          <FileSvgDraw /> {validation.isPending ? "checking file..." : ""}
-          {validation.error ? (
-            <div className="text-red-500 text-xs mt-2">invalid file</div>
-          ) : null}
+          <FileSvgDraw />{" "}
+          {state !== "no-file" && (
+            <div className="text-red-500 text-xl mt-2">{state}</div>
+          )}
         </div>
       </FileInput>
       <FileUploaderContent>

@@ -1,7 +1,7 @@
 import { reactive } from "@/lib/utils/signals";
 
 type CreateClusterFlow = {
-  selectedOperatorIds: string[];
+  selectedOperatorIds: number[];
   keystoreFile: File | null;
 };
 

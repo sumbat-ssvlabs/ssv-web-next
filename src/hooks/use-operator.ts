@@ -10,7 +10,6 @@ export const getOperatorQueryOptions = (id: number | string) => {
 };
 
 type UseOperatorOptions = {
-  // @ts-expect-error - This is a bug in the types
   options?: QueryConfig<typeof getOperatorQueryOptions>;
 };
 
