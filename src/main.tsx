@@ -10,7 +10,6 @@ import { config } from "./wagmi/config";
 
 import { router } from "@/app/routes";
 import { RouterProvider } from "react-router-dom";
-import { DashboardLayout } from "@/app/layouts/dashboard/dashboard";
 
 import "@/global.css";
 import "@fontsource/manrope/400.css";
@@ -33,9 +32,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       >
         <RainbowKitProvider>
           <ReactQueryDevtools buttonPosition="bottom-right" />
-          <DashboardLayout>
-            <RouterProvider router={router} />
-          </DashboardLayout>
+          <RouterProvider router={router} />
         </RainbowKitProvider>
       </PersistQueryClientProvider>
     </WagmiProvider>

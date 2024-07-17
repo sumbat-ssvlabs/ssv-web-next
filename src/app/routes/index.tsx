@@ -10,6 +10,7 @@ import { GenerateKeySharesOnline } from "@/app/routes/create-cluster/generate-ke
 import { Preparation } from "@/app/routes/create-cluster/preparation";
 import { SelectOperators } from "@/app/routes/create-cluster/select-operators";
 import { createBrowserRouter } from "react-router-dom";
+import { DashboardLayout } from "@/app/layouts/dashboard/dashboard";
 
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
@@ -17,7 +18,9 @@ export const router: ReturnType<typeof createBrowserRouter> =
       path: "/",
       element: (
         <ProtectedRoute>
-          <MainContainer />
+          <DashboardLayout>
+            <MainContainer />
+          </DashboardLayout>
         </ProtectedRoute>
       ),
       children: [
@@ -58,6 +61,10 @@ export const router: ReturnType<typeof createBrowserRouter> =
     },
     {
       path: "/connect",
-      element: <ConnectWallet />,
+      element: (
+        <DashboardLayout>
+          <ConnectWallet />
+        </DashboardLayout>
+      ),
     },
   ]);
