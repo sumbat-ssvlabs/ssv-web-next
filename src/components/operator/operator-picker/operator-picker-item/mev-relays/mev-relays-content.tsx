@@ -1,5 +1,5 @@
 import { Text } from "@/components/ui/text";
-import { MevRelayBadge } from "@/features/operator/operator-picker/operator-picker-item/mev-relays/mev-relay-badge";
+import { MevRelayBadge } from "@/components/operator/operator-picker/operator-picker-item/mev-relays/mev-relay-badge";
 import { cn } from "@/lib/utils/tw";
 import type { ComponentPropsWithoutRef, FC } from "react";
 

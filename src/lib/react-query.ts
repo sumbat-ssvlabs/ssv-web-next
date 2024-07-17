@@ -8,7 +8,7 @@ import { deserialize, serialize } from "wagmi";
 
 export const queryConfig = {
   queries: {
-    staleTime: 1000 * 60, // 1 minutes
+    staleTime: 10000, // 1 minutes
     gcTime: 1000 * 60 * 60 * 24, // 24 hours
   },
 } satisfies DefaultOptions;

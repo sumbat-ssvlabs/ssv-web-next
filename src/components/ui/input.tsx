@@ -39,7 +39,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <Slot>{leftSlot}</Slot>
         <input
           type={type}
-          className="w-full h-full flex-1 bg-transparent"
+          className="w-full h-full flex-1 bg-transparent outline-none"
           {...props}
           ref={ref}
         />

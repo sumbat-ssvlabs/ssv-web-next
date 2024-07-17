@@ -5,6 +5,10 @@ import { OperatorSettings } from "@/app/routes/dashboard/operators/operator-sett
 import { Operators } from "@/app/routes/dashboard/operators/operators";
 import { Validators } from "@/app/routes/dashboard/validators/validators";
 import { ProtectedRoute } from "@/app/routes/protected-route";
+import { GenerateKeySharesOffline } from "@/app/routes/create-cluster/generate-key-shares-offline";
+import { GenerateKeySharesOnline } from "@/app/routes/create-cluster/generate-key-shares-online";
+import { Preparation } from "@/app/routes/create-cluster/preparation";
+import { SelectOperators } from "@/app/routes/create-cluster/select-operators";
 import { createBrowserRouter } from "react-router-dom";
 
 export const router: ReturnType<typeof createBrowserRouter> =
@@ -20,6 +24,22 @@ export const router: ReturnType<typeof createBrowserRouter> =
         {
           path: "validators",
           element: <Validators />,
+        },
+        {
+          path: "create-cluster",
+          element: <Preparation />,
+        },
+        {
+          path: "create-cluster/select-operators",
+          element: <SelectOperators />,
+        },
+        {
+          path: "create-cluster/generate-online",
+          element: <GenerateKeySharesOnline />,
+        },
+        {
+          path: "create-cluster/generate-offline",
+          element: <GenerateKeySharesOffline />,
         },
         {
           index: true,

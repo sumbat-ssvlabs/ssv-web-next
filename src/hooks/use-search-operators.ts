@@ -6,7 +6,7 @@ export const useSearchOperators = ({
   search,
 }: Pick<SearchOperatorsParams, "ordering" | "search"> = {}) => {
   return useInfiniteQuery({
-    gcTime: 1000 * 60,
+    staleTime: Infinity,
     initialPageParam: 1,
     queryKey: ["search-operators", ordering, search],
     queryFn: ({ pageParam }) =>

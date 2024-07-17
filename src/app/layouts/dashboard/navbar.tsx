@@ -5,8 +5,8 @@ import { FaXTwitter } from "react-icons/fa6";
 import { HiOutlineExternalLink, HiOutlineGlobeAlt } from "react-icons/hi";
 import { TbDots } from "react-icons/tb";
 
-import { ConnectWalletBtn } from "@/features/connect-wallet/connect-wallet-btn";
-import { NetworkSwitchBtn } from "@/features/connect-wallet/network-switch-btn";
+import { ConnectWalletBtn } from "@/components/connect-wallet/connect-wallet-btn";
+import { NetworkSwitchBtn } from "@/components/connect-wallet/network-switch-btn";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,

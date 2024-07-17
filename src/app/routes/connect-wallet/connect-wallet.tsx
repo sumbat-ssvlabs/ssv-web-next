@@ -1,5 +1,5 @@
 import robotRocket from "@/assets/images/robot-rocket.svg";
-import { ConnectWalletBtn } from "@/features/connect-wallet/connect-wallet-btn";
+import { ConnectWalletBtn } from "@/components/connect-wallet/connect-wallet-btn";
 import { Card } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
 import type { ComponentPropsWithoutRef, FC } from "react";

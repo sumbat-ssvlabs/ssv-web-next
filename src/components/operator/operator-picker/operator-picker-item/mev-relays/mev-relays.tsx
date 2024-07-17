@@ -2,7 +2,7 @@ import type { FC, ComponentPropsWithoutRef } from "react";
 import { cn } from "@/lib/utils/tw";
 import { Tooltip } from "@/components/ui/tooltip";
 import { getMevRelaysAmount } from "@/lib/utils/operator";
-import { MevRelaysContent } from "@/features/operator/operator-picker/operator-picker-item/mev-relays/mev-relays-content";
+import { MevRelaysContent } from "@/components/operator/operator-picker/operator-picker-item/mev-relays/mev-relays-content";
 
 export type MevRelaysProps = {
   mevRelays?: string;
@@ -18,6 +18,7 @@ export const MevRelays: FCProps = ({ className, mevRelays, ...props }) => {
   return (
     <Tooltip
       asChild
+      className="dark"
       content={hasMevRelays && <MevRelaysContent mevRelays={mevRelays} />}
     >
       <div
