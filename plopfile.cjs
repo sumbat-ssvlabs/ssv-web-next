@@ -95,7 +95,7 @@ module.exports = (plop) => {
         name: "path",
         // Prompt to display on command line
         message: "Where should we save this?",
-        default: "src/lib/hooks/",
+        default: "src/hooks/",
         // choices: uiComponents,
       },
 

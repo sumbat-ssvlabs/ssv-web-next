@@ -55,3 +55,50 @@ export type Operator = {
 };
 
 export type OperatorsSearchResponse = WithPagination<{ operators: Operator[] }>;
+
+export type ClusterData = {
+  // use this snapshot data for contract interactions
+  active: boolean;
+  balance: string; // the balance of the cluster after last contract interaction (deposit, withdraw)
+  index: string;
+  networkFeeIndex: string;
+  validatorCount: number;
+};
+
+export interface Cluster {
+  id: number;
+  clusterId: string;
+  ownerAddress: string;
+  validatorCount: number;
+  networkFeeIndex: number;
+  index: number;
+  balance: string; // actual balance of the cluster, not snapshot
+  active: boolean;
+  isLiquidated: boolean;
+  runWay: number;
+  burnRate: BigInteger;
+  operators: Operator[];
+  clusterData: ClusterData;
+  updatedAt?: string;
+}
+
+export interface GetClusterResponse {
+  type: string;
+  cluster: {
+    id: number;
+    clusterId: string;
+    network: string;
+    version: string;
+    ownerAddress: string;
+    validatorCount: number;
+    networkFeeIndex: string;
+    index: string;
+    balance: string;
+    active: boolean;
+    isLiquidated: boolean;
+    operators: number[];
+    blockNumber: number;
+    createdAt: string;
+    updatedAt: string;
+  } | null;
+}

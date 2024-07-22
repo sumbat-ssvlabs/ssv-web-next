@@ -3,7 +3,7 @@ import { OperatorPicker } from "@/components/operator/operator-picker/operator-p
 import { cn } from "@/lib/utils/tw";
 import { xor } from "lodash-es";
 import { type ComponentPropsWithoutRef, type FC } from "react";
-import { validatorFlow } from "../../../signals/create-cluster-signals";
+import { createValidatorFlow } from "../../../signals/create-cluster-signals";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
@@ -23,10 +23,10 @@ export const SelectOperators: FCProps = ({ className, ...props }) => {
       <OperatorPicker
         maxSelection={4}
         className="flex-1"
-        selectedOperatorIds={validatorFlow.selectedOperatorIds.value}
+        selectedOperatorIds={createValidatorFlow.selectedOperatorIds.value}
         onOperatorCheckedChange={(id) => {
-          validatorFlow.selectedOperatorIds.value = xor(
-            validatorFlow.selectedOperatorIds.value,
+          createValidatorFlow.selectedOperatorIds.value = xor(
+            createValidatorFlow.selectedOperatorIds.value,
             [id],
           );
         }}

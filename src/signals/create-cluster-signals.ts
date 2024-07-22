@@ -8,7 +8,7 @@ type CreateClusterFlow = {
   extractedKeys: ExtractedKeys;
 };
 
-export const validatorFlow = deepSignal<CreateClusterFlow>({
+export const createValidatorFlow = deepSignal<CreateClusterFlow>({
   keystoreFile: null,
   selectedOperatorIds: [],
   password: "",

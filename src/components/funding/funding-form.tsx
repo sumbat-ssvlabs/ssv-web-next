@@ -12,8 +12,12 @@ import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { z } from "zod";
 
+const schema = z.object({
+  days: z.coerce.number().positive(),
+});
+
 export type FundingFormProps = {
-  // TODO: Add props or remove this type
+  onSubmit: (data: z.infer<typeof schema>) => void;
 };
 
 type FCProps = FC<
@@ -21,11 +25,7 @@ type FCProps = FC<
     FundingFormProps
 >;
 
-const schema = z.object({
-  days: z.number().positive(),
-});
-
-export const FundingForm: FCProps = ({ className, ...props }) => {
+export const FundingForm: FCProps = ({ className, onSubmit, ...props }) => {
   const form = useForm<z.infer<typeof schema>>({
     defaultValues: {
       days: 365,
@@ -40,6 +40,7 @@ export const FundingForm: FCProps = ({ className, ...props }) => {
   return (
     <form
       className={cn(className, "flex flex-col gap-2 max-w-[620px]")}
+      onSubmit={form.handleSubmit(onSubmit)}
       {...props}
     >
       <Input
@@ -51,6 +52,9 @@ export const FundingForm: FCProps = ({ className, ...props }) => {
           </Text>
         }
       />
+      {form.formState.errors.days && (
+        <Text>{form.formState.errors.days.message}</Text>
+      )}
       <Collapse isOpened={showLiquidationWarning}>
         <Alert variant="error">
           This period is low and could put your validator at risk. To avoid
@@ -64,7 +68,7 @@ export const FundingForm: FCProps = ({ className, ...props }) => {
           </Link>
         </Alert>
       </Collapse>
-      <Button>Next</Button>
+      <Button type="submit">Next</Button>
     </form>
   );
 };

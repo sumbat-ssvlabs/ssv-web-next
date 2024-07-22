@@ -8,7 +8,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useExtractKeystoreData } from "@/hooks/use-extract-keystore-data";
 import { useKeystoreValidation } from "@/hooks/use-keystores-validation";
-import { validatorFlow } from "@/signals/create-cluster-signals";
+import { createValidatorFlow } from "@/signals/create-cluster-signals";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Paperclip } from "lucide-react";
 import { type ComponentPropsWithoutRef, type FC } from "react";
@@ -58,14 +58,17 @@ const schema = z.object({
 });
 
 export const GenerateKeySharesOnline: FCProps = () => {
-  const file = validatorFlow.keystoreFile.value;
+  const file = createValidatorFlow.keystoreFile.value;
   const files = file ? [file] : null;
 
   const navigate = useNavigate();
 
-  const { state } = useKeystoreValidation(validatorFlow.keystoreFile.value);
+  const { state } = useKeystoreValidation(
+    createValidatorFlow.keystoreFile.value,
+  );
   const extractKeystoreData = useExtractKeystoreData({
-    onSuccess: () => {
+    onSuccess: (data) => {
+      createValidatorFlow.extractedKeys.value = data;
       navigate("/create-cluster/funding");
     },
   });
@@ -88,7 +91,8 @@ export const GenerateKeySharesOnline: FCProps = () => {
         }}
         value={file ? [file] : []}
         onValueChange={(files) => {
-          return (validatorFlow.keystoreFile.value = files?.at(-1) ?? null);
+          return (createValidatorFlow.keystoreFile.value =
+            files?.at(-1) ?? null);
         }}
         className="relative bg-background rounded-lg p-2"
       >
@@ -113,7 +117,7 @@ export const GenerateKeySharesOnline: FCProps = () => {
       </FileUploader>
       <form
         onSubmit={form.handleSubmit(async (data) => {
-          validatorFlow.password.value = data.password;
+          createValidatorFlow.password.value = data.password;
           await extractKeystoreData.mutateAsync({
             file: files![0],
             password: data.password,
@@ -121,7 +125,7 @@ export const GenerateKeySharesOnline: FCProps = () => {
         })}
       >
         <Input
-          defaultValue={validatorFlow.password.value}
+          defaultValue={createValidatorFlow.password.value}
           disabled={state !== "validator-not-registered"}
           type="password"
           className="mt-4"

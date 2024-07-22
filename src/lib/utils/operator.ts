@@ -1,5 +1,7 @@
 import { globals } from "@/config";
 import { ethFormatter } from "@/lib/utils/number";
+import { Operator } from "@/types/api";
+import type { IOperator } from "ssv-keys/dist/tsc/src/lib/KeyShares/KeySharesData/IOperator";
 import { formatUnits } from "viem";
 
 type GetYearlyFeeOpts = {
@@ -41,4 +43,22 @@ export const MEV_RELAYS_LOGOS = {
   [MEV_RELAYS.FLASHBOTS]: "Flashbots",
   [MEV_RELAYS.MANIFOLD]: "manifold",
   [MEV_RELAYS.ULTRA_SOUND]: "ultraSound",
+};
+
+export const sortOperators = (operators: Operator[]) => {
+  return [...operators].sort((a, b) => a.id - b.id);
+};
+
+export const prepareOperatorsForShares = (operators: Operator[]): IOperator[] =>
+  sortOperators(operators).map((operator) => ({
+    id: operator.id,
+    operatorKey: operator.public_key,
+  }));
+
+export const sumOperatorsFee = (operators: Operator[]) => {
+  return operators.reduce((acc, operator) => acc + BigInt(operator.fee), 0n);
+};
+
+export const getOperatorIds = (operators: Operator[]) => {
+  return operators.map((operator) => operator.id);
 };
