@@ -1,14 +1,20 @@
+import { Button } from "@/components/ui/button";
 import {
   FileInput,
   FileUploader,
   FileUploaderContent,
   FileUploaderItem,
 } from "@/components/ui/file-upload";
-import { useKeystoreValidation } from "@/hooks/use-keystores-validity";
-import { createClusterFlow } from "@/signals/create-cluster-signals";
+import { Input } from "@/components/ui/input";
+import { useExtractKeystoreData } from "@/hooks/use-extract-keystore-data";
+import { useKeystoreValidation } from "@/hooks/use-keystores-validation";
+import { validatorFlow } from "@/signals/create-cluster-signals";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Paperclip } from "lucide-react";
 import { type ComponentPropsWithoutRef, type FC } from "react";
-import { DropzoneOptions } from "react-dropzone";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { z } from "zod";
 
 export type GenerateKeySharesOnlineProps = {
   // TODO: Add props or remove this type
@@ -47,50 +53,95 @@ const FileSvgDraw = () => {
   );
 };
 
+const schema = z.object({
+  password: z.string().min(1, "Password is required"),
+});
+
 export const GenerateKeySharesOnline: FCProps = () => {
-  const dropZoneConfig: DropzoneOptions = {
-    maxFiles: 5,
-    maxSize: 1024 * 1024 * 4,
-    multiple: false,
-    accept: {
-      "application/json": [".json"],
+  const file = validatorFlow.keystoreFile.value;
+  const files = file ? [file] : null;
+
+  const navigate = useNavigate();
+
+  const { state } = useKeystoreValidation(validatorFlow.keystoreFile.value);
+  const extractKeystoreData = useExtractKeystoreData({
+    onSuccess: () => {
+      navigate("/create-cluster/funding");
     },
-  };
+  });
 
-  const files = createClusterFlow.keystoreFile.value
-    ? [createClusterFlow.keystoreFile.value]
-    : null;
-
-  const { state } = useKeystoreValidation(createClusterFlow.keystoreFile.value);
+  const form = useForm({
+    defaultValues: { password: "" },
+    resolver: zodResolver(schema),
+  });
 
   return (
-    <FileUploader
-      value={files}
-      onValueChange={(files) => {
-        return (createClusterFlow.keystoreFile.value = files?.at(-1) ?? null);
-      }}
-      dropzoneOptions={dropZoneConfig}
-      className="relative bg-background rounded-lg p-2"
-    >
-      <FileInput className="outline-dashed outline-1 outline-white">
-        <div className="flex items-center justify-center flex-col pt-3 pb-4 w-full ">
-          <FileSvgDraw />{" "}
-          {state !== "no-file" && (
-            <div className="text-red-500 text-xl mt-2">{state}</div>
-          )}
+    <div className="flex flex-col">
+      <FileUploader
+        dropzoneOptions={{
+          maxFiles: 1,
+          maxSize: 1024 * 1024 * 4,
+          multiple: false,
+          accept: {
+            "application/json": [".json"],
+          },
+        }}
+        value={file ? [file] : []}
+        onValueChange={(files) => {
+          return (validatorFlow.keystoreFile.value = files?.at(-1) ?? null);
+        }}
+        className="relative bg-background rounded-lg p-2"
+      >
+        <FileInput className="outline-dashed outline-1 outline-white">
+          <div className="flex items-center justify-center flex-col pt-3 pb-4 w-full ">
+            <FileSvgDraw />{" "}
+            {state !== "no-file" && (
+              <div className="text-red-500 text-xl mt-2">{state}</div>
+            )}
+          </div>
+        </FileInput>
+        <FileUploaderContent>
+          {files &&
+            files.length > 0 &&
+            files.map((file, i) => (
+              <FileUploaderItem key={i} index={i}>
+                <Paperclip className="h-4 w-4 stroke-current" />
+                <span>{file.name}</span>
+              </FileUploaderItem>
+            ))}
+        </FileUploaderContent>
+      </FileUploader>
+      <form
+        onSubmit={form.handleSubmit(async (data) => {
+          validatorFlow.password.value = data.password;
+          await extractKeystoreData.mutateAsync({
+            file: files![0],
+            password: data.password,
+          });
+        })}
+      >
+        <Input
+          defaultValue={validatorFlow.password.value}
+          disabled={state !== "validator-not-registered"}
+          type="password"
+          className="mt-4"
+          {...form.register("password")}
+        />
+        <div className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+          {extractKeystoreData.error?.message}
         </div>
-      </FileInput>
-      <FileUploaderContent>
-        {files &&
-          files.length > 0 &&
-          files.map((file, i) => (
-            <FileUploaderItem key={i} index={i}>
-              <Paperclip className="h-4 w-4 stroke-current" />
-              <span>{file.name}</span>
-            </FileUploaderItem>
-          ))}
-      </FileUploaderContent>
-    </FileUploader>
+        <Button
+          type="submit"
+          disabled={
+            state !== "validator-not-registered" ||
+            !form.watch("password").length
+          }
+          isLoading={extractKeystoreData.isPending}
+        >
+          Generate Key Shares
+        </Button>
+      </form>
+    </div>
   );
 };
 

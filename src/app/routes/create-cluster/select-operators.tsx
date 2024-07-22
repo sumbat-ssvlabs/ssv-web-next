@@ -3,7 +3,9 @@ import { OperatorPicker } from "@/components/operator/operator-picker/operator-p
 import { cn } from "@/lib/utils/tw";
 import { xor } from "lodash-es";
 import { type ComponentPropsWithoutRef, type FC } from "react";
-import { createClusterFlow } from "../../../signals/create-cluster-signals";
+import { validatorFlow } from "../../../signals/create-cluster-signals";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 export type SelectOperatorsProps = {
   // TODO: Add props or remove this type
@@ -19,16 +21,19 @@ export const SelectOperators: FCProps = ({ className, ...props }) => {
     <div className={cn(className, "flex flex-col h-full")} {...props}>
       <OperatorPickerFilter />
       <OperatorPicker
-        maxSelection={5}
+        maxSelection={4}
         className="flex-1"
-        selectedOperatorIds={createClusterFlow.selectedOperatorIds.value}
+        selectedOperatorIds={validatorFlow.selectedOperatorIds.value}
         onOperatorCheckedChange={(id) => {
-          createClusterFlow.selectedOperatorIds.value = xor(
-            createClusterFlow.selectedOperatorIds.value,
+          validatorFlow.selectedOperatorIds.value = xor(
+            validatorFlow.selectedOperatorIds.value,
             [id],
           );
         }}
       />
+      <Link to="/create-cluster/generate-online">
+        <Button>Next</Button>
+      </Link>
     </div>
   );
 };

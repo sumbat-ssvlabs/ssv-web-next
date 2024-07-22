@@ -167,3 +167,7 @@ body {
 #root > [data-rk] {
   @apply flex flex-col h-full;
 }
+
+.ReactCollapse--collapse {
+  transition: height 250ms;
+}

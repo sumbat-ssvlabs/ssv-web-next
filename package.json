@@ -21,13 +21,17 @@
     ]
   },
   "dependencies": {
+    "@deepsignal/core": "^4.0.0",
+    "@deepsignal/react": "^4.0.0",
     "@fontsource/manrope": "^5.0.20",
+    "@hookform/resolvers": "^3.9.0",
     "@preact/signals-react": "^2.1.0",
     "@radix-ui/react-alert-dialog": "^1.1.1",
     "@radix-ui/react-checkbox": "^1.1.1",
     "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-dropdown-menu": "^2.1.1",
     "@radix-ui/react-label": "^2.1.0",
+    "@radix-ui/react-radio-group": "^1.2.0",
     "@radix-ui/react-scroll-area": "^1.1.0",
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.2",
@@ -39,12 +43,14 @@
     "@wagmi/core": "^2.11.7",
     "abitype": "^1.0.5",
     "axios": "^1.7.2",
+    "buffer": "^6.0.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "framer-motion": "^11.3.4",
     "lodash-es": "^4.17.21",
     "lucide-react": "^0.400.0",
     "react": "^18.3.1",
+    "react-collapse": "^5.1.1",
     "react-dom": "^18.3.1",
     "react-dropzone": "^14.2.3",
     "react-hook-form": "^7.52.1",
@@ -65,6 +71,7 @@
     "@types/lodash-es": "^4.17.12",
     "@types/node": "^20.14.9",
     "@types/react": "^18.3.3",
+    "@types/react-collapse": "^5.0.4",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^7.13.1",
     "@typescript-eslint/parser": "^7.13.1",
@@ -83,5 +90,10 @@
     "typescript": "^5.2.2",
     "vite": "^5.3.1",
     "vite-plugin-node-polyfills": "^0.22.0"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "@deepsignal/core@4.0.0": "patches/@deepsignal__core@4.0.0.patch"
+    }
   }
 }

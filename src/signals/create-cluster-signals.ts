@@ -1,11 +1,19 @@
-import { reactive } from "@/lib/utils/signals";
+import { ExtractedKeys } from "ssv-keys/dist/tsc/src/lib/SSVKeys";
+import { deepSignal } from "@deepsignal/react";
 
 type CreateClusterFlow = {
   selectedOperatorIds: number[];
   keystoreFile: File | null;
+  password: string;
+  extractedKeys: ExtractedKeys;
 };
 
-export const createClusterFlow = reactive<CreateClusterFlow>({
+export const validatorFlow = deepSignal<CreateClusterFlow>({
   keystoreFile: null,
   selectedOperatorIds: [],
+  password: "",
+  extractedKeys: {
+    publicKey: "",
+    privateKey: "",
+  },
 });

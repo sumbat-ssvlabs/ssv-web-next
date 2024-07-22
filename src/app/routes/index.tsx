@@ -11,6 +11,7 @@ import { Preparation } from "@/app/routes/create-cluster/preparation";
 import { SelectOperators } from "@/app/routes/create-cluster/select-operators";
 import { createBrowserRouter } from "react-router-dom";
 import { DashboardLayout } from "@/app/layouts/dashboard/dashboard";
+import { Funding } from "@/app/routes/create-cluster/funding";
 
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
@@ -43,6 +44,10 @@ export const router: ReturnType<typeof createBrowserRouter> =
         {
           path: "create-cluster/generate-offline",
           element: <GenerateKeySharesOffline />,
+        },
+        {
+          path: "create-cluster/funding",
+          element: <Funding />,
         },
         {
           index: true,

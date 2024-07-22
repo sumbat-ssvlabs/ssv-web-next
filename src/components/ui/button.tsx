@@ -3,6 +3,7 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils/tw";
+import { CgSpinner } from "react-icons/cg";
 
 export const buttonVariants = cva(
   "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
@@ -82,13 +83,14 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           {
             "opacity-50": isLoading,
           },
+          "flex gap-2",
         )}
         type={type}
         ref={ref}
         {...props}
         onClick={isLoading ? undefined : props.onClick}
       >
-        {/* {isLoading && <Spinner />} */}
+        {isLoading && <CgSpinner className="animate-spin size-5" />}
         {isLoading ? (isActionBtn ? _loadingText : children) : children}
       </Comp>
     );
