@@ -1,7 +1,7 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
 import { getIsRegisteredValidator } from "@/api/validators";
-import { QueryConfig } from "@/lib/react-query";
+import type { QueryConfig } from "@/lib/react-query";
 
 export const isValidatorRegisteredQueryOptions = (publicKey: string) => {
   return queryOptions({

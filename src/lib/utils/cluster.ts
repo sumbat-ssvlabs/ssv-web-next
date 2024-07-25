@@ -1,5 +1,5 @@
-import { ClusterData, Operator } from "@/types/api";
-import { Address } from "abitype";
+import type { ClusterData, Operator } from "@/types/api";
+import type { Address } from "abitype";
 import { isNumber, merge } from "lodash-es";
 import { encodePacked, keccak256 } from "viem";
 

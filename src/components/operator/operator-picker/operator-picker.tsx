@@ -1,7 +1,8 @@
 import { OperatorPickerItem } from "@/components/operator/operator-picker/operator-picker-item/operator-picker-item";
 import { useSearchOperators } from "@/hooks/use-search-operators";
 import type { FC } from "react";
-import { VList, VListProps } from "virtua";
+import type { VListProps } from "virtua";
+import { VList } from "virtua";
 
 export type OperatorPickerProps = {
   selectedOperatorIds: number[];

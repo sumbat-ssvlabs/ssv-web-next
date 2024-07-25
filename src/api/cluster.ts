@@ -1,7 +1,7 @@
 import { endpoint } from "@/api";
 import { api } from "@/lib/api-client";
 import { getDefaultClusterData } from "@/lib/utils/cluster";
-import { Cluster, GetClusterResponse } from "@/types/api";
+import type { Cluster, GetClusterResponse } from "@/types/api";
 
 export const getCluster = (hash: string) =>
   api.get<GetClusterResponse>(endpoint("cluster", hash));

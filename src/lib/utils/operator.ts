@@ -1,6 +1,6 @@
 import { globals } from "@/config";
 import { ethFormatter } from "@/lib/utils/number";
-import { Operator } from "@/types/api";
+import type { Operator } from "@/types/api";
 import type { IOperator } from "ssv-keys/dist/tsc/src/lib/KeyShares/KeySharesData/IOperator";
 import { formatUnits } from "viem";
 

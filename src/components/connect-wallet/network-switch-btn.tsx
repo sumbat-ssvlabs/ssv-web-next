@@ -1,4 +1,5 @@
-import { Button, ButtonProps } from "@/components/ui/button";
+import type { ButtonProps } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { ChevronDown } from "lucide-react";
 import type { FC } from "react";

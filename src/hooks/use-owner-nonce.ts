@@ -1,8 +1,8 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
-import { QueryConfig } from "@/lib/react-query";
+import type { QueryConfig } from "@/lib/react-query";
 import { getOwnerNonce } from "@/api/account";
-import { Address } from "abitype";
+import type { Address } from "abitype";
 
 export const ownerNonceQueryOptions = (account: Address) => {
   return queryOptions({

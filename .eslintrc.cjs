@@ -15,5 +15,6 @@ module.exports = {
       { allowConstantExport: true },
     ],
     "react-refresh/only-export-components": "off",
+    "@typescript-eslint/consistent-type-imports": "error",
   },
 };

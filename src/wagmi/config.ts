@@ -1,9 +1,11 @@
-import { Chain, connectorsForWallets } from "@rainbow-me/rainbowkit";
+import type { Chain } from "@rainbow-me/rainbowkit";
+import { connectorsForWallets } from "@rainbow-me/rainbowkit";
 import {
   walletConnectWallet,
   coinbaseWallet,
 } from "@rainbow-me/rainbowkit/wallets";
-import { HttpTransport, http } from "viem";
+import type { HttpTransport } from "viem";
+import { http } from "viem";
 import { createConfig } from "wagmi";
 import { holesky as holeskyBase, mainnet as mainnetBase } from "wagmi/chains";
 

@@ -1,10 +1,9 @@
-import {
-  DisclaimerComponent,
-  RainbowKitProvider as OriginalRainbowKitProvider,
-} from "@rainbow-me/rainbowkit";
+import type { DisclaimerComponent } from "@rainbow-me/rainbowkit";
+import { RainbowKitProvider as OriginalRainbowKitProvider } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { rainbowKitTheme } from "./themes";
 
 const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (

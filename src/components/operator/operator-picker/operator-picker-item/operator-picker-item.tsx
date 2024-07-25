@@ -6,7 +6,7 @@ import { Text } from "@/components/ui/text";
 import { percentageFormatter } from "@/lib/utils/number";
 import { getYearlyFee } from "@/lib/utils/operator";
 import { cn } from "@/lib/utils/tw";
-import { Operator } from "@/types/api";
+import type { Operator } from "@/types/api";
 import type { ComponentPropsWithoutRef, FC } from "react";
 import { MdOutlineQueryStats } from "react-icons/md";
 import { Link } from "react-router-dom";

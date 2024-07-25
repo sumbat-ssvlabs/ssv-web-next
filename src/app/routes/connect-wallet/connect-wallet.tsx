@@ -3,7 +3,8 @@ import { ConnectWalletBtn } from "@/components/connect-wallet/connect-wallet-btn
 import { Card } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
 import type { ComponentPropsWithoutRef, FC } from "react";
-import { Location, Navigate, useLocation } from "react-router-dom";
+import type { Location } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAccount } from "wagmi";
 
 export const ConnectWallet: FC<ComponentPropsWithoutRef<"div">> = () => {

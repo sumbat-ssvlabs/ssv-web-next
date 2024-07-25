@@ -1,6 +1,7 @@
 import type { FC, ComponentPropsWithoutRef } from "react";
 import { cn } from "@/lib/utils/tw";
-import { Input, InputProps } from "@/components/ui/input";
+import type { InputProps } from "@/components/ui/input";
+import { Input } from "@/components/ui/input";
 import { FiSearch } from "react-icons/fi";
 
 type FCProps = FC<

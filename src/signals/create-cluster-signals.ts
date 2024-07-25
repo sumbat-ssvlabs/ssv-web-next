@@ -1,5 +1,6 @@
-import { ExtractedKeys } from "ssv-keys/dist/tsc/src/lib/SSVKeys";
 import { deepSignal } from "@deepsignal/react";
+import { effect } from "@preact/signals-react";
+import type { ExtractedKeys } from "ssv-keys/dist/tsc/src/lib/SSVKeys";
 
 type CreateClusterFlow = {
   selectedOperatorIds: number[];
@@ -16,4 +17,8 @@ export const createValidatorFlow = deepSignal<CreateClusterFlow>({
     publicKey: "",
     privateKey: "",
   },
+});
+
+effect(() => {
+  console.log("createValidatorFlow", createValidatorFlow.value);
 });

@@ -1,9 +1,9 @@
-import { MutationConfig } from "@/lib/react-query";
-import { KeystoreResponseMessage } from "@/workers/extract-keystore-data";
+import type { MutationConfig } from "@/lib/react-query";
+import type { KeystoreResponseMessage } from "@/workers/extract-keystore-data";
 import { useMutation } from "@tanstack/react-query";
 
 import ExtractKeystoreDataWorker from "@/workers/extract-keystore-data?worker";
-import { ExtractedKeys } from "ssv-keys/dist/tsc/src/lib/SSVKeys";
+import type { ExtractedKeys } from "ssv-keys/dist/tsc/src/lib/SSVKeys";
 const worker = new ExtractKeystoreDataWorker();
 
 type Params = {

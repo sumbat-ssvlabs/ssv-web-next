@@ -1,4 +1,4 @@
-import { ExtractedKeys } from "ssv-keys/dist/tsc/src/lib/SSVKeys";
+import type { ExtractedKeys } from "ssv-keys/dist/tsc/src/lib/SSVKeys";
 import { Buffer } from "buffer";
 self.Buffer = Buffer;
 

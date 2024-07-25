@@ -1,14 +1,10 @@
-import { computeFundingCost } from "@/lib/utils/keystore";
-import {
-  prepareOperatorsForShares,
-  sumOperatorsFee,
-} from "@/lib/utils/operator";
-import { ClusterData, Operator } from "@/types/api";
+import type { ClusterData } from "@/types/api";
 import { KeySharesItem } from "ssv-keys";
-import { IOperator } from "ssv-keys/dist/tsc/src/lib/KeyShares/KeySharesData/IOperator";
-import { Address } from "viem";
+import type { IOperator } from "ssv-keys/dist/tsc/src/lib/KeyShares/KeySharesData/IOperator";
+import type { Address } from "viem";
 
 import { Buffer } from "buffer";
+import type { KeySharesPayload } from "ssv-keys/dist/tsc/src/lib/KeyShares/KeySharesData/KeySharesPayload";
 self.Buffer = Buffer;
 
 const { SSVKeys } = await import("ssv-keys");
@@ -26,64 +22,56 @@ const createShares = async (privateKey: string, operators: IOperator[]) => {
   };
 };
 
-export type CreateKeystorePayloadMessage = MessageEvent<{
+export type CreateSharesMessage = MessageEvent<{
   account: Address;
+  nonce: number;
   privateKey: string;
-  ownerNonce: number;
-  operators: Operator[];
-  networkFee: bigint;
-  liquidationCollateralPeriod: bigint;
-  minimumLiquidationCollateral: bigint;
-  depositAmount: bigint;
-  fundingDays: number;
+  operators: IOperator[];
   clusterData: ClusterData;
 }>;
 
-export type KeystorePayloadResponseMessage = MessageEvent<
-  | {
-      error: Error;
-      data: null;
-    }
-  | {
-      error: null;
-      data: [string, string, string, bigint, ClusterData];
-    }
->;
+export type CreateShareSuccess = {
+  error: null;
+  data: KeySharesPayload;
+};
 
-self.onmessage = async function ({ data }: CreateKeystorePayloadMessage) {
+export type CreateShareError = {
+  error: unknown;
+  data: null;
+};
+
+export type CreateSharesResponseMessage =
+  | MessageEvent<CreateShareSuccess>
+  | MessageEvent<CreateShareError>;
+
+self.onmessage = async function ({ data }: CreateSharesMessage) {
   try {
-    const operators = prepareOperatorsForShares(data.operators);
-    const operatorsFee = sumOperatorsFee(data.operators);
-    const totalCost = computeFundingCost({ ...data, operatorsFee });
-
     const { threshold, encryptedShares } = await createShares(
       data.privateKey,
-      operators,
+      data.operators,
     );
 
-    const shares = await new KeySharesItem().buildPayload(
-      { publicKey: threshold.publicKey, operators, encryptedShares },
+    const shares = (await new KeySharesItem().buildPayload(
+      {
+        publicKey: threshold.publicKey,
+        operators: data.operators,
+        encryptedShares,
+      },
       {
         ownerAddress: data.account,
-        ownerNonce: data.ownerNonce,
+        ownerNonce: data.nonce,
         privateKey: data.privateKey,
       },
-    );
+    )) as KeySharesPayload;
 
     self.postMessage({
       error: null,
-      data: [
-        data.privateKey,
-        shares.operatorIds,
-        shares.sharesData || shares.shares,
-        totalCost,
-        data.clusterData,
-      ],
-    });
+      data: shares,
+    } satisfies CreateShareSuccess);
   } catch (error) {
     self.postMessage({
       error,
       data: null,
-    });
+    } satisfies CreateShareError);
   }
 };

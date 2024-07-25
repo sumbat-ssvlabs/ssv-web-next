@@ -1,6 +1,6 @@
 import { endpoint } from "@/api";
 import { api } from "@/lib/api-client";
-import { Address } from "abitype";
+import type { Address } from "abitype";
 import { getAddress } from "viem";
 
 interface GetAccountResponse {

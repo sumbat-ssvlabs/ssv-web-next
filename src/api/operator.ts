@@ -1,6 +1,6 @@
 import { endpoint } from "@/api";
 import { api } from "@/lib/api-client";
-import { Operator, OperatorsSearchResponse } from "@/types/api";
+import type { Operator, OperatorsSearchResponse } from "@/types/api";
 import { isUndefined, omitBy } from "lodash-es";
 
 export const getOperator = (id: number | string) => {

@@ -1,11 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ms } from "@/lib/utils/number";
 import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
-import {
-  DefaultOptions,
-  QueryClient,
-  UseMutationOptions,
-} from "@tanstack/react-query";
+import type { DefaultOptions, UseMutationOptions } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
 import { deserialize, serialize } from "wagmi";
 
 export const queryConfig = {

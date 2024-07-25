@@ -1,4 +1,5 @@
-import { searchOperators, SearchOperatorsParams } from "@/api/operator";
+import type { SearchOperatorsParams } from "@/api/operator";
+import { searchOperators } from "@/api/operator";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 export const useSearchOperators = ({

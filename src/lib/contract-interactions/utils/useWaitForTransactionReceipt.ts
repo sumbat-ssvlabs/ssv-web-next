@@ -1,13 +1,13 @@
 import { HoleskyV4SetterABI } from "@/lib/abi/holesky/v4/setter";
 import { MainnetV4SetterABI } from "@/lib/abi/mainnet/v4/setter";
 import { useMutation } from "@tanstack/react-query";
-import {
+import type {
   Address,
-  decodeEventLog,
   DecodeEventLogReturnType,
   TransactionReceipt,
   WaitForTransactionReceiptErrorType,
 } from "viem";
+import { decodeEventLog } from "viem";
 import { usePublicClient } from "wagmi";
 
 import type { WriteContractErrorType } from "@wagmi/core";

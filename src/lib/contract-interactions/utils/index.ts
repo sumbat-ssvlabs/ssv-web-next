@@ -1,4 +1,4 @@
-import {
+import type {
   Abi,
   AbiFunction,
   AbiParameter,
