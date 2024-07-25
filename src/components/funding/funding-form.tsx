@@ -3,13 +3,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
 import { globals } from "@/config";
+import { useFundingCost } from "@/hooks/use-funding-cost";
+import { getOperatorQueryOptions } from "@/hooks/use-operator";
 import { cn } from "@/lib/utils/tw";
+import { createValidatorFlow } from "@/signals/create-cluster-signals";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueries } from "@tanstack/react-query";
 import { isEmpty } from "lodash-es";
 import type { ComponentPropsWithoutRef, FC } from "react";
 import { Collapse } from "react-collapse";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import { formatEther } from "viem";
 import { z } from "zod";
 
 const schema = z.object({
@@ -32,10 +37,27 @@ export const FundingForm: FCProps = ({ className, onSubmit, ...props }) => {
     },
     resolver: zodResolver(schema),
   });
+  const results = useQueries({
+    queries: createValidatorFlow.selectedOperatorIds.value.map((id) =>
+      getOperatorQueryOptions(id),
+    ),
+  });
+  const isLoading = results.some((result) => result.isLoading);
 
   const days = form.watch("days");
   const showLiquidationWarning =
     !isEmpty(days) && days < globals.CLUSTER_VALIDITY_PERIOD_MINIMUM;
+
+  const { data } = useFundingCost({
+    fundingDays: form.watch("days"),
+    operatorsFee: results.reduce(
+      (acc, { data }) => acc + BigInt(data?.data.fee || 0n),
+      0n,
+    ),
+    validators: 1,
+  });
+  console.log("data:", data);
+  const a = formatEther(data || 0n);
 
   return (
     <form
@@ -55,6 +77,8 @@ export const FundingForm: FCProps = ({ className, onSubmit, ...props }) => {
       {form.formState.errors.days && (
         <Text>{form.formState.errors.days.message}</Text>
       )}
+      {isLoading ? "Loading..." : `${a}ssv `}
+
       <Collapse isOpened={showLiquidationWarning}>
         <Alert variant="error">
           This period is low and could put your validator at risk. To avoid

@@ -10,33 +10,37 @@ export const computeDailyAmount = (value: bigint, days: number) => {
 
 type LiquidationCollateralCostArgs = {
   networkFee: bigint;
+  operatorsFee: bigint;
   liquidationCollateralPeriod: bigint;
   minimumLiquidationCollateral: bigint;
-  operatorsFee: bigint;
+  validators?: number;
 };
 
-export const computeLiquidationCollateralCost = (
-  args: LiquidationCollateralCostArgs,
-) => {
+export const computeLiquidationCollateralCost = ({
+  networkFee,
+  operatorsFee,
+  liquidationCollateralPeriod,
+  minimumLiquidationCollateral,
+  validators = 1,
+}: LiquidationCollateralCostArgs) => {
   const cost =
-    args.operatorsFee + args.networkFee * args.liquidationCollateralPeriod;
-  return bigintMax(cost, args.minimumLiquidationCollateral);
+    operatorsFee +
+    networkFee * liquidationCollateralPeriod * BigInt(validators);
+  return bigintMax(cost, minimumLiquidationCollateral) / BigInt(validators);
 };
 
 type ComputeFundingCostArgs = Prettify<
   {
-    depositAmount: bigint;
     fundingDays: number;
   } & LiquidationCollateralCostArgs
 >;
 
 export const computeFundingCost = (args: ComputeFundingCostArgs) => {
-  if (!args.fundingDays) return args.depositAmount;
-
   const networkCost = computeDailyAmount(args.networkFee, args.fundingDays);
   const operatorsCost = computeDailyAmount(args.operatorsFee, args.fundingDays);
   const liquidationCollateralCost = computeLiquidationCollateralCost(args);
   return (
-    args.depositAmount + networkCost + operatorsCost + liquidationCollateralCost
+    (networkCost + operatorsCost + liquidationCollateralCost) *
+    BigInt(args.validators ?? 1)
   );
 };
