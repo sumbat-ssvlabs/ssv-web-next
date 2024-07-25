@@ -7,4 +7,6 @@ export const getCluster = (hash: string) =>
   api.get<GetClusterResponse>(endpoint("cluster", hash));
 
 export const getClusterData = (hash: string): Promise<Cluster["clusterData"]> =>
-  getCluster(hash).then((res) => res.data.cluster ?? getDefaultClusterData());
+  getCluster(hash)
+    .then((res) => res.data.cluster ?? getDefaultClusterData())
+    .catch(() => getDefaultClusterData());

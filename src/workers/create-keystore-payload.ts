@@ -1,5 +1,4 @@
 import type { ClusterData } from "@/types/api";
-import { KeySharesItem } from "ssv-keys";
 import type { IOperator } from "ssv-keys/dist/tsc/src/lib/KeyShares/KeySharesData/IOperator";
 import type { Address } from "viem";
 
@@ -7,7 +6,7 @@ import { Buffer } from "buffer";
 import type { KeySharesPayload } from "ssv-keys/dist/tsc/src/lib/KeyShares/KeySharesData/KeySharesPayload";
 self.Buffer = Buffer;
 
-const { SSVKeys } = await import("ssv-keys");
+const { SSVKeys, KeySharesItem } = await import("ssv-keys");
 const ssvKeys = new SSVKeys();
 
 const createShares = async (privateKey: string, operators: IOperator[]) => {

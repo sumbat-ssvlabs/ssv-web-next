@@ -1,6 +1,5 @@
 import { computeFundingCost } from "@/lib/utils/keystore";
-import { useQuery } from "@tanstack/react-query";
-import { serialize } from "wagmi";
+import { useMutation } from "@tanstack/react-query";
 import { useSsvNetworkFee } from "./use-ssv-network-fee";
 
 type Args = {
@@ -9,11 +8,7 @@ type Args = {
   fundingDays: number;
 };
 
-export const useFundingCost = ({
-  fundingDays,
-  validators,
-  operatorsFee,
-}: Args) => {
+export const useComputeFundingCost = () => {
   const {
     isSuccess,
     liquidationThresholdPeriod,
@@ -21,25 +16,19 @@ export const useFundingCost = ({
     ssvNetworkFee,
   } = useSsvNetworkFee();
 
-  return useQuery({
-    queryKey: [
-      "funding-cost",
-      operatorsFee,
-      validators,
-      fundingDays,
-      liquidationThresholdPeriod.data,
-      minimumLiquidationCollateral.data,
-      ssvNetworkFee.data,
-    ].map((v) => serialize(v)),
-    queryFn: async () => {
+  return useMutation({
+    mutationFn: async ({ fundingDays, validators, operatorsFee }: Args) => {
+      if (!isSuccess) {
+        throw new Error("Something went wrong, please try again later.");
+      }
       return computeFundingCost({
         operatorsFee,
         fundingDays,
         networkFee: ssvNetworkFee.data!,
         liquidationCollateralPeriod: liquidationThresholdPeriod.data!,
         minimumLiquidationCollateral: minimumLiquidationCollateral.data!,
+        validators,
       });
     },
-    enabled: isSuccess,
   });
 };
