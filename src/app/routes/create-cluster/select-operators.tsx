@@ -20,7 +20,7 @@ type FCProps = FC<
 
 export const SelectOperators: FCProps = ({ className, ...props }) => {
   return (
-    <Container className="flex h-full gap-4" size="xl">
+    <Container className="flex h-full items-stretch gap-4" size="xl">
       <Card
         className={cn(className, "flex flex-col flex-[2] h-full")}
         {...props}

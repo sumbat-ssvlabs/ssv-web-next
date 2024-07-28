@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import {
   FileInput,
   FileUploader,
@@ -79,7 +80,7 @@ export const GenerateKeySharesOnline: FCProps = () => {
   });
 
   return (
-    <div className="flex flex-col">
+    <Card className="flex flex-col">
       <FileUploader
         dropzoneOptions={{
           maxFiles: 1,
@@ -116,6 +117,7 @@ export const GenerateKeySharesOnline: FCProps = () => {
         </FileUploaderContent>
       </FileUploader>
       <form
+        className="flex flex-col gap-4"
         onSubmit={form.handleSubmit(async (data) => {
           createValidatorFlow.password.value = data.password;
           await extractKeystoreData.mutateAsync({
@@ -145,7 +147,7 @@ export const GenerateKeySharesOnline: FCProps = () => {
           Generate Key Shares
         </Button>
       </form>
-    </div>
+    </Card>
   );
 };
 
