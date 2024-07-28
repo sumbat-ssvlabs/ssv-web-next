@@ -6,6 +6,8 @@ import { type ComponentPropsWithoutRef, type FC } from "react";
 import { createValidatorFlow } from "../../../signals/create-cluster-signals";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { Card } from "@/components/ui/card";
+import { Container } from "@/components/ui/container";
 
 export type SelectOperatorsProps = {
   // TODO: Add props or remove this type
@@ -18,23 +20,30 @@ type FCProps = FC<
 
 export const SelectOperators: FCProps = ({ className, ...props }) => {
   return (
-    <div className={cn(className, "flex flex-col h-full")} {...props}>
-      <OperatorPickerFilter />
-      <OperatorPicker
-        maxSelection={4}
-        className="flex-1"
-        selectedOperatorIds={createValidatorFlow.selectedOperatorIds.value}
-        onOperatorCheckedChange={(id) => {
-          createValidatorFlow.selectedOperatorIds.value = xor(
-            createValidatorFlow.selectedOperatorIds.value,
-            [id],
-          );
-        }}
-      />
-      <Link to="/create-cluster/generate-online">
-        <Button>Next</Button>
-      </Link>
-    </div>
+    <Container className="flex h-full gap-4" size="xl">
+      <Card
+        className={cn(className, "flex flex-col flex-[2] h-full")}
+        {...props}
+      >
+        <OperatorPickerFilter />
+        <OperatorPicker
+          maxSelection={4}
+          selectedOperatorIds={createValidatorFlow.selectedOperatorIds.value}
+          onOperatorCheckedChange={(id) => {
+            createValidatorFlow.selectedOperatorIds.value = xor(
+              createValidatorFlow.selectedOperatorIds.value,
+              [id],
+            );
+          }}
+        />
+      </Card>
+      <Card className="flex-[1]">
+        Hello
+        <Link to="/create-cluster/generate-online">
+          <Button>Next</Button>
+        </Link>
+      </Card>
+    </Container>
   );
 };
 

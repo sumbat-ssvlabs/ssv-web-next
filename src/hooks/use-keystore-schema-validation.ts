@@ -1,5 +1,5 @@
 import type { QueryConfig } from "@/lib/react-query";
-import { queryOptions, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 
 export const schema = z.object({
@@ -33,25 +33,20 @@ export const schema = z.object({
   version: z.number(),
 });
 
-export const isFileValidKeystore = (file: File | null) => {
-  return queryOptions({
-    queryKey: ["keystore-schema-validation", file],
-    queryFn: async () => {
-      const text = await file!.text();
-      const json = JSON.parse(text);
-      return schema.parse(json);
-    },
-    retry: false,
-    enabled: Boolean(file),
-  });
+export const validateKeyStoreFileSchema = async (file: File) => {
+  const text = await file!.text();
+  const json = JSON.parse(text);
+  return schema.parse(json);
 };
 
 export const useKeystoreSchemaValidation = (
   file: File | null,
-  options: QueryConfig<typeof isFileValidKeystore> = {},
+  options: QueryConfig = {},
 ) => {
   return useQuery({
-    ...isFileValidKeystore(file),
+    queryKey: ["keystore-schema-validation", file],
+    queryFn: () => validateKeyStoreFileSchema(file!),
+    enabled: Boolean(file),
     ...options,
   });
 };

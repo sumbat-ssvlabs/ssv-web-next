@@ -60,7 +60,7 @@ export const Funding: FCProps = ({ className, ...props }) => {
   };
 
   return (
-    <div className={cn(className)} {...props}>
+    <div className={cn(className, "max-w-screen-sm mx-auto")} {...props}>
       {createShares.isError && <div>Error: {createShares.error.message}</div>}
       {isLoading || createShares.isPending ? (
         <div>Loading...</div>

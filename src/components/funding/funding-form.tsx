@@ -9,6 +9,8 @@ import { isEmpty } from "lodash-es";
 import type { ComponentPropsWithoutRef, FC } from "react";
 import { Collapse } from "react-collapse";
 import { useForm } from "react-hook-form";
+import { TbAlertTriangleFilled } from "react-icons/tb";
+
 import { Link } from "react-router-dom";
 import { z } from "zod";
 
@@ -52,21 +54,28 @@ export const FundingForm: FCProps = ({ className, onSubmit, ...props }) => {
           </Text>
         }
       />
-      {form.formState.errors.days && (
-        <Text>{form.formState.errors.days.message}</Text>
-      )}
+      <Collapse isOpened={Boolean(form.formState.errors.days)}>
+        <Text className="text-red-500 text-sm font-semibold">
+          {form.formState.errors.days?.message}
+        </Text>
+      </Collapse>
 
       <Collapse isOpened={showLiquidationWarning}>
-        <Alert variant="error">
-          This period is low and could put your validator at risk. To avoid
-          liquidation please input a longer period.{" "}
-          <Link
-            to="https://docs.ssv.network/learn/protocol-overview/tokenomics/liquidations"
-            target="_blank"
-            className="underline text-primary-700"
-          >
-            Learn more on liquidations
-          </Link>
+        <Alert variant="warning">
+          <div className="flex items-center gap-4">
+            <TbAlertTriangleFilled className="text-orange-500 size-8" />
+            <div>
+              This period is low and could put your validator at risk. To avoid
+              liquidation please input a longer period.{" "}
+              <Link
+                to="https://docs.ssv.network/learn/protocol-overview/tokenomics/liquidations"
+                target="_blank"
+                className="underline text-primary-700"
+              >
+                Learn more on liquidations
+              </Link>
+            </div>
+          </div>
         </Alert>
       </Collapse>
       <Button type="submit">Next</Button>

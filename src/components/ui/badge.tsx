@@ -8,6 +8,7 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
+        error: "bg-error-100 text-error-500",
         success: "bg-success-100 text-success-700",
         info: "text-gray-500",
       },

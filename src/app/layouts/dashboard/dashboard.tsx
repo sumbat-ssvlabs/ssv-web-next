@@ -11,7 +11,7 @@ export const DashboardLayout: FC<{ children: ReactNode }> = ({ children }) => {
     <AnimatePresence>
       {isRestoring ? (
         <motion.div
-          className="fixed bg-gray-50 inset-0 flex h-screen items-center justify-center"
+          className="dark fixed bg-gray-50 inset-0 flex h-screen items-center justify-center"
           key="loading"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -21,14 +21,14 @@ export const DashboardLayout: FC<{ children: ReactNode }> = ({ children }) => {
         </motion.div>
       ) : (
         <motion.div
-          className={"flex flex-col h-screen"}
+          className={" flex flex-col h-screen"}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           key="content"
         >
           <Navbar />
-          <main className="p-6 flex-1 overflow-auto">{children}</main>
+          <main className=" p-6 flex-1 overflow-auto">{children}</main>
         </motion.div>
       )}
     </AnimatePresence>

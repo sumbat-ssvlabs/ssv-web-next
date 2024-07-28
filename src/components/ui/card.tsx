@@ -2,7 +2,7 @@ import type { FC, ComponentPropsWithoutRef } from "react";
 import { cn } from "@/lib/utils/tw";
 import { cva, type VariantProps } from "class-variance-authority";
 
-const variants = cva("bg-[#FDFEFE] dark:bg-[#0B2A3C] rounded-2xl", {
+const variants = cva("bg-[#FDFEFE] dark:bg-[#0B2A3C] rounded-2xl mx-auto", {
   variants: {
     variant: {
       default: "p-8 flex flex-col gap-6",

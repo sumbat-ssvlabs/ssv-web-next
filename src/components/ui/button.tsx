@@ -18,8 +18,8 @@ export const buttonVariants = cva(
           "border dark:border-white/10 hover:bg-accent hover:text-accent-foreground",
         secondary:
           "bg-primary-50 text-primary-500 hover:bg-primary-100 active:bg-primary-200",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
+        ghost: "hover:bg-gray-300 hover:text-accent-foreground",
+        link: "inline-flex text-primary-500  underline-offset-4 hover:underline",
       },
       colorScheme: {
         wallet:
@@ -54,6 +54,7 @@ export interface ButtonProps
   isLoading?: boolean;
   loadingText?: string;
   isActionBtn?: boolean;
+  icon?: React.ReactNode;
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -64,6 +65,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       size,
       colorScheme,
       width,
+      icon,
       asChild = false,
       isLoading,
       loadingText,
@@ -90,8 +92,10 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
         onClick={isLoading ? undefined : props.onClick}
       >
-        {isLoading && <CgSpinner className="animate-spin size-5" />}
-        {isLoading ? (isActionBtn ? _loadingText : children) : children}
+        <>
+          {isLoading ? <CgSpinner className="animate-spin size-5" /> : icon}
+          {isLoading ? (isActionBtn ? _loadingText : children) : children}
+        </>
       </Comp>
     );
   },
