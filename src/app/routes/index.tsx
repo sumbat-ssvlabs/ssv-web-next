@@ -12,6 +12,9 @@ import { SelectOperators } from "@/app/routes/create-cluster/select-operators";
 import { createBrowserRouter } from "react-router-dom";
 import { DashboardLayout } from "@/app/layouts/dashboard/dashboard";
 import { Funding } from "@/app/routes/create-cluster/funding";
+import { OperatorDashboard } from "@/components/dashboard/operator-dashboard";
+import { Join } from "@/app/routes/join/join";
+import { CreateOperatorPreparation } from "@/app/routes/create-operator/create-operator";
 
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
@@ -25,6 +28,19 @@ export const router: ReturnType<typeof createBrowserRouter> =
         </ProtectedRoute>
       ),
       children: [
+        {
+          path: "join",
+          element: <Join />,
+        },
+        {
+          path: "join/operator",
+          element: <CreateOperatorPreparation />,
+        },
+        {
+          path: "my-account/operator-dashboard",
+          element: <OperatorDashboard />,
+        },
+
         {
           path: "validators",
           element: <Validators />,

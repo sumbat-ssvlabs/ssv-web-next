@@ -9,7 +9,7 @@ export const NavigateBackBtn: FC<ButtonProps> = ({ className, ...props }) => {
   const navigate = useNavigate();
   return (
     <Button
-      variant="outline"
+      variant="secondary"
       icon={<FaAngleLeft />}
       className={cn(className)}
       {...props}

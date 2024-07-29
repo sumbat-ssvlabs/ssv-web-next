@@ -19,3 +19,7 @@ const units = {
 export const ms = (value: number, unit: keyof typeof units): number => {
   return value * units[unit];
 };
+
+export const sortNumbers = (numbers: number[]) => {
+  return [...numbers].sort((a, b) => a - b);
+};

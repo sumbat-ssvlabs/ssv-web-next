@@ -1,6 +1,6 @@
-import { queryOptions, useQuery } from "@tanstack/react-query";
-import type { QueryConfig } from "@/lib/react-query";
 import { getOperator } from "@/api/operator";
+import { type QueryConfig } from "@/lib/react-query";
+import { queryOptions, useQuery } from "@tanstack/react-query";
 
 export const getOperatorQueryOptions = (id: number | string) => {
   return queryOptions({
