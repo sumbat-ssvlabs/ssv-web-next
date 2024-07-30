@@ -1,22 +1,22 @@
+import { DashboardLayout } from "@/app/layouts/dashboard/dashboard";
 import { ConnectWallet } from "@/app/routes/connect-wallet/connect-wallet";
-import { MainContainer } from "@/app/routes/dashboard/container";
-import { Operator } from "@/app/routes/dashboard/operators/operator";
-import { OperatorSettings } from "@/app/routes/dashboard/operators/operator-settings/operator-settings";
-import { Operators } from "@/app/routes/dashboard/operators/operators";
-import { Validators } from "@/app/routes/dashboard/validators/validators";
-import { ProtectedRoute } from "@/app/routes/protected-route";
+import { Funding } from "@/app/routes/create-cluster/funding";
 import { GenerateKeySharesOffline } from "@/app/routes/create-cluster/generate-key-shares-offline";
 import { GenerateKeySharesOnline } from "@/app/routes/create-cluster/generate-key-shares-online";
 import { Preparation } from "@/app/routes/create-cluster/preparation";
 import { SelectOperators } from "@/app/routes/create-cluster/select-operators";
-import { createBrowserRouter, Outlet } from "react-router-dom";
-import { DashboardLayout } from "@/app/layouts/dashboard/dashboard";
-import { Funding } from "@/app/routes/create-cluster/funding";
-import { OperatorDashboard } from "@/components/dashboard/operator-dashboard";
-import { Join } from "@/app/routes/join/join";
 import { CreateOperatorPreparation } from "@/app/routes/create-operator/create-operator";
-import { ProtectedOperatorRoute } from "@/app/routes/protected-operator-route";
+import { MainContainer } from "@/app/routes/dashboard/container";
+import { Operator } from "@/app/routes/dashboard/operators/operator";
+import { OperatorSettings } from "@/app/routes/dashboard/operators/operator-settings/operator-settings";
+import { Operators } from "@/app/routes/dashboard/operators/operators";
 import { WithdrawOperatorBalance } from "@/app/routes/dashboard/operators/withdraw-operator-balance";
+import { Validators } from "@/app/routes/dashboard/validators/validators";
+import { Join } from "@/app/routes/join/join";
+import { ProtectedOperatorRoute } from "@/app/routes/protected-operator-route";
+import { ProtectedRoute } from "@/app/routes/protected-route";
+import { OperatorDashboard } from "@/components/dashboard/operator-dashboard";
+import { createBrowserRouter, Outlet } from "react-router-dom";
 
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([

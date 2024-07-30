@@ -23,7 +23,6 @@ export type Operator = {
   owner_address: string;
   address_whitelist: string;
   verified_operator?: boolean;
-  balance: number;
   whitelist_addresses?: string[];
   whitelisting_contract?: string;
   is_private?: boolean;

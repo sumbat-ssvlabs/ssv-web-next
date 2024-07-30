@@ -45,20 +45,20 @@ export const Operator: FC<ComponentPropsWithoutRef<"div">> = ({
       >
         <div className="flex items-stretch gap-6 flex-col flex-1">
           <Card className="w-full">
-            <Text variant="headline3" className="text-gray-500">
+            <Text variant="headline4" className="text-gray-500">
               Balance
             </Text>
-            <Text variant="headline1">0.01 SSV</Text>
+            <Text variant="headline3">0.01 SSV</Text>
 
             <Button as={Link} to="withdraw" variant="default" size="xl">
               Withdraw
             </Button>
           </Card>
           <Card className="w-full">
-            <Text variant="headline3" className="text-gray-500">
+            <Text variant="headline4" className="text-gray-500">
               Annual Fee
             </Text>
-            <Text variant="headline1">20 SSV</Text>
+            <Text variant="headline3">20 SSV</Text>
             <Button variant="secondary" size="xl">
               Update Fee
             </Button>

@@ -1,14 +1,18 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
+import { NumberInput } from "@/components/ui/number-input";
 import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils/tw";
-import type { ComponentPropsWithoutRef, FC } from "react";
+import { useState, type ComponentPropsWithoutRef, type FC } from "react";
 
 export const Join: FC<ComponentPropsWithoutRef<"div">> = ({
   className,
   ...props
 }) => {
+  const [value, setValue] = useState(0n);
+  console.log("value:", value);
+
   return (
     <Container variant="vertical">
       <Card className={cn(className)} {...props}>
@@ -17,6 +21,11 @@ export const Join: FC<ComponentPropsWithoutRef<"div">> = ({
           Distribute your validator to run on the SSV network or help maintain
           it as one of its operators.
         </Text>
+        <NumberInput
+          value={value}
+          onChange={(newValue) => setValue(newValue)}
+        />
+
         <div className="flex gap-4">
           <div className="flex-1 flex gap-2 flex-col items-center">
             <Button variant="secondary" size="xl" className="w-full">

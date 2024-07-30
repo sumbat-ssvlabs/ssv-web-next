@@ -1,3 +1,5 @@
+import { formatUnits } from "viem";
+
 export const percentageFormatter = new Intl.NumberFormat("en-US", {
   style: "percent",
   maximumFractionDigits: 2,
@@ -7,6 +9,9 @@ export const ethFormatter = new Intl.NumberFormat("en-US", {
   useGrouping: true,
   maximumFractionDigits: 2,
 });
+
+export const formatSSV = (num: bigint) =>
+  ethFormatter.format(+formatUnits(num, 18));
 
 const units = {
   seconds: 1000,
