@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { useKey } from "react-use";
 import { formatUnits, parseUnits } from "viem";
 
 export type NumberInputProps = {
@@ -22,7 +23,9 @@ type FCProps = FC<
     NumberInputProps
 >;
 
-const numReg = /^(-?\d+)?(\.\d*)?$/;
+const numReg = /^(-?(0|[1-9]\d*)?)?(\.\d*)?$/;
+const ignoreKeys = ["ArrowUp", "ArrowDown"];
+const delta = "0.05";
 
 export const NumberInput: FCProps = ({
   value,
@@ -33,29 +36,54 @@ export const NumberInput: FCProps = ({
   onChange,
   ...props
 }) => {
-  const changedType = useRef<"event" | undefined>(undefined);
+  const isTriggeredByEvent = useRef(false);
   const [displayValue, setDisplayValue] = useState(
     formatUnits(value, decimals),
   );
 
   useEffect(() => {
-    if (changedType.current === "event") {
-      return (changedType.current = undefined);
+    if (isTriggeredByEvent.current) {
+      isTriggeredByEvent.current = false;
+      return;
     }
     setDisplayValue(formatUnits(value, decimals).toString());
   }, [value, decimals]);
+
+  useKey(
+    "ArrowUp",
+    () => {
+      const next = value + parseUnits(delta, decimals);
+      if (max && next > max) return onChange(max);
+      onChange(next);
+    },
+    undefined,
+    [value],
+  );
+
+  useKey(
+    "ArrowDown",
+    () => {
+      const parsed = parseUnits(delta, decimals);
+      const newValue = value - parsed;
+      if (newValue < 0n) return onChange(0n);
+      onChange(newValue);
+    },
+    undefined,
+    [value],
+  );
 
   return (
     <Input
       {...props}
       value={displayValue}
+      onKeyDown={(ev) => ignoreKeys.includes(ev.key) && ev.preventDefault()}
       onInput={(ev) => {
         const value = ev.currentTarget.value;
         const isNumber = numReg.test(value);
-        if (!isNumber) return console.log("no num");
-        if (!allowNegative && value.includes("-")) return console.log("no neg");
+        if (!isNumber) return;
+        if (!allowNegative && value.includes("-")) return;
 
-        changedType.current = "event";
+        isTriggeredByEvent.current = true;
         setDisplayValue(value);
 
         const parsed = parseUnits(ev.currentTarget.value, decimals);

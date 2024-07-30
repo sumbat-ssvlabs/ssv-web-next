@@ -11,7 +11,6 @@ export const Join: FC<ComponentPropsWithoutRef<"div">> = ({
   ...props
 }) => {
   const [value, setValue] = useState(0n);
-  console.log("value:", value);
 
   return (
     <Container variant="vertical">
@@ -22,9 +21,13 @@ export const Join: FC<ComponentPropsWithoutRef<"div">> = ({
           it as one of its operators.
         </Text>
         <NumberInput
+          decimals={18}
           value={value}
+          // allowNegative
           onChange={(newValue) => setValue(newValue)}
         />
+
+        <Button onClick={() => setValue(1200000000000000n)}>Add</Button>
 
         <div className="flex gap-4">
           <div className="flex-1 flex gap-2 flex-col items-center">
