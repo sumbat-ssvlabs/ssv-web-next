@@ -9,9 +9,9 @@ export const NavigateBackBtn: FC<ButtonProps> = ({ className, ...props }) => {
   const navigate = useNavigate();
   return (
     <Button
-      variant="secondary"
-      icon={<FaAngleLeft />}
-      className={cn(className)}
+      variant="ghost"
+      icon={<FaAngleLeft className="text-primary-500" />}
+      className={cn(className, "font-bold")}
       {...props}
       onClick={(ev) => {
         props.onClick?.(ev);

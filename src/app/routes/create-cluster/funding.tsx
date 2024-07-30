@@ -38,7 +38,7 @@ export const Funding: FCProps = ({ className, ...props }) => {
     const cost = await computeFundingCost.mutateAsync({
       fundingDays: days,
       operatorsFee: results.reduce(
-        (acc, { data }) => acc + BigInt(data?.data.fee || 0n),
+        (acc, { data }) => acc + BigInt(data?.fee || 0n),
         0n,
       ),
       validators: 1,
@@ -51,7 +51,7 @@ export const Funding: FCProps = ({ className, ...props }) => {
       ),
       nonce: await getOwnerNonce(address!),
       operators: prepareOperatorsForShares(
-        results.map((result) => result.data!.data!),
+        results.map((result) => result.data!),
       ),
       privateKey: createValidatorFlow.extractedKeys.value.privateKey,
     });

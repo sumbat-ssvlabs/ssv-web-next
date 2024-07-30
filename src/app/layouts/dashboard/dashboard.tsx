@@ -28,7 +28,7 @@ export const DashboardLayout: FC<{ children: ReactNode }> = ({ children }) => {
           key="content"
         >
           <Navbar />
-          <main className=" p-6 flex-1 overflow-auto">{children}</main>
+          <main className="flex-1 overflow-auto">{children}</main>
         </motion.div>
       )}
     </AnimatePresence>

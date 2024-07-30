@@ -1,8 +1,8 @@
-import * as React from "react";
-import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
+import * as React from "react";
 
 import { cn } from "@/lib/utils/tw";
+import type { ComponentWithAs, HTMLChakraProps } from "@/types/component";
 import { CgSpinner } from "react-icons/cg";
 
 export const buttonVariants = cva(
@@ -48,7 +48,7 @@ export const buttonVariants = cva(
 );
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends HTMLChakraProps<"button">,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
   isLoading?: boolean;
@@ -57,7 +57,11 @@ export interface ButtonProps
   icon?: React.ReactNode;
 }
 
-export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+// @ts-expect-error - I don't know how to fix this
+export const Button: ComponentWithAs<"button", ButtonProps> = React.forwardRef<
+  HTMLButtonElement,
+  ButtonProps
+>(
   (
     {
       className,
@@ -66,17 +70,17 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       colorScheme,
       width,
       icon,
-      asChild = false,
       isLoading,
       loadingText,
       children,
       isActionBtn,
       type = "button",
+      as,
       ...props
     },
     ref,
   ) => {
-    const Comp = asChild ? Slot : "button";
+    const Comp = as ?? "button";
     const _loadingText = loadingText ?? "Waiting for Wallet Confirmation...";
     return (
       <Comp

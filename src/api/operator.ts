@@ -4,7 +4,7 @@ import type { Operator, OperatorsSearchResponse } from "@/types/api";
 import { isUndefined, omitBy } from "lodash-es";
 
 export const getOperator = (id: number | string) => {
-  return api.get<Operator>(endpoint("operators", id));
+  return api.get<Operator>(endpoint("operators", id)).then((res) => res.data);
 };
 
 type OrderBy = "id" | "validators_count" | "performance.30d" | "fee" | "mev";
