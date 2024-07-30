@@ -33,13 +33,15 @@ export const NumberInput: FCProps = ({
   onChange,
   ...props
 }) => {
-  const isEmptyInput = useRef(false);
+  const changedType = useRef<"event" | undefined>(undefined);
   const [displayValue, setDisplayValue] = useState(
     formatUnits(value, decimals),
   );
 
   useEffect(() => {
-    if (isEmptyInput.current) return;
+    if (changedType.current === "event") {
+      return (changedType.current = undefined);
+    }
     setDisplayValue(formatUnits(value, decimals).toString());
   }, [value, decimals]);
 
@@ -53,15 +55,9 @@ export const NumberInput: FCProps = ({
         if (!isNumber) return console.log("no num");
         if (!allowNegative && value.includes("-")) return console.log("no neg");
 
-        if (value === "") {
-          isEmptyInput.current = true;
-          onChange(0n);
-          return setDisplayValue("");
-        }
+        changedType.current = "event";
+        setDisplayValue(value);
 
-        if (value.endsWith("0") || value.endsWith(".")) setDisplayValue(value);
-
-        isEmptyInput.current = false;
         const parsed = parseUnits(ev.currentTarget.value, decimals);
         if (max && parsed > max) return onChange(max);
         onChange(parsed);
