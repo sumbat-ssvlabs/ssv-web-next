@@ -9,7 +9,7 @@ export const NavigateBackBtn: FC<ButtonProps> = ({ className, ...props }) => {
   return (
     <Button
       as={Link}
-      variant="ghost"
+      variant="subtle"
       to=".."
       icon={<FaAngleLeft className="text-primary-500" />}
       className={cn(className, "font-bold w-fit")}

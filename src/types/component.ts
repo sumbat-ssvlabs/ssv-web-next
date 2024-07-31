@@ -47,6 +47,6 @@ export type ComponentWithAs<Component extends As, Props extends object = {}> = {
   id?: string;
 };
 
-export type HTMLChakraProps<T extends As> = Omit<PropsOf<T>, "ref"> & {
+export type PropsWithAs<T extends As> = Omit<PropsOf<T>, "ref"> & {
   as?: As;
 };

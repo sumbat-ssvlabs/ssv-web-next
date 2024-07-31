@@ -11,6 +11,7 @@ export const variants = cva("mx-auto max-w-full", {
     },
     size: {
       default: "w-[648px]",
+      lg: "w-[872px]",
       xl: "w-[1320px]",
     },
   },

@@ -22,6 +22,11 @@ import "@fontsource/manrope/800.css";
 import { TransactionModal } from "@/components/ui/transaction-modal";
 import { Text } from "@/components/ui/text";
 
+// @ts-expect-error BigInt is not supported in JSON
+BigInt.prototype["toJSON"] = function () {
+  return this.toString();
+};
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <WagmiProvider config={config}>

@@ -9,10 +9,13 @@ import { useGetOperatorEarnings } from "@/lib/contract-interactions/read/use-get
 import { useWithdrawOperatorEarnings } from "@/lib/contract-interactions/write/use-withdraw-operator-earnings";
 import { formatSSV } from "@/lib/utils/number";
 import { cn } from "@/lib/utils/tw";
-import { transactionModalProxy } from "@/signals/modal";
-import { useState, type ComponentPropsWithoutRef, type FC } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMemo, type ComponentPropsWithoutRef, type FC } from "react";
+import { Collapse } from "react-collapse";
 import { Helmet } from "react-helmet";
+import { useForm } from "react-hook-form";
 import { useParams } from "react-router";
+import { z } from "zod";
 
 export const WithdrawOperatorBalance: FC<ComponentPropsWithoutRef<"div">> = ({
   className,
@@ -26,7 +29,18 @@ export const WithdrawOperatorBalance: FC<ComponentPropsWithoutRef<"div">> = ({
   });
 
   const max = operatorEarnings.data ?? 0n;
-  const [value, setValue] = useState(0n);
+
+  const schema = useMemo(
+    () =>
+      z.object({ value: z.bigint().positive("Value must be greater than 0") }),
+    [],
+  );
+  const form = useForm<z.infer<typeof schema>>({
+    defaultValues: {
+      value: 0n,
+    },
+    resolver: zodResolver(schema),
+  });
 
   const withdraw = useWithdrawOperatorEarnings({
     onConfirmationError: (err) => {
@@ -34,10 +48,14 @@ export const WithdrawOperatorBalance: FC<ComponentPropsWithoutRef<"div">> = ({
     },
   });
 
+  const submit = ({ value }: z.infer<typeof schema>) => {
+    withdraw.write({ operatorId: BigInt(params.id!), amount: value });
+  };
+
   return (
     <Container variant="vertical" className={cn(className, "py-6")} {...props}>
       <Helmet>
-        <title>Withdraw {operator?.name}</title>
+        <title>Withdraw {operator?.name ?? ""}</title>
       </Helmet>
       <NavigateBackBtn>{operator?.name}</NavigateBackBtn>
       <Card className="w-full">
@@ -46,38 +64,44 @@ export const WithdrawOperatorBalance: FC<ComponentPropsWithoutRef<"div">> = ({
         </Text>
         <Text variant="headline1">{formatSSV(max)} SSV</Text>
       </Card>
-      <Card className="w-full">
+      <Card as="form" onSubmit={form.handleSubmit(submit)} className="w-full">
         <Text variant="headline4" className="text-gray-500">
           Withdraw
         </Text>
-        <NumberInput
-          className="text-xl h-16 font-bold"
-          value={value}
-          onChange={setValue}
-          max={max}
-          rightSlot={
-            <div className="flex items-center gap-3 px-3">
-              <Button
-                size="sm"
-                className="px-4"
-                variant="secondary"
-                onClick={() => setValue(max)}
-              >
-                Max
-              </Button>
-              <Text>SSV</Text>
-            </div>
-          }
-        />
+        <div className="flex flex-col">
+          <NumberInput
+            disabled={withdraw.isLoading}
+            className="text-xl h-16 font-bold"
+            value={form.watch("value")}
+            onChange={(value) =>
+              form.setValue("value", value, { shouldValidate: true })
+            }
+            max={max}
+            rightSlot={
+              <div className="flex items-center gap-3 px-3">
+                <Button
+                  size="sm"
+                  className="px-4"
+                  variant="secondary"
+                  onClick={() => form.setValue("value", max)}
+                >
+                  Max
+                </Button>
+                <Text>SSV</Text>
+              </div>
+            }
+          />
+          <Collapse isOpened={Boolean(form.formState.errors.value)}>
+            <Text variant="body-2-medium" className="text-error-500">
+              {form.formState.errors.value?.message}
+            </Text>
+          </Collapse>
+        </div>
         <Button
+          disabled={Boolean(form.formState.errors.value)}
           isActionBtn
           isLoading={withdraw.isLoading}
-          onClick={() => {
-            transactionModalProxy.openModal({
-              hash: "0x0564987",
-            });
-            // withdraw.write({ amount: value, operatorId: BigInt(params.id!) });
-          }}
+          type="submit"
           size="xl"
         >
           Withdraw

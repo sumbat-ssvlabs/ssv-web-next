@@ -15,7 +15,7 @@ module.exports = {
     },
     extend: {
       colors: {
-        black: "var(--black)",
+        black: "hsl(var(--black))",
         primary: {
           50: "var(--primary-50)",
           100: "var(--primary-100)",
@@ -40,6 +40,7 @@ module.exports = {
           700: "var(--gray-700)",
           800: "var(--gray-800)",
           900: "var(--gray-900)",
+          1000: "var(--gray-1000)",
         },
         success: {
           100: "var(--success-100)",

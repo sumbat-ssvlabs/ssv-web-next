@@ -2,7 +2,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 
 import { cn } from "@/lib/utils/tw";
-import type { ComponentWithAs, HTMLChakraProps } from "@/types/component";
+import type { ComponentWithAs, PropsWithAs } from "@/types/component";
 import { CgSpinner } from "react-icons/cg";
 
 export const buttonVariants = cva(
@@ -19,6 +19,8 @@ export const buttonVariants = cva(
         secondary:
           "bg-primary-50 text-primary-500 hover:bg-primary-100 active:bg-primary-200",
         ghost: "hover:bg-gray-300 hover:text-accent-foreground",
+        subtle:
+          "bg-slate-400/5 hover:bg-slate-400/20 hover:text-accent-foreground",
         link: "inline-flex text-primary-500  underline-offset-4 hover:underline",
       },
       colorScheme: {
@@ -48,7 +50,7 @@ export const buttonVariants = cva(
 );
 
 export interface ButtonProps
-  extends HTMLChakraProps<"button">,
+  extends PropsWithAs<"button">,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
   isLoading?: boolean;

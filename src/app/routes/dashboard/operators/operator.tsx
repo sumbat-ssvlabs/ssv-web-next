@@ -1,16 +1,17 @@
+import { OperatorDetails } from "@/components/operator/operator-details";
+import { OperatorSettingsBtn } from "@/components/operator/operator-settings-btn";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
 import { useOperator } from "@/hooks/use-operator";
 import { useGetOperatorEarnings } from "@/lib/contract-interactions/read/use-get-operator-earnings";
+import { formatSSV } from "@/lib/utils/number";
 import { cn } from "@/lib/utils/tw";
 import type { ComponentPropsWithoutRef, FC } from "react";
-import { Link, useParams } from "react-router-dom";
 import { Helmet } from "react-helmet";
-import { formatSSV } from "@/lib/utils/number";
+import { Link, useParams } from "react-router-dom";
 
 export const Operator: FC<ComponentPropsWithoutRef<"div">> = ({
   className,
@@ -24,27 +25,44 @@ export const Operator: FC<ComponentPropsWithoutRef<"div">> = ({
 
   if (operator.isLoading)
     return (
-      <div className="flex flex-col gap-6 h-full  pb-6">
-        <Skeleton className="rounded-2xl w-full h-[208px]" />
-        <Container variant="horizontal" className="flex-1" size="xl" {...props}>
-          <div className="flex flex-1 gap-6 flex-col">
-            <Skeleton className="rounded-2xl flex-1" />
-            <Skeleton className="rounded-2xl flex-1" />
-          </div>
-          <Skeleton className="rounded-2xl flex-[2] h-full" />
-        </Container>
+      <div className="flex flex-col items-center justify-center gap-6 h-full  pb-6">
+        <img src="/images/ssv-loader.svg" className="size-36" />
+        {/* <Text variant="body-2-semibold">Loading Operator...</Text> */}
       </div>
     );
 
   return (
     <>
       <Helmet>
-        <title>SSV {operator.data?.name}</title>
+        <title>SSV {operator.data?.name ?? ""}</title>
       </Helmet>
       <div className="flex flex-col gap-6">
         <div className="bg-gray-100 w-full h-[208px]">
-          <Container size="xl">
-            <NavigateBackBtn>Operators</NavigateBackBtn>
+          <Container size="xl" variant="vertical" className="pt-6">
+            <div className="flex w-full items-center justify-between">
+              <NavigateBackBtn>Operators</NavigateBackBtn>
+              <OperatorSettingsBtn />
+            </div>
+            <div className="flex items-end flex-1 gap-20">
+              <div className="flex flex-col gap-2">
+                <Text variant="body-3-medium" className="text-gray-500">
+                  Name
+                </Text>
+                <OperatorDetails id={Number(params.id)} />
+              </div>{" "}
+              <div className="flex flex-col gap-2">
+                <Text variant="body-3-medium" className="text-gray-500">
+                  Status
+                </Text>
+                <OperatorDetails id={Number(params.id)} />
+              </div>{" "}
+              <div className="flex flex-col gap-2">
+                <Text variant="body-3-medium" className="text-gray-500">
+                  Validators
+                </Text>
+                <OperatorDetails id={Number(params.id)} />
+              </div>
+            </div>
           </Container>
         </div>
         <Container

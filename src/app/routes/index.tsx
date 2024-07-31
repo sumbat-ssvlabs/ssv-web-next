@@ -95,7 +95,13 @@ export const router: ReturnType<typeof createBrowserRouter> =
                 },
                 {
                   path: "settings",
-                  element: <OperatorSettings />,
+                  element: <Outlet />,
+                  children: [
+                    {
+                      index: true,
+                      element: <OperatorSettings />,
+                    },
+                  ],
                 },
                 {
                   path: "withdraw",
