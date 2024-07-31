@@ -28,7 +28,7 @@
     --gray-900: #062031;
     --gray-1000: #011627;
 
-    --black: var(--gray-1000);
+    /* --black: var(--gray-1000); */
 
     --success-100: rgba(8, 200, 88, 0.16);
     --success-300: rgba(8, 200, 88, 0.32);
@@ -100,7 +100,7 @@
     --gray-900: #f9fbfc;
     --gray-1000: #fdfefe;
 
-    --black: var(--gray-800);
+    /* --black: var(--gray-800); */
 
     --success-100: rgba(8, 200, 88, 0.32);
     --success-300: rgba(8, 200, 88, 0.16);

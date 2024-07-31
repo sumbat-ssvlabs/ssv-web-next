@@ -7,7 +7,9 @@ import { Preparation } from "@/app/routes/create-cluster/preparation";
 import { SelectOperators } from "@/app/routes/create-cluster/select-operators";
 import { CreateOperatorPreparation } from "@/app/routes/create-operator/create-operator";
 import { MainContainer } from "@/app/routes/dashboard/container";
+import { NoYourOperator } from "@/app/routes/dashboard/operators/no-your-operator";
 import { Operator } from "@/app/routes/dashboard/operators/operator";
+import { OperatorNotFound } from "@/app/routes/dashboard/operators/operator-not-found";
 import { OperatorSettings } from "@/app/routes/dashboard/operators/operator-settings/operator-settings";
 import { Operators } from "@/app/routes/dashboard/operators/operators";
 import { WithdrawOperatorBalance } from "@/app/routes/dashboard/operators/withdraw-operator-balance";
@@ -73,27 +75,41 @@ export const router: ReturnType<typeof createBrowserRouter> =
         },
         {
           path: "operators",
-          element: <Operators />,
-        },
-        {
-          path: "operator/:id",
-          element: (
-            <ProtectedOperatorRoute>
-              <Outlet />
-            </ProtectedOperatorRoute>
-          ),
+          element: <Outlet />,
           children: [
             {
               index: true,
-              element: <Operator />,
+              element: <Operators />,
             },
             {
-              path: "settings",
-              element: <OperatorSettings />,
+              path: ":id",
+              element: (
+                <ProtectedOperatorRoute>
+                  <Outlet />
+                </ProtectedOperatorRoute>
+              ),
+              children: [
+                {
+                  index: true,
+                  element: <Operator />,
+                },
+                {
+                  path: "settings",
+                  element: <OperatorSettings />,
+                },
+                {
+                  path: "withdraw",
+                  element: <WithdrawOperatorBalance />,
+                },
+              ],
             },
             {
-              path: "withdraw",
-              element: <WithdrawOperatorBalance />,
+              path: "not-found",
+              element: <OperatorNotFound />,
+            },
+            {
+              path: "not-your-operator",
+              element: <NoYourOperator />,
             },
           ],
         },

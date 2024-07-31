@@ -38,6 +38,7 @@ interface TooltipProps
   content?: React.ReactNode;
   hasArrow?: boolean;
   delayDuration?: number;
+  open?: TooltipPrimitive.TooltipProps["open"];
 }
 
 const Tooltip: React.FC<TooltipProps> = ({
@@ -45,13 +46,14 @@ const Tooltip: React.FC<TooltipProps> = ({
   asChild,
   delayDuration,
   content,
+  open,
   hasArrow,
   ...props
 }) => {
   if (!content) return children;
   return (
     <TooltipProvider>
-      <TooltipRoot delayDuration={delayDuration || 0}>
+      <TooltipRoot delayDuration={delayDuration || 0} open={open}>
         <TooltipTrigger asChild={asChild}>{children}</TooltipTrigger>
         <TooltipContent {...props}>
           {hasArrow && <TooltipArrow className="fill-gray-700" />}

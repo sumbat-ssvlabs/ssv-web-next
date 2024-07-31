@@ -27,7 +27,9 @@ export const Join: FC<ComponentPropsWithoutRef<"div">> = ({
           onChange={(newValue) => setValue(newValue)}
         />
 
-        <Button onClick={() => setValue(1200000000000000n)}>Add</Button>
+        <Button onClick={() => setValue(1598798777798798714547654n)}>
+          Add
+        </Button>
 
         <div className="flex gap-4">
           <div className="flex-1 flex gap-2 flex-col items-center">

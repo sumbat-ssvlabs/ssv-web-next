@@ -15,6 +15,7 @@ interface ImportMetaEnv {
   }[];
 }
 
+declare const APP_VERSION: string;
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }

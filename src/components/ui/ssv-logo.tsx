@@ -9,7 +9,7 @@ export const SsvLogo: FC<ComponentPropsWithoutRef<"img">> = ({
     <img
       className={cn(className, "h-7")}
       {...props}
-      src="images/logo/dark.svg"
+      src="/images/logo/dark.svg"
     />
   );
 };

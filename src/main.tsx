@@ -19,6 +19,8 @@ import "@fontsource/manrope/400.css";
 import "@fontsource/manrope/500.css";
 import "@fontsource/manrope/700.css";
 import "@fontsource/manrope/800.css";
+import { TransactionModal } from "@/components/ui/transaction-modal";
+import { Text } from "@/components/ui/text";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -33,6 +35,13 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <RainbowKitProvider>
           <ReactQueryDevtools buttonPosition="bottom-right" />
           <RouterProvider router={router} />
+          <TransactionModal />
+          <Text
+            variant="caption-medium"
+            className="fixed bottom-0 left-0 m-2 text-gray-500 pointer-events-none"
+          >
+            {APP_VERSION}
+          </Text>
         </RainbowKitProvider>
       </PersistQueryClientProvider>
     </WagmiProvider>

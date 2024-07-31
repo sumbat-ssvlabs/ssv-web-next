@@ -1,13 +1,9 @@
+import type { InputProps } from "@/components/ui/input";
 import { Input } from "@/components/ui/input";
+import { Tooltip } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils/tw";
-import {
-  type ComponentPropsWithoutRef,
-  type FC,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import { useKey } from "react-use";
+import { type FC, useRef, useState } from "react";
+import { useDebounce, useKey } from "react-use";
 import { formatUnits, parseUnits } from "viem";
 
 export type NumberInputProps = {
@@ -18,12 +14,10 @@ export type NumberInputProps = {
   decimals?: number;
 };
 
-type FCProps = FC<
-  Omit<ComponentPropsWithoutRef<"input">, keyof NumberInputProps> &
-    NumberInputProps
->;
+type FCProps = FC<Omit<InputProps, keyof NumberInputProps> & NumberInputProps>;
 
-const numReg = /^(-?(0|[1-9]\d*)?)?(\.\d*)?$/;
+const numReg = /^(-?(\d+)?)?(\.\d{0,10})?$/;
+const captureReg = /^(-?(\d+)?)?(\.\d{0,10})?/;
 const ignoreKeys = ["ArrowUp", "ArrowDown"];
 const delta = "0.05";
 
@@ -37,17 +31,29 @@ export const NumberInput: FCProps = ({
   ...props
 }) => {
   const isTriggeredByEvent = useRef(false);
+  const prev = useRef(value);
   const [displayValue, setDisplayValue] = useState(
     formatUnits(value, decimals),
   );
 
-  useEffect(() => {
-    if (isTriggeredByEvent.current) {
-      isTriggeredByEvent.current = false;
-      return;
-    }
-    setDisplayValue(formatUnits(value, decimals).toString());
-  }, [value, decimals]);
+  const [showMaxSet, setShowMaxSet] = useState(false);
+  useDebounce(
+    () => {
+      setShowMaxSet(false);
+    },
+    2500,
+    [showMaxSet],
+  );
+
+  if (!isTriggeredByEvent.current && prev.current !== value) {
+    setTimeout(() => {
+      setDisplayValue(
+        formatUnits(value, decimals).toString().match(captureReg)?.[0] || "",
+      );
+    }, 0);
+  }
+  isTriggeredByEvent.current = false;
+  prev.current = value;
 
   useKey(
     "ArrowUp",
@@ -73,27 +79,40 @@ export const NumberInput: FCProps = ({
   );
 
   return (
-    <Input
-      {...props}
-      value={displayValue}
-      onKeyDown={(ev) => ignoreKeys.includes(ev.key) && ev.preventDefault()}
-      onInput={(ev) => {
-        const value = ev.currentTarget.value;
-        const isNumber = numReg.test(value);
-        if (!isNumber) return;
-        if (!allowNegative && value.includes("-")) return;
+    <Tooltip
+      asChild
+      content={"Max value set"}
+      open={showMaxSet}
+      hasArrow
+      side="left"
+    >
+      <Input
+        {...props}
+        value={displayValue}
+        onKeyDown={(ev) => ignoreKeys.includes(ev.key) && ev.preventDefault()}
+        onInput={(ev) => {
+          const value = ev.currentTarget.value.match(captureReg)?.[0] || "";
+          const isNumber = numReg.test(value);
+          if (!isNumber) return;
+          if (!allowNegative && value.includes("-")) return;
 
-        isTriggeredByEvent.current = true;
-        setDisplayValue(value);
+          isTriggeredByEvent.current = true;
+          const parsed = parseUnits(value, decimals);
 
-        const parsed = parseUnits(ev.currentTarget.value, decimals);
-        if (max && parsed > max) return onChange(max);
-        onChange(parsed);
-      }}
-      className={cn(className)}
-      inputMode="numeric"
-      type="text"
-    />
+          if (max && parsed > max) {
+            isTriggeredByEvent.current = false;
+            setShowMaxSet(true);
+            return onChange(max);
+          }
+          onChange(parsed);
+
+          setDisplayValue(value);
+        }}
+        className={cn(className)}
+        inputMode="numeric"
+        type="text"
+      />
+    </Tooltip>
   );
 };
 

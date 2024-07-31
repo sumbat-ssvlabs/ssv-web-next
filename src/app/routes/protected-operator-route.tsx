@@ -12,13 +12,15 @@ export const ProtectedOperatorRoute: FC<ComponentPropsWithoutRef<"div">> = ({
   const operator = useOperator(params.id ?? "");
   const { address } = useAccount();
 
-  if (isUndefined(params.id)) return <Navigate to="/404" replace />;
-  if (operator.isError) return <Navigate to="/404" replace />;
+  if (isUndefined(params.id)) return <Navigate to="../not-found" replace />;
+  if (operator.isError) return <Navigate to="../not-found" replace />;
+  operator.data && console.log(operator.data);
+  console.log(address);
   if (
     operator.data &&
     !isAddressEqual(operator.data.owner_address as `0x${string}`, address!)
   )
-    return <Navigate to="/not-your-operator" replace />;
+    return <Navigate to="../not-your-operator" replace />;
 
   return props.children;
 };
