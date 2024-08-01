@@ -1,6 +1,6 @@
 import type { ButtonProps } from "@/components/ui/button";
 import { Button } from "@/components/ui/button";
-import { useClipboard } from "@/hooks/use-copy";
+import { useClipboard } from "@/hooks/use-clipboard";
 import { cn } from "@/lib/utils/tw";
 import { AnimatePresence, motion } from "framer-motion";
 import type { FC } from "react";
@@ -34,7 +34,7 @@ export const CopyBtn: FCProps = ({ className, text, ...props }) => {
               left: "50%",
               translate: "-50%, -50%",
             }}
-            transition={{ duration: 0.3, type: "spring" }}
+            transition={{ duration: 0.2, type: "spring" }}
             initial={{ opacity: 0, rotate: -180, x: "-50%", y: "-50%" }}
             animate={{ opacity: 1, rotate: 0, x: "-50%", y: "-50%" }}
             exit={{ opacity: 0, rotate: 180, x: "-50%", y: "-50%" }}
@@ -50,7 +50,7 @@ export const CopyBtn: FCProps = ({ className, text, ...props }) => {
               top: "50%",
               left: "50%",
             }}
-            transition={{ duration: 0.3, type: "spring" }}
+            transition={{ duration: 0.2, type: "spring" }}
             initial={{ opacity: 0, rotate: -180, x: "-50%", y: "-50%" }}
             animate={{ opacity: 1, rotate: 0, x: "-50%", y: "-50%" }}
             exit={{ opacity: 0, rotate: 180, x: "-50%", y: "-50%" }}

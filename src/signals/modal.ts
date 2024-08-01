@@ -4,7 +4,7 @@ interface ModalProxy<
   T extends Record<string, unknown> = Record<string, unknown>,
 > {
   open: boolean;
-  onOpenChange?(open: boolean): void;
+  onOpenChange(open: boolean): void;
   openModal(meta: T): void;
   meta: T;
 }

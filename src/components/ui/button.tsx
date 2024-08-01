@@ -21,7 +21,7 @@ export const buttonVariants = cva(
         ghost: "hover:bg-gray-300 hover:text-accent-foreground",
         subtle:
           "bg-slate-400/5 hover:bg-slate-400/20 hover:text-accent-foreground",
-        link: "inline-flex text-primary-500  underline-offset-4 hover:underline",
+        link: "inline-flex text-primary-500 underline-offset-4 hover:underline",
       },
       colorScheme: {
         wallet:
@@ -35,12 +35,19 @@ export const buttonVariants = cva(
         icon: "h-10 w-10 rounded-lg",
         network: "h-12 pl-3 pr-4 font-semibold text-md rounded-lg",
         wallet: "h-12 px-4 font-semibold text-md rounded-lg",
+        none: "",
       },
       width: {
         full: "w-full",
         default: "",
       },
     },
+    compoundVariants: [
+      {
+        variant: "link",
+        class: "p-0 h-auto inline",
+      },
+    ],
     defaultVariants: {
       variant: "default",
       size: "default",

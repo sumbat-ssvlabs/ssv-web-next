@@ -11,12 +11,16 @@ import { formatSSV } from "@/lib/utils/number";
 import { cn } from "@/lib/utils/tw";
 import { transactionModalProxy } from "@/signals/modal";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMemo, type ComponentPropsWithoutRef, type FC } from "react";
+import { type ComponentPropsWithoutRef, type FC } from "react";
 import { Collapse } from "react-collapse";
 import { Helmet } from "react-helmet";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router";
 import { z } from "zod";
+
+const schema = z.object({
+  value: z.bigint().positive("Value must be greater than 0"),
+});
 
 export const WithdrawOperatorBalance: FC<ComponentPropsWithoutRef<"div">> = ({
   className,
@@ -29,17 +33,12 @@ export const WithdrawOperatorBalance: FC<ComponentPropsWithoutRef<"div">> = ({
     id: BigInt(params.id!),
   });
 
+  console.log("operatorEarnings.data:", operatorEarnings.data);
   const max = operatorEarnings.data ?? 0n;
+  console.log("max:", max);
 
-  const schema = useMemo(
-    () =>
-      z.object({ value: z.bigint().positive("Value must be greater than 0") }),
-    [],
-  );
   const form = useForm<z.infer<typeof schema>>({
-    defaultValues: {
-      value: 0n,
-    },
+    defaultValues: { value: 0n },
     resolver: zodResolver(schema),
   });
 
@@ -85,7 +84,9 @@ export const WithdrawOperatorBalance: FC<ComponentPropsWithoutRef<"div">> = ({
                   size="sm"
                   className="px-4"
                   variant="secondary"
-                  onClick={() => form.setValue("value", max)}
+                  onClick={() =>
+                    form.setValue("value", max, { shouldValidate: true })
+                  }
                 >
                   Max
                 </Button>
