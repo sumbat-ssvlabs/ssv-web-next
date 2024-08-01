@@ -4,14 +4,15 @@ globalThis.Buffer = Buffer;
 import React from "react";
 import ReactDOM from "react-dom/client";
 
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { router } from "@/app/routes/router";
+
 import { RainbowKitProvider } from "@/lib/providers/rainbow-kit";
 import { persister, queryClient } from "@/lib/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { WagmiProvider } from "wagmi";
 import { config } from "./wagmi/config";
 
-import { router } from "@/app/routes";
 import { RouterProvider } from "react-router-dom";
 
 import { Text } from "@/components/ui/text";
@@ -21,10 +22,12 @@ import "@fontsource/manrope/500.css";
 import "@fontsource/manrope/700.css";
 import "@fontsource/manrope/800.css";
 
-// @ts-expect-error BigInt is not supported in JSON
-BigInt.prototype["toJSON"] = function () {
-  return this.toString();
-};
+if (import.meta.env.DEV) {
+  // @ts-expect-error BigInt is not supported in JSON
+  BigInt.prototype["toJSON"] = function () {
+    return this.toString();
+  };
+}
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -37,7 +40,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         }}
       >
         <RainbowKitProvider>
-          <ReactQueryDevtools buttonPosition="bottom-right" />
+          {import.meta.env.DEV && (
+            <ReactQueryDevtools buttonPosition="bottom-right" />
+          )}
           <RouterProvider router={router}></RouterProvider>
           <Text
             variant="caption-medium"

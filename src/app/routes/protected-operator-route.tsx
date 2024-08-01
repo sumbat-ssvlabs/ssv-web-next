@@ -8,11 +8,11 @@ import { useAccount } from "wagmi";
 export const ProtectedOperatorRoute: FC<ComponentPropsWithoutRef<"div">> = ({
   ...props
 }) => {
-  const params = useParams<{ id: string }>();
-  const operator = useOperator(params.id ?? "");
+  const { operatorId } = useParams<{ operatorId: string }>();
+  const operator = useOperator(operatorId ?? "");
   const { address } = useAccount();
 
-  if (isUndefined(params.id)) return <Navigate to="../not-found" replace />;
+  if (isUndefined(operatorId)) return <Navigate to="../not-found" replace />;
   if (operator.isError) return <Navigate to="../not-found" replace />;
   operator.data && console.log(operator.data);
   console.log(address);

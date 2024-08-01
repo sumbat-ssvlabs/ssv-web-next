@@ -70,65 +70,64 @@
 // ------------------------------------------------
 
   
-import { Config, useWriteContract, UseWriteContractParameters } from "wagmi";
+import { useWriteContract } from "wagmi";
 import {useSSVNetworkDetails} from '@/hooks/use-ssv-network-details';
-import {
+import type {
   ${eventTypeName},
   MutationOptions,
+} from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
+import {
   ${useWaitForTxHookName},
 } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
 import { ${abiName} } from "@/lib/abi/${networkName}/v4/setter";${
       hasInputs
         ? `
 import type {  ExtractAbiFunction } from "abitype";
-import  { AbiInputsToParams, paramsToArray, extractAbiFunction } from "@/lib/contract-interactions/utils";`
+import type {
+  AbiInputsToParams} from "@/lib/contract-interactions/utils";
+import  { paramsToArray, extractAbiFunction } from "@/lib/contract-interactions/utils";`
         : ""
     }
 import type { WriteContractErrorType } from "@wagmi/core";
+import type { WaitForTransactionReceiptErrorType } from "viem";
 
-type WriteMutationOptions = Pick<UseWriteContractParameters<Config, unknown>, "mutation">
 ${hasInputs ? `type Fn = ExtractAbiFunction<typeof ${abiName}, "${functionName}">;` : ""}
 ${hasInputs ? `const abiFunction = extractAbiFunction(${abiName},"${functionName}");` : ""}
 // type State = "idle" | "confirming" | "mining" | "mined" | "error";
 
-export const ${hookName} = (options?: MutationOptions<${eventTypeName}> & WriteMutationOptions) => {
+export const ${hookName} = () => {
   const { setterContractAddress } = useSSVNetworkDetails()
 
  const wait = ${useWaitForTxHookName}();
-  const mutation = useWriteContract({
-    mutation: {
-      ...options?.mutation,
-      onSuccess: (result, ...rest) => {
-        options?.mutation?.onSuccess?.(result,...rest);
-        wait.mutate(result, {
-          onSuccess: (receipt) => {
-            options?.onMined?.(receipt);
-          },
-        });
-        options?.onConfirmed?.(result);
-      },
-      onError: (error, ...rest) => {
-        options?.mutation?.onError?.(error,...rest);
-        options?.onConfirmationError?.(error as WriteContractErrorType)
-        }
-    },
-  });
+  const mutation = useWriteContract();
 
-  const write = (${hasInputs ? 'params: AbiInputsToParams<Fn["inputs"]>' : ""}${isPayable ? ",value?: bigint" : ""}) => {
-    return mutation.writeContract({
+  const write = (${hasInputs ? 'params: AbiInputsToParams<Fn["inputs"]>,' : ""}${isPayable ? "value?: bigint," : ""}options: MutationOptions<${eventTypeName}> = {}) => {
+    return mutation.writeContractAsync({
     ${isPayable ? "value," : ""}
       abi: ${abiName},
       address: setterContractAddress,
       functionName: "${functionName}",
       ${hasInputs ? "args: paramsToArray({ params, abiFunction })" : ""}
-    });
+    },{
+          onSuccess: (hash) => options.onConfirmed?.(hash),
+          onError: (error) =>
+            options.onError?.(error as WriteContractErrorType),
+        }
+      )
+      .then((result) =>
+        wait.mutateAsync(result, {
+          onSuccess: (receipt) => options.onMined?.(receipt),
+          onError: (error) =>
+            options.onError?.(error as WaitForTransactionReceiptErrorType),
+        })
+      );
   };
 
-    const isLoading = mutation.isPending || wait.isPending;
+    const isPending = mutation.isPending || wait.isPending;
 
   return {
     error: mutation.error || wait.error,
-    isLoading,
+    isPending,
     mutation,
     write,
   };

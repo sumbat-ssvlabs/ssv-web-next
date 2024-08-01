@@ -19,11 +19,17 @@ import {
 import type { WriteContractErrorType } from "@wagmi/core";
 import type { WaitForTransactionReceiptErrorType } from "viem";
 
-type Fn = ExtractAbiFunction<typeof MainnetV4SetterABI, "registerValidator">;
-const abiFunction = extractAbiFunction(MainnetV4SetterABI, "registerValidator");
+type Fn = ExtractAbiFunction<
+  typeof MainnetV4SetterABI,
+  "removeOperatorsWhitelists"
+>;
+const abiFunction = extractAbiFunction(
+  MainnetV4SetterABI,
+  "removeOperatorsWhitelists",
+);
 // type State = "idle" | "confirming" | "mining" | "mined" | "error";
 
-export const useRegisterValidator = () => {
+export const useRemoveOperatorsWhitelists = () => {
   const { setterContractAddress } = useSSVNetworkDetails();
 
   const wait = useWaitForTransactionReceipt();
@@ -38,7 +44,7 @@ export const useRegisterValidator = () => {
         {
           abi: MainnetV4SetterABI,
           address: setterContractAddress,
-          functionName: "registerValidator",
+          functionName: "removeOperatorsWhitelists",
           args: paramsToArray({ params, abiFunction }),
         },
         {

@@ -6,7 +6,7 @@ interface ModalProxy<
   open: boolean;
   onOpenChange(open: boolean): void;
   openModal(meta: T): void;
-  meta: T;
+  meta: Partial<T>;
 }
 
 type Effects<T> = {

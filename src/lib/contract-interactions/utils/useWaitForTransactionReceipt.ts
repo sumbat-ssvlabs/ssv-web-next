@@ -17,9 +17,10 @@ export type TestnetEvent = DecodeEventLogReturnType<typeof HoleskyV4SetterABI>;
 
 export type MutationOptions<T extends MainnetEvent | TestnetEvent> = {
   onConfirmed?: (hash: Address) => void;
-  onConfirmationError?: (error: WriteContractErrorType) => void;
   onMined?: (receipt: TransactionReceipt & { events: T[] }) => void;
-  onMiningError?: (error: WaitForTransactionReceiptErrorType) => void;
+  onError?: (
+    error: WriteContractErrorType | WaitForTransactionReceiptErrorType,
+  ) => void;
 };
 
 export const useWaitForTransactionReceipt = () => {

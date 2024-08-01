@@ -4,32 +4,33 @@
 
 import { useReadContract } from "wagmi";
 import { useSSVNetworkDetails } from "@/hooks/use-ssv-network-details";
-import { HoleskyV4GetterABI } from "@/lib/abi/holesky/v4/getter";
+import { MainnetV4GetterABI } from "@/lib/abi/mainnet/v4/getter";
 import type { ExtractAbiFunction } from "abitype";
-import type { AbiInputsToParams } from "@/lib/contract-interactions/utils";
+import type {
+  AbiInputsToParams} from "@/lib/contract-interactions/utils";
 import {
   paramsToArray,
   extractAbiFunction,
 } from "@/lib/contract-interactions/utils";
 
 type Fn = ExtractAbiFunction<
-  typeof HoleskyV4GetterABI,
-  "isWhitelistingContract"
+  typeof MainnetV4GetterABI,
+  "getWhitelistedOperators"
 >;
 const abiFunction = extractAbiFunction(
-  HoleskyV4GetterABI,
-  "isWhitelistingContract",
+  MainnetV4GetterABI,
+  "getWhitelistedOperators",
 );
 
-export const useIsWhitelistingContract_Testnet = (
+export const useGetWhitelistedOperators = (
   params: AbiInputsToParams<Fn["inputs"]>,
 ) => {
   const { getterContractAddress } = useSSVNetworkDetails();
 
   return useReadContract({
-    abi: HoleskyV4GetterABI,
+    abi: MainnetV4GetterABI,
     address: getterContractAddress,
-    functionName: "isWhitelistingContract",
+    functionName: "getWhitelistedOperators",
     args: paramsToArray({ params, abiFunction }),
     query: {
       enabled: Boolean(params),

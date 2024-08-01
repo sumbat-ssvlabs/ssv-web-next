@@ -10,6 +10,7 @@ import { MainContainer } from "@/app/routes/dashboard/container";
 import { NoYourOperator } from "@/app/routes/dashboard/operators/no-your-operator";
 import { Operator } from "@/app/routes/dashboard/operators/operator";
 import { OperatorNotFound } from "@/app/routes/dashboard/operators/operator-not-found";
+import { AuthorizedAddresses } from "@/app/routes/dashboard/operators/operator-settings/authorized-addresses";
 import { OperatorSettings } from "@/app/routes/dashboard/operators/operator-settings/operator-settings";
 import { Operators } from "@/app/routes/dashboard/operators/operators";
 import { WithdrawOperatorBalance } from "@/app/routes/dashboard/operators/withdraw-operator-balance";
@@ -82,7 +83,7 @@ export const router: ReturnType<typeof createBrowserRouter> =
               element: <Operators />,
             },
             {
-              path: ":id",
+              path: ":operatorId",
               element: (
                 <ProtectedOperatorRoute>
                   <Outlet />
@@ -100,6 +101,10 @@ export const router: ReturnType<typeof createBrowserRouter> =
                     {
                       index: true,
                       element: <OperatorSettings />,
+                    },
+                    {
+                      path: "authorized-addresses",
+                      element: <AuthorizedAddresses />,
                     },
                   ],
                 },

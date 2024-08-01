@@ -1,4 +1,4 @@
-import { ActiveBadge } from "@/app/routes/dashboard/operators/operator-settings/active-badge";
+import { ActiveBadge } from "@/components/operator/operator-permission/active-badge";
 import { OperatorStatusBadge } from "@/components/operator/operator-permission/operator-status-badge";
 import { PermissionSettingsItem } from "@/components/operator/operator-permission/permission-settings-item";
 import { Card } from "@/components/ui/card";

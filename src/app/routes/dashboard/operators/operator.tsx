@@ -17,17 +17,16 @@ export const Operator: FC<ComponentPropsWithoutRef<"div">> = ({
   className,
   ...props
 }) => {
-  const params = useParams<{ id: string }>();
-  const operator = useOperator(params.id!);
+  const { operatorId } = useParams<{ operatorId: string }>();
+  const operator = useOperator(operatorId!);
 
-  const earnings = useGetOperatorEarnings({ id: BigInt(params.id!) });
+  const earnings = useGetOperatorEarnings({ id: BigInt(operatorId!) });
   const balance = earnings.data ?? 0n;
 
   if (operator.isLoading)
     return (
       <div className="flex flex-col items-center justify-center gap-6 h-full  pb-6">
         <img src="/images/ssv-loader.svg" className="size-36" />
-        {/* <Text variant="body-2-semibold">Loading Operator...</Text> */}
       </div>
     );
 
@@ -48,19 +47,19 @@ export const Operator: FC<ComponentPropsWithoutRef<"div">> = ({
                 <Text variant="body-3-medium" className="text-gray-500">
                   Name
                 </Text>
-                <OperatorDetails id={Number(params.id)} />
+                <OperatorDetails id={Number(operatorId)} />
               </div>{" "}
               <div className="flex flex-col gap-2">
                 <Text variant="body-3-medium" className="text-gray-500">
                   Status
                 </Text>
-                <OperatorDetails id={Number(params.id)} />
+                <OperatorDetails id={Number(operatorId)} />
               </div>{" "}
               <div className="flex flex-col gap-2">
                 <Text variant="body-3-medium" className="text-gray-500">
                   Validators
                 </Text>
-                <OperatorDetails id={Number(params.id)} />
+                <OperatorDetails id={Number(operatorId)} />
               </div>
             </div>
           </Container>

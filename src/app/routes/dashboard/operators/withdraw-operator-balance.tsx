@@ -26,16 +26,14 @@ export const WithdrawOperatorBalance: FC<ComponentPropsWithoutRef<"div">> = ({
   className,
   ...props
 }) => {
-  const params = useParams<{ id: string }>();
+  const { operatorId } = useParams<{ operatorId: string }>();
 
   const { data: operator } = useOperator();
   const operatorEarnings = useGetOperatorEarnings({
-    id: BigInt(params.id!),
+    id: BigInt(operatorId!),
   });
 
-  console.log("operatorEarnings.data:", operatorEarnings.data);
   const max = operatorEarnings.data ?? 0n;
-  console.log("max:", max);
 
   const form = useForm<z.infer<typeof schema>>({
     defaultValues: { value: 0n },
@@ -43,14 +41,18 @@ export const WithdrawOperatorBalance: FC<ComponentPropsWithoutRef<"div">> = ({
   });
 
   const withdraw = useWithdrawOperatorEarnings({
-    onConfirmationError: (err) => {
-      console.log("err:", Object.values(err));
+    onConfirmed: (hash) => {
+      transactionModalProxy.openModal({ hash });
+    },
+    onMined: () => {
+      form.reset();
+      operatorEarnings.refetch();
+      transactionModalProxy.onOpenChange(false);
     },
   });
 
   const submit = ({ value }: z.infer<typeof schema>) => {
-    return transactionModalProxy.openModal({ hash: "hash" });
-    withdraw.write({ operatorId: BigInt(params.id!), amount: value });
+    return withdraw.write({ operatorId: BigInt(operatorId!), amount: value });
   };
 
   return (
@@ -71,7 +73,7 @@ export const WithdrawOperatorBalance: FC<ComponentPropsWithoutRef<"div">> = ({
         </Text>
         <div className="flex flex-col">
           <NumberInput
-            disabled={withdraw.isLoading}
+            disabled={withdraw.isPending}
             className="text-xl h-16 font-bold"
             value={form.watch("value")}
             onChange={(value) =>
@@ -103,7 +105,7 @@ export const WithdrawOperatorBalance: FC<ComponentPropsWithoutRef<"div">> = ({
         <Button
           disabled={Boolean(form.formState.errors.value)}
           isActionBtn
-          isLoading={withdraw.isLoading}
+          isLoading={withdraw.isPending}
           type="submit"
           size="xl"
         >

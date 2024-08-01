@@ -1,6 +1,7 @@
 import { globals } from "@/config";
 import { ethFormatter } from "@/lib/utils/number";
 import type { Operator } from "@/types/api";
+import { difference } from "lodash-es";
 import type { IOperator } from "ssv-keys/dist/tsc/src/lib/KeyShares/KeySharesData/IOperator";
 import { formatUnits } from "viem";
 
@@ -61,4 +62,25 @@ export const sumOperatorsFee = (operators: Operator[]) => {
 
 export const getOperatorIds = (operators: Operator[]) => {
   return operators.map((operator) => operator.id);
+};
+
+type MergeOperatorWhitelistAddressesOpts = {
+  shouldAdd: boolean;
+  operator: Operator;
+  delta: readonly (string | `0x${string}`)[];
+};
+
+export const mergeOperatorWhitelistAddresses = ({
+  shouldAdd,
+  operator,
+  delta,
+}: MergeOperatorWhitelistAddressesOpts) => {
+  const addresses = shouldAdd
+    ? [...(operator?.whitelist_addresses || []), ...delta]
+    : difference(operator?.whitelist_addresses, delta);
+
+  return {
+    ...operator,
+    whitelist_addresses: addresses,
+  } as Operator;
 };

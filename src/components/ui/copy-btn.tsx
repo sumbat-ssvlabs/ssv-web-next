@@ -39,7 +39,7 @@ export const CopyBtn: FCProps = ({ className, text, ...props }) => {
             animate={{ opacity: 1, rotate: 0, x: "-50%", y: "-50%" }}
             exit={{ opacity: 0, rotate: 180, x: "-50%", y: "-50%" }}
           >
-            <LuCopy className="text-gray-500 size-full" strokeWidth="2.5" />
+            <LuCopy className="size-full" strokeWidth="2.5" />
           </motion.div>
         ) : (
           <motion.div
