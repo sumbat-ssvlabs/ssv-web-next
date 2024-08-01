@@ -1,15 +1,15 @@
-import type { FC, ComponentPropsWithoutRef } from "react";
-import { cn } from "@/lib/utils/tw";
 import { OperatorAvatar } from "@/components/operator/operator-avatar";
-import { useOperator } from "@/hooks/use-operator";
-import { Text } from "@/components/ui/text";
-import { LuCopy, LuPackageSearch } from "react-icons/lu";
-import { Tooltip } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { CopyBtn } from "@/components/ui/copy-btn";
+import { Text } from "@/components/ui/text";
+import { Tooltip } from "@/components/ui/tooltip";
+import { useOperator } from "@/hooks/use-operator";
 import { useSSVNetworkDetails } from "@/hooks/use-ssv-network-details";
+import { cn } from "@/lib/utils/tw";
 import path from "path";
-import { useCopyToClipboard } from "react-use";
+import type { ComponentPropsWithoutRef, FC } from "react";
+import { LuPackageSearch } from "react-icons/lu";
+import { Link } from "react-router-dom";
 
 export type OperatorDetailsProps = {
   id: number;
@@ -23,8 +23,7 @@ type FCProps = FC<
 export const OperatorDetails: FCProps = ({ id, className, ...props }) => {
   const operator = useOperator(id);
   const network = useSSVNetworkDetails();
-  const [state, copy] = useCopyToClipboard();
-  console.log("state:", state);
+
   if (!operator.isSuccess) return null;
   return (
     <div className={cn(className, "flex items-center gap-3")} {...props}>
@@ -57,14 +56,7 @@ export const OperatorDetails: FCProps = ({ id, className, ...props }) => {
           <Text variant="body-3-medium" className="text-gray-500">
             ID: {operator.data.id}
           </Text>
-          <Button
-            size="icon"
-            variant="ghost"
-            className="inline-flex size-6"
-            onClick={() => copy(operator.data.id_str)}
-          >
-            <LuCopy className="text-gray-500 size-3" />
-          </Button>
+          <CopyBtn text={operator.data.id_str} />
         </div>
       </div>
     </div>

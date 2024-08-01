@@ -9,6 +9,7 @@ import { useGetOperatorEarnings } from "@/lib/contract-interactions/read/use-get
 import { useWithdrawOperatorEarnings } from "@/lib/contract-interactions/write/use-withdraw-operator-earnings";
 import { formatSSV } from "@/lib/utils/number";
 import { cn } from "@/lib/utils/tw";
+import { transactionModalProxy } from "@/signals/modal";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo, type ComponentPropsWithoutRef, type FC } from "react";
 import { Collapse } from "react-collapse";
@@ -49,6 +50,7 @@ export const WithdrawOperatorBalance: FC<ComponentPropsWithoutRef<"div">> = ({
   });
 
   const submit = ({ value }: z.infer<typeof schema>) => {
+    return transactionModalProxy.openModal({ hash: "hash" });
     withdraw.write({ operatorId: BigInt(params.id!), amount: value });
   };
 
