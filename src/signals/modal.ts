@@ -5,7 +5,7 @@ interface ModalProxy<
 > {
   open: boolean;
   onOpenChange(open: boolean): void;
-  openModal(meta: T): void;
+  openModal(meta?: T): void;
   meta: Partial<T>;
 }
 
@@ -22,15 +22,18 @@ const createModalSignal = <T extends Record<string, unknown>>(
     onOpenChange: (open) => {
       state.open = open;
     },
-    openModal: (meta: T) => {
-      state.meta = meta;
+    openModal: (meta) => {
+      if (meta) state.meta = meta;
       state.open = true;
     },
-    meta: defaults?.meta ?? ({} as T),
+    meta: defaults?.meta ?? {},
   });
-  return [state, () => useSnapshot(state)] as const;
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const hook = () => useSnapshot(state);
+  hook.state = state;
+  return hook;
 };
 
-export const [transactionModalProxy, useTransactionModal] = createModalSignal<{
+export const useTransactionModal = createModalSignal<{
   hash: string;
 }>();

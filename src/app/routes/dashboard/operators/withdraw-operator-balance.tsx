@@ -9,7 +9,7 @@ import { useGetOperatorEarnings } from "@/lib/contract-interactions/read/use-get
 import { useWithdrawOperatorEarnings } from "@/lib/contract-interactions/write/use-withdraw-operator-earnings";
 import { formatSSV } from "@/lib/utils/number";
 import { cn } from "@/lib/utils/tw";
-import { transactionModalProxy } from "@/signals/modal";
+import { useTransactionModal } from "@/signals/modal";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type ComponentPropsWithoutRef, type FC } from "react";
 import { Collapse } from "react-collapse";
@@ -40,19 +40,22 @@ export const WithdrawOperatorBalance: FC<ComponentPropsWithoutRef<"div">> = ({
     resolver: zodResolver(schema),
   });
 
-  const withdraw = useWithdrawOperatorEarnings({
-    onConfirmed: (hash) => {
-      transactionModalProxy.openModal({ hash });
-    },
-    onMined: () => {
-      form.reset();
-      operatorEarnings.refetch();
-      transactionModalProxy.onOpenChange(false);
-    },
-  });
+  const withdraw = useWithdrawOperatorEarnings();
 
   const submit = ({ value }: z.infer<typeof schema>) => {
-    return withdraw.write({ operatorId: BigInt(operatorId!), amount: value });
+    return withdraw.write(
+      { operatorId: BigInt(operatorId!), amount: value },
+      {
+        onConfirmed: (hash) => {
+          useTransactionModal.state.openModal({ hash });
+        },
+        onMined: () => {
+          form.reset();
+          operatorEarnings.refetch();
+          useTransactionModal.state.onOpenChange(false);
+        },
+      },
+    );
   };
 
   return (
