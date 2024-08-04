@@ -3,28 +3,33 @@ import { proxy, useSnapshot } from "valtio";
 interface ModalProxy<
   T extends Record<string, unknown> = Record<string, unknown>,
 > {
-  open: boolean;
+  isOpen: boolean;
   onOpenChange(open: boolean): void;
-  openModal(meta?: T): void;
+  open(meta?: T): void;
+  close(clear?: boolean): void;
   meta: Partial<T>;
 }
 
 type Effects<T> = {
   meta?: T;
-  open?: boolean;
+  isOpen?: boolean;
 };
 
 const createModalSignal = <T extends Record<string, unknown>>(
   defaults?: Effects<T>,
 ) => {
   const state = proxy<ModalProxy<T>>({
-    open: defaults?.open ?? false,
+    isOpen: defaults?.isOpen ?? false,
     onOpenChange: (open) => {
-      state.open = open;
+      state.isOpen = open;
     },
-    openModal: (meta) => {
+    open: (meta) => {
       if (meta) state.meta = meta;
-      state.open = true;
+      state.isOpen = true;
+    },
+    close: (clear) => {
+      if (clear) state.meta = {};
+      state.isOpen = false;
     },
     meta: defaults?.meta ?? {},
   });

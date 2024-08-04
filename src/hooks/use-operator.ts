@@ -6,7 +6,7 @@ import { useParams } from "react-router";
 
 export const getOperatorQueryOptions = (id: number | string) => {
   return queryOptions({
-    queryKey: ["operator", id],
+    queryKey: ["operator", id.toString()],
     queryFn: () => getOperator(id),
     enabled: !!id,
   });

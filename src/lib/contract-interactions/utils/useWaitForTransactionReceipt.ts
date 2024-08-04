@@ -11,6 +11,9 @@ import { decodeEventLog } from "viem";
 import { usePublicClient } from "wagmi";
 
 import type { WriteContractErrorType } from "@wagmi/core";
+import { useTransactionModal } from "@/signals/modal";
+import type { Toast } from "@/components/ui/use-toast";
+import { toast } from "@/components/ui/use-toast";
 
 export type MainnetEvent = DecodeEventLogReturnType<typeof MainnetV4SetterABI>;
 export type TestnetEvent = DecodeEventLogReturnType<typeof HoleskyV4SetterABI>;
@@ -21,6 +24,42 @@ export type MutationOptions<T extends MainnetEvent | TestnetEvent> = {
   onError?: (
     error: WriteContractErrorType | WaitForTransactionReceiptErrorType,
   ) => void;
+};
+
+export const withTransactionModal = <
+  T extends MutationOptions<MainnetEvent | TestnetEvent> & {
+    successToast?: Toast;
+  },
+>(
+  options: T,
+) => {
+  return {
+    onConfirmed: (hash) => {
+      useTransactionModal.state.open({ hash });
+      options.onConfirmed?.(hash);
+    },
+    onMined: (receipt) => {
+      useTransactionModal.state.close();
+      options.onMined?.(receipt);
+      toast({
+        title: "Transaction confirmed",
+        description: new Date().toLocaleString(),
+        ...options.successToast,
+      });
+    },
+    onError: (error) => {
+      useTransactionModal.state.close();
+      toast({
+        title: "Transaction failed",
+        description:
+          "shortMessage" in error
+            ? error?.shortMessage
+            : error?.message || "Unknown error",
+        variant: "destructive",
+      });
+      options.onError?.(error);
+    },
+  } satisfies MutationOptions<MainnetEvent | TestnetEvent>;
 };
 
 export const useWaitForTransactionReceipt = () => {

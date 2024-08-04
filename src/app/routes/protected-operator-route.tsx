@@ -22,6 +22,7 @@ export const ProtectedOperatorRoute: FC<ComponentPropsWithoutRef<"div">> = ({
   )
     return <Navigate to="../not-your-operator" replace />;
 
+  if (operator.isLoading) return null;
   return props.children;
 };
 

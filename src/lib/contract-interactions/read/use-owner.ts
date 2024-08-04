@@ -3,8 +3,25 @@
 // ------------------------------------------------
 
 import { useReadContract } from "wagmi";
-import { useSSVNetworkDetails } from "@/hooks/use-ssv-network-details";
+import {
+  getSSVNetworkDetails,
+  useSSVNetworkDetails,
+} from "@/hooks/use-ssv-network-details";
 import { MainnetV4GetterABI } from "@/lib/abi/mainnet/v4/getter";
+import { readContractQueryOptions } from "wagmi/query";
+import { getChainId } from "@wagmi/core";
+import { config } from "@/wagmi/config";
+import { queryClient } from "@/lib/react-query";
+
+export const getOwnerQueryOptions = () =>
+  readContractQueryOptions(config, {
+    abi: MainnetV4GetterABI,
+    chainId: getChainId(config),
+    address: getSSVNetworkDetails().getterContractAddress,
+    functionName: "owner",
+  });
+
+export const fetchOwner = () => queryClient.fetchQuery(getOwnerQueryOptions());
 
 export const useOwner = () => {
   const { getterContractAddress } = useSSVNetworkDetails();

@@ -18,10 +18,10 @@ type FCProps = FC<
 >;
 
 export const TransactionModal: FCProps = () => {
-  const { meta, open } = useTransactionModal();
+  const { meta, isOpen } = useTransactionModal();
 
   return (
-    <Dialog open={open}>
+    <Dialog isOpen={isOpen}>
       <DialogContent className="flex bg-gray-50 flex-col gap-8 max-w-[424px] font-medium ">
         <div className="flex flex-col gap-3">
           <DialogTitle>

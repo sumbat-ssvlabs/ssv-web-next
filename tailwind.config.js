@@ -117,6 +117,7 @@ module.exports = {
       addVariant("last-child", "& > :last-child");
       addVariant("invalid", '&[aria-invalid="true"]');
       addVariant("invalid-within", "&:has([aria-invalid='true'])");
+      addVariant("data-[disabled]", "&[data-disabled='true']");
     }),
   ],
 };

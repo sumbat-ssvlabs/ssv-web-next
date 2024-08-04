@@ -60,17 +60,39 @@
 // ------------------------------------------------
 
 import { useReadContract } from "wagmi";
-import { useSSVNetworkDetails } from '@/hooks/use-ssv-network-details';
+import { getSSVNetworkDetails, useSSVNetworkDetails } from "@/hooks/use-ssv-network-details";
 import { ${abiName} } from "@/lib/abi/${networkName}/v4/getter";${
       hasInputs
         ? `
-import type {  ExtractAbiFunction } from "abitype";
-import  { AbiInputsToParams, paramsToArray, extractAbiFunction } from "@/lib/contract-interactions/utils";`
+import type {
+  AbiInputsToParams} from "@/lib/contract-interactions/utils";
+import {
+  paramsToArray,
+  extractAbiFunction,
+} from "@/lib/contract-interactions/utils";`
         : ""
     }
+import type { ExtractAbiFunction } from "abitype";
+import { readContractQueryOptions } from "wagmi/query";
+import { getChainId } from "@wagmi/core";
+import { config } from "@/wagmi/config";
+import { queryClient } from "@/lib/react-query";
 
 ${hasInputs ? `type Fn = ExtractAbiFunction<typeof ${abiName}, "${functionName}">;` : ""}
 ${hasInputs ? `const abiFunction = extractAbiFunction(${abiName},"${functionName}");` : ""}
+
+export const get${capitalizeFirstLetter(functionName)}QueryOptions = (${hasInputs ? 'params: AbiInputsToParams<Fn["inputs"]>' : ""}) =>
+  readContractQueryOptions(config, {
+    abi: ${abiName},
+    chainId: getChainId(config),
+    address: getSSVNetworkDetails().getterContractAddress,
+    functionName: "${functionName}",
+    ${hasInputs ? "args: paramsToArray({ params, abiFunction })," : ""}
+  });
+
+export const fetch${capitalizeFirstLetter(functionName)} =  (${hasInputs ? 'params: AbiInputsToParams<Fn["inputs"]>' : ""}) =>
+queryClient.fetchQuery(get${capitalizeFirstLetter(functionName)}QueryOptions(${hasInputs ? "params" : ""}));
+
 
 export const ${hookName} = (${hasInputs ? 'params: AbiInputsToParams<Fn["inputs"]>' : ""}) => {
   const { getterContractAddress } = useSSVNetworkDetails()

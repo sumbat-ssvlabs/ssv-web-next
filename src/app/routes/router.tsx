@@ -11,7 +11,9 @@ import { NoYourOperator } from "@/app/routes/dashboard/operators/no-your-operato
 import { Operator } from "@/app/routes/dashboard/operators/operator";
 import { OperatorNotFound } from "@/app/routes/dashboard/operators/operator-not-found";
 import { AuthorizedAddresses } from "@/app/routes/dashboard/operators/operator-settings/authorized-addresses";
+import ExternalContract from "@/app/routes/dashboard/operators/operator-settings/external-contract";
 import { OperatorSettings } from "@/app/routes/dashboard/operators/operator-settings/operator-settings";
+import { OperatorStatus } from "@/app/routes/dashboard/operators/operator-settings/operator-status";
 import { Operators } from "@/app/routes/dashboard/operators/operators";
 import { WithdrawOperatorBalance } from "@/app/routes/dashboard/operators/withdraw-operator-balance";
 import { Validators } from "@/app/routes/dashboard/validators/validators";
@@ -105,6 +107,14 @@ export const router: ReturnType<typeof createBrowserRouter> =
                     {
                       path: "authorized-addresses",
                       element: <AuthorizedAddresses />,
+                    },
+                    {
+                      path: "status",
+                      element: <OperatorStatus />,
+                    },
+                    {
+                      path: "external-contract",
+                      element: <ExternalContract />,
                     },
                   ],
                 },

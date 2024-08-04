@@ -3,13 +3,15 @@ import { OperatorSettingsBtn } from "@/components/operator/operator-settings-btn
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
+import type { Option } from "@/components/ui/multi-select";
+import { FancyMultiSelect } from "@/components/ui/multi-select";
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import { Text } from "@/components/ui/text";
 import { useOperator } from "@/hooks/use-operator";
 import { useGetOperatorEarnings } from "@/lib/contract-interactions/read/use-get-operator-earnings";
 import { formatSSV } from "@/lib/utils/number";
 import { cn } from "@/lib/utils/tw";
-import type { ComponentPropsWithoutRef, FC } from "react";
+import { useState, type ComponentPropsWithoutRef, type FC } from "react";
 import { Helmet } from "react-helmet";
 import { Link, useParams } from "react-router-dom";
 
@@ -22,6 +24,8 @@ export const Operator: FC<ComponentPropsWithoutRef<"div">> = ({
 
   const earnings = useGetOperatorEarnings({ id: BigInt(operatorId!) });
   const balance = earnings.data ?? 0n;
+
+  const [selected, setSelected] = useState<Option[]>([]);
 
   if (operator.isLoading)
     return (
@@ -71,6 +75,25 @@ export const Operator: FC<ComponentPropsWithoutRef<"div">> = ({
           className={cn(className)}
         >
           <div className="flex items-stretch gap-6 flex-col flex-1">
+            <form>
+              <FancyMultiSelect
+                options={[
+                  { label: "nextjs", value: "Nextjs" },
+                  { label: "React", value: "react" },
+                  { label: "Remix", value: "remix" },
+                  { label: "Vite", value: "vite" },
+                  { label: "Nuxt", value: "nuxt" },
+                  { label: "Vue", value: "vue" },
+                  { label: "Svelte", value: "svelte" },
+                  { label: "Angular", value: "angular" },
+                  { label: "Ember", value: "ember" },
+                  { label: "Gatsby", value: "gatsby" },
+                  { label: "Astro", value: "astro" },
+                ]}
+                selected={selected}
+                onChange={setSelected}
+              />
+            </form>
             <Card className="w-full">
               <Text variant="headline4" className="text-gray-500">
                 Balance

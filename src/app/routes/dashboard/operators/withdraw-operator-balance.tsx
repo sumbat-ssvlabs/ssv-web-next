@@ -4,12 +4,13 @@ import { Container } from "@/components/ui/container";
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import { NumberInput } from "@/components/ui/number-input";
 import { Text } from "@/components/ui/text";
+import { toast } from "@/components/ui/use-toast";
 import { useOperator } from "@/hooks/use-operator";
 import { useGetOperatorEarnings } from "@/lib/contract-interactions/read/use-get-operator-earnings";
+import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
 import { useWithdrawOperatorEarnings } from "@/lib/contract-interactions/write/use-withdraw-operator-earnings";
 import { formatSSV } from "@/lib/utils/number";
 import { cn } from "@/lib/utils/tw";
-import { useTransactionModal } from "@/signals/modal";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type ComponentPropsWithoutRef, type FC } from "react";
 import { Collapse } from "react-collapse";
@@ -45,16 +46,15 @@ export const WithdrawOperatorBalance: FC<ComponentPropsWithoutRef<"div">> = ({
   const submit = ({ value }: z.infer<typeof schema>) => {
     return withdraw.write(
       { operatorId: BigInt(operatorId!), amount: value },
-      {
-        onConfirmed: (hash) => {
-          useTransactionModal.state.openModal({ hash });
-        },
+      withTransactionModal({
         onMined: () => {
+          toast({
+            title: "Withdrawal Successful",
+          });
           form.reset();
           operatorEarnings.refetch();
-          useTransactionModal.state.onOpenChange(false);
         },
-      },
+      }),
     );
   };
 

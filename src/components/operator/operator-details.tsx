@@ -12,7 +12,7 @@ import { LuPackageSearch } from "react-icons/lu";
 import { Link } from "react-router-dom";
 
 export type OperatorDetailsProps = {
-  id: number;
+  id?: number;
 };
 
 type FCProps = FC<

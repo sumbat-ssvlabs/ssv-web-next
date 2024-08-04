@@ -1,6 +1,8 @@
+import { useToast } from "@/components/ui/use-toast";
 import { useAddAuthorizedAddresses } from "@/hooks/operator/use-add-authorized-addresses";
 import { useDeleteAuthorizedAddresses } from "@/hooks/operator/use-delete-authorized-addresses";
 import { getOperatorQueryOptions } from "@/hooks/use-operator";
+import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
 import { useRemoveOperatorsWhitelists } from "@/lib/contract-interactions/write/use-remove-operators-whitelists";
 import { useSetOperatorsWhitelists } from "@/lib/contract-interactions/write/use-set-operators-whitelists";
 import { mergeOperatorWhitelistAddresses } from "@/lib/utils/operator";
@@ -11,6 +13,7 @@ type Mode = "add" | "delete" | "view";
 
 export const useManageAuthorizedAddresses = (_operatorId?: string) => {
   const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   const params = useParams<{ operatorId: string }>();
   const operatorId = _operatorId || params.operatorId;
@@ -41,21 +44,28 @@ export const useManageAuthorizedAddresses = (_operatorId?: string) => {
   }) => {
     const isAdd = mode === "add";
     const writer = isAdd ? set : remove;
-    writer.write(params, {
-      onConfirmed: () => {
-        const queryKey = getOperatorQueryOptions(operatorId!).queryKey;
-        queryClient.cancelQueries({ queryKey });
-        queryClient.setQueryData(queryKey, (operator) => {
-          return mergeOperatorWhitelistAddresses({
-            shouldAdd: isAdd,
-            operator: operator!,
-            delta: params.whitelistAddresses,
+    writer.write(
+      params,
+      withTransactionModal({
+        onMined: () => {
+          toast({
+            title: "Operator whitelist updated",
+            description: new Date().toLocaleString(),
           });
-        });
-        addManager.form.reset();
-        deleteManager.reset();
-      },
-    });
+          const queryKey = getOperatorQueryOptions(operatorId!).queryKey;
+          queryClient.cancelQueries({ queryKey });
+          queryClient.setQueryData(queryKey, (operator) => {
+            return mergeOperatorWhitelistAddresses({
+              shouldAdd: isAdd,
+              operator: operator!,
+              delta: params.whitelistAddresses,
+            });
+          });
+          addManager.form.reset();
+          deleteManager.reset();
+        },
+      }),
+    );
   };
 
   const submit = (event: React.FormEvent<HTMLFormElement>) => {

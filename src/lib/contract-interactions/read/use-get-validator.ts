@@ -3,18 +3,38 @@
 // ------------------------------------------------
 
 import { useReadContract } from "wagmi";
-import { useSSVNetworkDetails } from "@/hooks/use-ssv-network-details";
+import {
+  getSSVNetworkDetails,
+  useSSVNetworkDetails,
+} from "@/hooks/use-ssv-network-details";
 import { MainnetV4GetterABI } from "@/lib/abi/mainnet/v4/getter";
-import type { ExtractAbiFunction } from "abitype";
-import type {
-  AbiInputsToParams} from "@/lib/contract-interactions/utils";
+import type { AbiInputsToParams } from "@/lib/contract-interactions/utils";
 import {
   paramsToArray,
   extractAbiFunction,
 } from "@/lib/contract-interactions/utils";
+import type { ExtractAbiFunction } from "abitype";
+import { readContractQueryOptions } from "wagmi/query";
+import { getChainId } from "@wagmi/core";
+import { config } from "@/wagmi/config";
+import { queryClient } from "@/lib/react-query";
 
 type Fn = ExtractAbiFunction<typeof MainnetV4GetterABI, "getValidator">;
 const abiFunction = extractAbiFunction(MainnetV4GetterABI, "getValidator");
+
+export const getGetValidatorQueryOptions = (
+  params: AbiInputsToParams<Fn["inputs"]>,
+) =>
+  readContractQueryOptions(config, {
+    abi: MainnetV4GetterABI,
+    chainId: getChainId(config),
+    address: getSSVNetworkDetails().getterContractAddress,
+    functionName: "getValidator",
+    args: paramsToArray({ params, abiFunction }),
+  });
+
+export const fetchGetValidator = (params: AbiInputsToParams<Fn["inputs"]>) =>
+  queryClient.fetchQuery(getGetValidatorQueryOptions(params));
 
 export const useGetValidator = (params: AbiInputsToParams<Fn["inputs"]>) => {
   const { getterContractAddress } = useSSVNetworkDetails();

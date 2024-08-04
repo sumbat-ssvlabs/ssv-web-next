@@ -4,8 +4,8 @@ globalThis.Buffer = Buffer;
 import React from "react";
 import ReactDOM from "react-dom/client";
 
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { router } from "@/app/routes/router";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { RainbowKitProvider } from "@/lib/providers/rainbow-kit";
 import { persister, queryClient } from "@/lib/react-query";
@@ -16,6 +16,7 @@ import { config } from "./wagmi/config";
 import { RouterProvider } from "react-router-dom";
 
 import { Text } from "@/components/ui/text";
+import { Toaster } from "@/components/ui/toaster";
 import "@/global.css";
 import "@fontsource/manrope/400.css";
 import "@fontsource/manrope/500.css";
@@ -43,7 +44,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           {import.meta.env.DEV && (
             <ReactQueryDevtools buttonPosition="bottom-right" />
           )}
-          <RouterProvider router={router}></RouterProvider>
+          <RouterProvider router={router} />
+          <Toaster />
           <Text
             variant="caption-medium"
             className="fixed bottom-0 left-0 m-2 text-gray-500 pointer-events-none"

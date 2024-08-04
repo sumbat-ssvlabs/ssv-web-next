@@ -4,7 +4,9 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 
 import { cn } from "@/lib/utils/tw";
 
-const Dialog = DialogPrimitive.Root;
+const Dialog: React.FC<
+  Omit<DialogPrimitive.DialogProps, "open"> & { isOpen?: boolean }
+> = (props) => <DialogPrimitive.Root {...props} open={props.isOpen} />;
 
 const DialogTrigger = DialogPrimitive.Trigger;
 

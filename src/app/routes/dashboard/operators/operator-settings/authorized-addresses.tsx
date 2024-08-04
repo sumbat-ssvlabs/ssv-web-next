@@ -2,6 +2,7 @@ import { DeletableAddress } from "@/components/operator/operator-permission/dele
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Container } from "@/components/ui/container";
 import {
   FormControl,
   FormField,
@@ -15,6 +16,7 @@ import { useManageAuthorizedAddresses } from "@/hooks/operator/use-manage-author
 import { useOperator } from "@/hooks/use-operator";
 import { X } from "lucide-react";
 import { useEffect, useRef } from "react";
+import { useBlocker } from "react-router";
 
 export const AuthorizedAddresses = () => {
   const formRef = useRef<HTMLDivElement>(null);
@@ -56,115 +58,125 @@ export const AuthorizedAddresses = () => {
     };
   }, [mode]);
 
-  return (
-    <Form {...addManager.form}>
-      <form
-        onSubmit={submit}
-        className="flex flex-col flex-1 overflow-hidden py-8 gap-9 w-[872px] mx-auto"
-      >
-        <NavigateBackBtn />
-        <Card className="w-full mx-auto overflow-auto">
-          <div className="flex flex-col gap-2">
-            <h2 className="text-xl font-bold">Authorized Addresses</h2>
-            <p className="text-sm font-medium text-gray-700">
-              Manage the owner addresses that are authorized to register
-              validators to your operator?.
-              <br />
-              Whitelisted addresses are effective only when your operator status
-              is set to Private.
-            </p>
-          </div>
-          {(mode === "add" || hasWhitelistedAddresses) &&
-            !operator?.is_private && (
-              <Alert variant="warning">
-                <AlertDescription>
-                  In order to enforce whitelisted addresses, make sure to switch
-                  the <span className="font-bold">Operator Status</span> to{" "}
-                  <span className="font-bold">Private.</span>
-                </AlertDescription>
-              </Alert>
-            )}
-          <div ref={formRef} className="space-y-3 overflow-auto">
-            {operator?.whitelist_addresses?.map((address) => (
-              <DeletableAddress
-                key={address}
-                address={address}
-                onDelete={deleteManager.add}
-                onUndo={deleteManager.remove}
-                isMarked={deleteManager.isMarked(address)}
-                disabled={mode === "add"}
-              />
-            ))}
-            {addManager.fieldArray.fields.map((field, index) => (
-              <FormField
-                key={field.id}
-                control={addManager.form.control}
-                name={`addresses.${index}.value`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        onPaste={handlePaste(index)}
-                        rightSlot={
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => addManager.fieldArray.remove(index)}
-                          >
-                            <X className="size-5" />
-                          </Button>
-                        }
-                      />
-                    </FormControl>
-                    <FormMessage className="text-error-500" />
-                  </FormItem>
-                )}
-              />
-            ))}
-            {addManager.form.formState.errors.addresses && (
-              <FormMessage className="text-error-500">
-                {addManager.form.formState.errors.addresses.message}
-              </FormMessage>
-            )}
-            {mode !== "delete" && (
-              <button
-                disabled={isReachedMaxAddressesCount}
-                type="button"
-                className="h-12 w-full text-center border border-gray-400 border-dashed rounded-lg text-gray-500 font-medium"
-                onClick={addNewAddressField}
-              >
-                + Add Authorized Address
-              </button>
-            )}
-          </div>
+  const unsavedChangesBlocker = useBlocker(mode !== "view" && !isPending);
+  useBlocker(isPending);
 
-          {mode !== "view" && (
-            <div className="flex gap-2 w-full">
-              <Button
-                type="button"
-                className="flex-1"
-                size="xl"
-                variant="secondary"
-                onClick={reset}
-                disabled={isPending}
-              >
-                Cancel
-              </Button>
-              <Button
-                className="flex-1"
-                size="xl"
-                type="submit"
-                isActionBtn
-                isLoading={isPending}
-                disabled={mode === "add" && addManager.isSubmitDisabled}
-              >
-                {mode === "delete" ? "Remove and Save" : "Add and Save"}
-              </Button>
+  return (
+    <Container variant="vertical" size="lg">
+      <Form {...addManager.form}>
+        <NavigateBackBtn />
+        {unsavedChangesBlocker.state === "blocked" ? (
+          <Button onClick={unsavedChangesBlocker.proceed}>
+            Yes i want to leave
+          </Button>
+        ) : null}
+        <form onSubmit={submit} className="w-full overflow-auto">
+          <Card className="w-full">
+            <div className="flex flex-col gap-2">
+              <h2 className="text-xl font-bold">Authorized Addresses</h2>
+              <p className="text-sm font-medium text-gray-700">
+                Manage the owner addresses that are authorized to register
+                validators to your operator?.
+                <br />
+                Whitelisted addresses are effective only when your operator
+                status is set to Private.
+              </p>
             </div>
-          )}
-        </Card>
-      </form>
-    </Form>
+            {(mode === "add" || hasWhitelistedAddresses) &&
+              !operator?.is_private && (
+                <Alert variant="warning">
+                  <AlertDescription>
+                    In order to enforce whitelisted addresses, make sure to
+                    switch the{" "}
+                    <span className="font-bold">Operator Status</span> to{" "}
+                    <span className="font-bold">Private.</span>
+                  </AlertDescription>
+                </Alert>
+              )}
+            <div ref={formRef} className="space-y-3 overflow-auto">
+              {operator?.whitelist_addresses?.map((address) => (
+                <DeletableAddress
+                  key={address}
+                  address={address}
+                  onDelete={deleteManager.add}
+                  onUndo={deleteManager.remove}
+                  isMarked={deleteManager.isMarked(address)}
+                  disabled={mode === "add"}
+                />
+              ))}
+              {addManager.fieldArray.fields.map((field, index) => (
+                <FormField
+                  key={field.id}
+                  control={addManager.form.control}
+                  name={`addresses.${index}.value`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          onPaste={handlePaste(index)}
+                          rightSlot={
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() =>
+                                addManager.fieldArray.remove(index)
+                              }
+                            >
+                              <X className="size-5" />
+                            </Button>
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage className="text-error-500" />
+                    </FormItem>
+                  )}
+                />
+              ))}
+              {addManager.form.formState.errors.addresses && (
+                <FormMessage className="text-error-500">
+                  {addManager.form.formState.errors.addresses.message}
+                </FormMessage>
+              )}
+              {mode !== "delete" && (
+                <button
+                  disabled={isReachedMaxAddressesCount}
+                  type="button"
+                  className="h-12 w-full text-center border border-gray-400 border-dashed rounded-lg text-gray-500 font-medium"
+                  onClick={addNewAddressField}
+                >
+                  + Add Authorized Address
+                </button>
+              )}
+            </div>
+
+            {mode !== "view" && (
+              <div className="flex gap-2 w-full">
+                <Button
+                  type="button"
+                  className="flex-1"
+                  size="xl"
+                  variant="secondary"
+                  onClick={reset}
+                  disabled={isPending}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  className="flex-1"
+                  size="xl"
+                  type="submit"
+                  isActionBtn
+                  isLoading={isPending}
+                  disabled={mode === "add" && addManager.isSubmitDisabled}
+                >
+                  {mode === "delete" ? "Remove and Save" : "Add and Save"}
+                </Button>
+              </div>
+            )}
+          </Card>
+        </form>
+      </Form>
+    </Container>
   );
 };
