@@ -65,6 +65,7 @@ export const withTransactionModal = <
 export const useWaitForTransactionReceipt = () => {
   const client = usePublicClient();
   return useMutation({
+    mutationKey: ["waitForTransactionReceipt"],
     mutationFn: (hash: `0x${string}`) => {
       if (!client) {
         throw new Error("Public client not found");
@@ -93,6 +94,7 @@ export const useWaitForTransactionReceipt = () => {
 export const useWaitForTransactionReceipt_Testnet = () => {
   const client = usePublicClient();
   return useMutation({
+    mutationKey: ["waitForTransactionReceipt"],
     mutationFn: (hash: `0x${string}`) => {
       if (!client) {
         throw new Error("Public client not found");

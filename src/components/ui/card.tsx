@@ -1,7 +1,6 @@
-import type { FC, ComponentPropsWithoutRef } from "react";
 import { cn } from "@/lib/utils/tw";
 import { cva, type VariantProps } from "class-variance-authority";
-import type { PropsWithAs } from "@/types/component";
+import type { ComponentWithAs } from "@/types/component";
 
 const variants = cva("bg-[#FDFEFE] dark:bg-[#0B2A3C] rounded-2xl mx-auto", {
   variants: {
@@ -17,11 +16,7 @@ const variants = cva("bg-[#FDFEFE] dark:bg-[#0B2A3C] rounded-2xl mx-auto", {
 
 export interface CardProps extends VariantProps<typeof variants> {}
 
-type FCProps = FC<
-  Omit<ComponentPropsWithoutRef<"div">, keyof CardProps> &
-    CardProps &
-    PropsWithAs<"div">
->;
+type FCProps = ComponentWithAs<"div", CardProps>;
 
 export const Card: FCProps = ({
   className,
