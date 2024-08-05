@@ -1,8 +1,8 @@
 import { getOperator } from "@/api/operator";
+import { useOperatorPageParams } from "@/hooks/operator/use-operator-page-params";
 import { type QueryConfig } from "@/lib/react-query";
 import { ms } from "@/lib/utils/number";
 import { queryOptions, useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router";
 
 export const getOperatorQueryOptions = (id: number | string) => {
   return queryOptions({
@@ -20,7 +20,7 @@ export const useOperator = (
   id?: number | string,
   { options }: UseOperatorOptions = {},
 ) => {
-  const params = useParams<{ operatorId: string }>();
+  const params = useOperatorPageParams();
   const _id = id ?? params.operatorId ?? "";
   return useQuery({
     staleTime: ms(1, "minutes"),

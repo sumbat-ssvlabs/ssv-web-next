@@ -6,7 +6,6 @@ import { GenerateKeySharesOnline } from "@/app/routes/create-cluster/generate-ke
 import { Preparation } from "@/app/routes/create-cluster/preparation";
 import { SelectOperators } from "@/app/routes/create-cluster/select-operators";
 import { CreateOperatorPreparation } from "@/app/routes/create-operator/create-operator";
-import { MainContainer } from "@/app/routes/dashboard/container";
 import { NoYourOperator } from "@/app/routes/dashboard/operators/no-your-operator";
 import { Operator } from "@/app/routes/dashboard/operators/operator";
 import { OperatorNotFound } from "@/app/routes/dashboard/operators/operator-not-found";
@@ -37,11 +36,7 @@ export const router: ReturnType<typeof createBrowserRouter> =
       children: [
         {
           path: "join",
-          element: (
-            <MainContainer>
-              <Join />
-            </MainContainer>
-          ),
+          element: [<Join />, <Join />],
         },
         {
           path: "join/operator",
@@ -139,7 +134,7 @@ export const router: ReturnType<typeof createBrowserRouter> =
     {
       path: "/connect",
       element: (
-        <DashboardLayout>
+        <DashboardLayout className="p-6">
           <ConnectWallet />
         </DashboardLayout>
       ),

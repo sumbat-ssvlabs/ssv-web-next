@@ -5,6 +5,7 @@ import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import { NumberInput } from "@/components/ui/number-input";
 import { Text } from "@/components/ui/text";
 import { toast } from "@/components/ui/use-toast";
+import { useOperatorPageParams } from "@/hooks/operator/use-operator-page-params";
 import { useOperator } from "@/hooks/use-operator";
 import { useGetOperatorEarnings } from "@/lib/contract-interactions/read/use-get-operator-earnings";
 import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
@@ -16,7 +17,6 @@ import { type ComponentPropsWithoutRef, type FC } from "react";
 import { Collapse } from "react-collapse";
 import { Helmet } from "react-helmet";
 import { useForm } from "react-hook-form";
-import { useParams } from "react-router";
 import { z } from "zod";
 
 const schema = z.object({
@@ -27,7 +27,7 @@ export const WithdrawOperatorBalance: FC<ComponentPropsWithoutRef<"div">> = ({
   className,
   ...props
 }) => {
-  const { operatorId } = useParams<{ operatorId: string }>();
+  const { operatorId } = useOperatorPageParams();
 
   const { data: operator } = useOperator();
   const operatorEarnings = useGetOperatorEarnings({

@@ -7,9 +7,9 @@ export const MainContainer: FC<ComponentPropsWithoutRef<"div">> = ({
 }) => {
   return (
     <div
-      className={cn(className, "max-w-screen-xl mx-auto h-full")}
+      className={cn(className, "max-w-screen-xl mx-auto h-full p-6")}
       {...props}
-    ></div>
+    />
   );
 };
 

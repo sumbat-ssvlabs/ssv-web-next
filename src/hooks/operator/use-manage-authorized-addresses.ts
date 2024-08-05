@@ -1,13 +1,13 @@
 import { useToast } from "@/components/ui/use-toast";
 import { useAddAuthorizedAddresses } from "@/hooks/operator/use-add-authorized-addresses";
 import { useDeleteAuthorizedAddresses } from "@/hooks/operator/use-delete-authorized-addresses";
+import { useOperatorPageParams } from "@/hooks/operator/use-operator-page-params";
 import { getOperatorQueryOptions } from "@/hooks/use-operator";
 import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
 import { useRemoveOperatorsWhitelists } from "@/lib/contract-interactions/write/use-remove-operators-whitelists";
 import { useSetOperatorsWhitelists } from "@/lib/contract-interactions/write/use-set-operators-whitelists";
 import { mergeOperatorWhitelistAddresses } from "@/lib/utils/operator";
 import { useQueryClient } from "@tanstack/react-query";
-import { useParams } from "react-router";
 
 type Mode = "add" | "delete" | "view";
 
@@ -15,7 +15,7 @@ export const useManageAuthorizedAddresses = (_operatorId?: string) => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const params = useParams<{ operatorId: string }>();
+  const params = useOperatorPageParams();
   const operatorId = _operatorId || params.operatorId;
 
   const set = useSetOperatorsWhitelists();

@@ -7,32 +7,26 @@ import type { Option } from "@/components/ui/multi-select";
 import { FancyMultiSelect } from "@/components/ui/multi-select";
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import { Text } from "@/components/ui/text";
+import { useOperatorPageParams } from "@/hooks/operator/use-operator-page-params";
 import { useOperator } from "@/hooks/use-operator";
 import { useGetOperatorEarnings } from "@/lib/contract-interactions/read/use-get-operator-earnings";
 import { formatSSV } from "@/lib/utils/number";
 import { cn } from "@/lib/utils/tw";
 import { useState, type ComponentPropsWithoutRef, type FC } from "react";
 import { Helmet } from "react-helmet";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export const Operator: FC<ComponentPropsWithoutRef<"div">> = ({
   className,
   ...props
 }) => {
-  const { operatorId } = useParams<{ operatorId: string }>();
+  const { operatorId } = useOperatorPageParams();
   const operator = useOperator(operatorId!);
 
   const earnings = useGetOperatorEarnings({ id: BigInt(operatorId!) });
   const balance = earnings.data ?? 0n;
 
   const [selected, setSelected] = useState<Option[]>([]);
-
-  if (operator.isLoading)
-    return (
-      <div className="flex flex-col items-center justify-center gap-6 h-full  pb-6">
-        <img src="/images/ssv-loader.svg" className="size-36" />
-      </div>
-    );
 
   return (
     <>
