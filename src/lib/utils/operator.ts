@@ -46,6 +46,52 @@ export const MEV_RELAYS_LOGOS = {
   [MEV_RELAYS.ULTRA_SOUND]: "ultraSound",
 };
 
+export type OperatorMetadataKeys = Extract<
+  keyof Operator,
+  | "name"
+  | "logo"
+  | "description"
+  | "setup_provider"
+  | "mev_relays"
+  | "location"
+  | "eth1_node_client"
+  | "eth2_node_client"
+  | "website_url"
+  | "twitter_url"
+  | "linkedin_url"
+  | "dkg_address"
+>;
+
+export enum OperatorMetadataFields {
+  OperatorName = "name",
+  OperatorImage = "logo",
+  Description = "description",
+  SetupProvider = "setup_provider",
+  MevRelays = "mev_relays",
+  Location = "location",
+  ExecutionClient = "eth1_node_client",
+  ConsensusClient = "eth2_node_client",
+  WebsiteUrl = "website_url",
+  TwitterUrl = "twitter_url",
+  LinkedinUrl = "linkedin_url",
+  DkgAddress = "dkg_address",
+}
+
+export const SORTED_OPERATOR_METADATA_FIELDS: OperatorMetadataKeys[] = [
+  OperatorMetadataFields.OperatorName,
+  OperatorMetadataFields.Description,
+  OperatorMetadataFields.Location,
+  OperatorMetadataFields.SetupProvider,
+  OperatorMetadataFields.ExecutionClient,
+  OperatorMetadataFields.ConsensusClient,
+  OperatorMetadataFields.MevRelays,
+  OperatorMetadataFields.WebsiteUrl,
+  OperatorMetadataFields.TwitterUrl,
+  OperatorMetadataFields.LinkedinUrl,
+  OperatorMetadataFields.DkgAddress,
+  OperatorMetadataFields.OperatorImage,
+] as const;
+
 export const sortOperators = (operators: Operator[]) => {
   return [...operators].sort((a, b) => a.id - b.id);
 };

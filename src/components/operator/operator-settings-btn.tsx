@@ -33,7 +33,7 @@ export const OperatorSettingsBtn: FC<ButtonProps> = ({
         <DropdownMenuItem onClick={() => navigate("settings")}>
           <TbAdjustments className="size-6" /> Permission Settings
         </DropdownMenuItem>{" "}
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={() => navigate("details")}>
           <TbEdit className="size-6 " /> Edit Details
         </DropdownMenuItem>
         <DropdownMenuItem className="text-error-500">

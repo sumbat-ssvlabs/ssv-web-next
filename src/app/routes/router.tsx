@@ -11,6 +11,7 @@ import { Operator } from "@/app/routes/dashboard/operators/operator";
 import { OperatorNotFound } from "@/app/routes/dashboard/operators/operator-not-found";
 import { AuthorizedAddresses } from "@/app/routes/dashboard/operators/operator-settings/authorized-addresses";
 import ExternalContract from "@/app/routes/dashboard/operators/operator-settings/external-contract";
+import { OperatorMetadata } from "@/app/routes/dashboard/operators/operator-settings/opeator-metadata";
 import { OperatorSettings } from "@/app/routes/dashboard/operators/operator-settings/operator-settings";
 import { OperatorStatus } from "@/app/routes/dashboard/operators/operator-settings/operator-status";
 import { Operators } from "@/app/routes/dashboard/operators/operators";
@@ -116,6 +117,10 @@ export const router: ReturnType<typeof createBrowserRouter> =
                 {
                   path: "withdraw",
                   element: <WithdrawOperatorBalance />,
+                },
+                {
+                  path: "details",
+                  element: <OperatorMetadata />,
                 },
               ],
             },

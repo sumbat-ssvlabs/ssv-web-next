@@ -1,6 +1,5 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
 import type { Dispatch, SetStateAction } from "react";
 import {
   createContext,
@@ -318,7 +317,8 @@ export const FileInput = forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, children, ...props }, ref) => {
-  const { dropzoneState, isFileTooBig, isLOF } = useFileUpload();
+  const { dropzoneState, isFileTooBig } = useFileUpload();
+  const isLOF = false;
   const rootProps = isLOF ? {} : dropzoneState.getRootProps();
   return (
     <div
@@ -344,12 +344,12 @@ export const FileInput = forwardRef<
       >
         {children}
       </div>
-      <Input
+      {/* <Input
         ref={dropzoneState.inputRef}
         disabled={isLOF}
         {...dropzoneState.getInputProps()}
         className={`${isLOF ? "cursor-not-allowed" : ""}`}
-      />
+      /> */}
     </div>
   );
 });
