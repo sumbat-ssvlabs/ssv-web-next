@@ -1,3 +1,4 @@
+import type { Option } from "@/components/ui/multi-select";
 import { globals } from "@/config";
 import { ethFormatter } from "@/lib/utils/number";
 import type { Operator } from "@/types/api";
@@ -45,6 +46,10 @@ export const MEV_RELAYS_LOGOS = {
   [MEV_RELAYS.MANIFOLD]: "manifold",
   [MEV_RELAYS.ULTRA_SOUND]: "ultraSound",
 };
+
+export const MEV_RELAY_OPTIONS: Option[] = Object.values(MEV_RELAYS).map(
+  (value) => ({ value: value, label: value }),
+);
 
 export type OperatorMetadataKeys = Extract<
   keyof Operator,

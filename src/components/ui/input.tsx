@@ -1,7 +1,11 @@
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 import { cn } from "@/lib/utils/tw";
+import { cva } from "class-variance-authority";
 
+export const inputVariants = cva(
+  "flex h-12 w-full gap-2 items-center rounded-lg px-5 font-medium border border-gray-400 bg-transparent placeholder:text-gray-300 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 invalid-within:border-error-500 focus-within:border-primary-500",
+);
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   leftSlot?: React.ReactNode;
@@ -13,23 +17,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div
         className={cn(
-          "flex",
-          "h-12",
-          "w-full",
-          "gap-2",
-          "items-center",
-          "rounded-lg",
-          "px-5",
-          "font-medium",
-          "border",
-          "border-gray-400",
-          "bg-transparent",
-          "placeholder:text-muted-foreground",
-          "focus-visible:outline-none",
-          "disabled:cursor-not-allowed",
-          "disabled:opacity-50",
-          "invalid-within:border-error-500",
-          "focus-within:border-primary-500",
+          inputVariants(),
           {
             "pr-1": rightSlot,
           },

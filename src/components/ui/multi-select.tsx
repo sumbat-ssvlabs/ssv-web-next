@@ -14,9 +14,9 @@ import { Command as CommandPrimitive } from "cmdk";
 
 export type Option = Record<"value" | "label", string>;
 type Props = {
-  selected: Option[];
+  selected: string[];
   options: Option[];
-  onChange: (options: Option[]) => void;
+  onChange: (options: string[]) => void;
   placeholder?: string;
 };
 export const FancyMultiSelect: React.FC<Props> = ({
@@ -26,17 +26,16 @@ export const FancyMultiSelect: React.FC<Props> = ({
   placeholder,
 }) => {
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
   const [inputValue, setInputValue] = React.useState("");
 
   const unselect = (option: Option) => {
-    onChange(selected.filter((s) => s.value !== option.value));
+    onChange(selected.filter((s) => s !== option.value));
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     const input = inputRef.current;
     if (input) {
-      console.log("input:", input);
       if (e.key === "Delete" || e.key === "Backspace") {
         console.log("yes");
         if (input.value === "") {
@@ -50,8 +49,12 @@ export const FancyMultiSelect: React.FC<Props> = ({
     }
   };
 
+  const selectedOptions = selected
+    .map((s) => options.find((o) => o.value === s))
+    .filter(Boolean) as Option[];
+
   const selectables = options.filter(
-    (option) => !selected.some((o) => o.value === option.value),
+    (option) => !selected.some((s) => s === option.value),
   );
 
   return (
@@ -59,9 +62,9 @@ export const FancyMultiSelect: React.FC<Props> = ({
       onKeyDown={handleKeyDown}
       className="overflow-visible bg-transparent"
     >
-      <div className="group rounded-md border border-input px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
-        <div className="flex flex-wrap gap-1">
-          {selected.map((option) => {
+      <div className="group rounded-lg border  border-gray-400 px-3 min-h-12 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+        <div className="flex flex-wrap items-center gap-1 h-full">
+          {selectedOptions.map((option) => {
             return (
               <Badge
                 size="xs"
@@ -100,7 +103,7 @@ export const FancyMultiSelect: React.FC<Props> = ({
                 ? ""
                 : placeholder ?? "Select option..."
             }
-            className="ml-2 flex-1 bg-transparent outline-none placeholder:text-muted-foreground"
+            className="ml-2 flex-1 bg-transparent outline-none placeholder:text-gray-400 text-base"
           />
         </div>
       </div>
@@ -119,7 +122,7 @@ export const FancyMultiSelect: React.FC<Props> = ({
                       }}
                       onSelect={() => {
                         setInputValue("");
-                        onChange([...selected, option]);
+                        onChange([...selected, option.value]);
                       }}
                       className={"cursor-pointer font-medium"}
                     >

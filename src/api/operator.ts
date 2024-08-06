@@ -1,6 +1,6 @@
 import { endpoint } from "@/api";
 import { api } from "@/lib/api-client";
-import type { Operator, OperatorsSearchResponse } from "@/types/api";
+import type { Country, Operator, OperatorsSearchResponse } from "@/types/api";
 import { isUndefined, omitBy } from "lodash-es";
 
 export const getOperator = (id: number | string) => {
@@ -22,4 +22,15 @@ export const searchOperators = (params: SearchOperatorsParams) => {
   return api.get<OperatorsSearchResponse>(
     endpoint("operators", `?${searchParams}`),
   );
+};
+
+export const getOperatorLocations = () => {
+  return api
+    .get<Country[]>(endpoint("operators", "locations"))
+    .then((res) => res.data);
+};
+export const getOperatorNodes = (layer: number) => {
+  return api
+    .get<string[]>(endpoint("operators", "nodes", layer))
+    .then((res) => res.data);
 };
