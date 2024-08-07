@@ -29,7 +29,7 @@ export const DashboardLayout: FC<ComponentPropsWithRef<"div">> = ({
           </motion.div>
         ) : (
           <motion.div
-            className={cn("flex flex-col h-screen")}
+            className={cn("flex flex-col h-screen max-h-screen")}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

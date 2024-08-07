@@ -1,3 +1,4 @@
+import type { OperatorMetadata as IOperatorMetadata } from "@/api/operator";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
@@ -20,73 +21,101 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Text } from "@/components/ui/text";
+import { Textarea } from "@/components/ui/textarea";
 import { Tooltip } from "@/components/ui/tooltip";
 import { useOperatorLocations } from "@/hooks/operator/use-operator-locations";
 import { useOperatorNodes } from "@/hooks/operator/use-operator-nodes";
+import { useSignOperatorMetadata } from "@/hooks/operator/use-sign-operator-metadata";
 import { useOperator } from "@/hooks/use-operator";
 import {
   MEV_RELAY_OPTIONS,
+  SORTED_OPERATOR_METADATA_FIELDS,
   type OperatorMetadataFields,
 } from "@/lib/utils/operator";
 import { cn } from "@/lib/utils/tw";
+import { dgkURLSchema, httpsURLSchema } from "@/lib/zod";
 import { operatorLogoSchema } from "@/lib/zod/operator";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { camelCase, mapKeys } from "lodash-es";
 import type { ComponentPropsWithoutRef, FC } from "react";
 import { useForm } from "react-hook-form";
 import { FaCircleInfo } from "react-icons/fa6";
+import { useNavigate } from "react-router";
 import { z } from "zod";
 
 const sanitizedString = z.string().regex(/^[a-zA-Z0-9_!$#’|\s]*$/, {
   message: "Only letters, numbers, and special characters are allowed.",
 });
 
-const schema = z.object({
-  logo: operatorLogoSchema,
-  name: sanitizedString.optional(),
-  description: sanitizedString.optional(),
-  dkg_address: sanitizedString.optional(),
-  eth1_node_client: sanitizedString.optional(),
-  eth2_node_client: sanitizedString.optional(),
-  linkedin_url: sanitizedString.optional(),
-  location: sanitizedString.optional(),
+export const metadataScheme = z.object({
+  logo: operatorLogoSchema.default(""),
+  name: sanitizedString.min(3),
+  description: sanitizedString.optional().default(""),
+  eth1_node_client: sanitizedString.optional().default(""),
+  eth2_node_client: sanitizedString.optional().default(""),
+  location: sanitizedString.optional().default(""),
   mev_relays: z.array(sanitizedString).transform((val) => val.join(", ")),
-  setup_provider: sanitizedString.optional(),
-  twitter_url: sanitizedString.optional(),
-  website_url: sanitizedString.optional(),
+  setup_provider: sanitizedString.optional().default(""),
+  dkg_address: z.union([z.literal(""), dgkURLSchema]),
+  twitter_url: z.union([z.literal(""), httpsURLSchema]),
+  website_url: z.union([z.literal(""), httpsURLSchema]),
+  linkedin_url: z.union([z.literal(""), httpsURLSchema]),
 }) satisfies z.ZodObject<Record<OperatorMetadataFields, z.ZodTypeAny>>;
 
 export const OperatorMetadata: FC<ComponentPropsWithoutRef<"div">> = ({
   className,
   ...props
 }) => {
+  const navigate = useNavigate();
+  const sign = useSignOperatorMetadata();
+
   const { data: operator } = useOperator();
-  const form = useForm<z.infer<typeof schema> & { mev_relays: string[] }>({
+  const { data: operatorLocations } = useOperatorLocations();
+  const { data: eth1NodeClientOptions } = useOperatorNodes(1);
+  const { data: eth2NodeClientOptions } = useOperatorNodes(2);
+
+  const form = useForm<
+    z.infer<typeof metadataScheme> & { mev_relays: string[] }
+  >({
     defaultValues: {
       ...operator,
       mev_relays: operator?.mev_relays?.split(",").filter(Boolean) ?? [],
     },
-    resolver: zodResolver(schema),
+    resolver: zodResolver(metadataScheme),
   });
 
-  const { data: operatorLocations } = useOperatorLocations();
-  const { data: eth1NodeClientOptions } = useOperatorNodes(1);
-  const { data: eth2NodeClientOptions } = useOperatorNodes(2);
+  const submit = (values: z.infer<typeof metadataScheme>) => {
+    const message = SORTED_OPERATOR_METADATA_FIELDS.reduce((acc, key) => {
+      if (!values[key]) return acc;
+      return [...acc, values[key]];
+    }, [] as string[]).join(",");
+
+    const metadata = mapKeys(values, (_, key) => {
+      if (key === "name") return "operatorName";
+      return camelCase(key);
+    }) as Omit<IOperatorMetadata, "signature">;
+
+    sign
+      .submit(operator!.id_str, {
+        message,
+        metadata,
+      })
+      .then(() => {
+        navigate("..");
+      });
+  };
 
   return (
     <Container variant="vertical" className={cn(className)} {...props}>
       <NavigateBackBtn />
       <Form {...form}>
-        <Card
-          as="form"
-          className="w-full"
-          onSubmit={form.handleSubmit((vals) => console.log("submit", vals))}
-        >
+        <Card as="form" className="w-full" onSubmit={form.handleSubmit(submit)}>
           <FormField
             control={form.control}
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Username</FormLabel>
+                <FormLabel>Operator name</FormLabel>
                 <FormControl>
                   <Input placeholder="shadcn" {...field} />
                 </FormControl>
@@ -121,7 +150,7 @@ export const OperatorMetadata: FC<ComponentPropsWithoutRef<"div">> = ({
               <FormItem>
                 <FormLabel>Description</FormLabel>
                 <FormControl>
-                  <Input placeholder="shadcn" {...field} />
+                  <Textarea placeholder="Description" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -308,7 +337,9 @@ export const OperatorMetadata: FC<ComponentPropsWithoutRef<"div">> = ({
               </FormItem>
             )}
           />
-          <Button type="submit">Submit</Button>
+          <Button size="xl" isLoading={sign.isPending} type="submit">
+            Sign Metadata
+          </Button>
         </Card>
       </Form>
     </Container>

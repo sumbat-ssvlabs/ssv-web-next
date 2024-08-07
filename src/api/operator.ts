@@ -34,3 +34,26 @@ export const getOperatorNodes = (layer: number) => {
     .get<string[]>(endpoint("operators", "nodes", layer))
     .then((res) => res.data);
 };
+
+export interface OperatorMetadata {
+  operatorName: string;
+  description: string;
+  location: string;
+  setupProvider: string;
+  eth1NodeClient: string;
+  eth2NodeClient: string;
+  mevRelays: string;
+  websiteUrl: string;
+  twitterUrl: string;
+  linkedinUrl: string;
+  dkgAddress: string;
+  logo: string;
+  signature: string;
+}
+
+export const setOperatorMetadata = (
+  operatorId: string,
+  metadata: OperatorMetadata,
+) => {
+  return api.put(endpoint("operators", operatorId, "metadata"), metadata);
+};

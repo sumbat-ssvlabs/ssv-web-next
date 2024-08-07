@@ -4,12 +4,12 @@ import { cva } from "class-variance-authority";
 import type { ComponentPropsWithoutRef, FC } from "react";
 import { MdOutlineLock } from "react-icons/md";
 
-export const variants = cva("", {
+export const variants = cva("object-cover", {
   variants: {
     size: {
       sm: "size-6 rounded-lg",
       md: "size-8 rounded-lg",
-      lg: "h-12 rounded-lg",
+      lg: "size-12 rounded-lg",
     },
   },
   defaultVariants: {

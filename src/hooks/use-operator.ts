@@ -1,6 +1,6 @@
 import { getOperator } from "@/api/operator";
 import { useOperatorPageParams } from "@/hooks/operator/use-operator-page-params";
-import { type QueryConfig } from "@/lib/react-query";
+import { queryClient, type QueryConfig } from "@/lib/react-query";
 import { ms } from "@/lib/utils/number";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
@@ -9,6 +9,12 @@ export const getOperatorQueryOptions = (id: number | string) => {
     queryKey: ["operator", id.toString()],
     queryFn: () => getOperator(id),
     enabled: !!id,
+  });
+};
+
+export const invalidateOperatorQuery = (id: number | string) => {
+  return queryClient.invalidateQueries({
+    queryKey: getOperatorQueryOptions(id).queryKey,
   });
 };
 

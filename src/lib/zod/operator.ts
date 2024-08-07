@@ -33,10 +33,9 @@ const fileSchema = z
 export const operatorLogoSchema = z
   .preprocess(
     (val) => {
-      console.log("val:", val);
       if (val instanceof FileList) return val[0];
-      return undefined;
+      return "";
     },
-    z.union([z.undefined(), fileSchema]),
+    z.union([z.string().default(""), fileSchema]),
   )
   .optional();
