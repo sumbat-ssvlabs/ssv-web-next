@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
+import { Stepper } from "@/components/ui/stepper";
 import { Text } from "@/components/ui/text";
 import { useOperatorPageParams } from "@/hooks/operator/use-operator-page-params";
 import { useOperator } from "@/hooks/use-operator";
@@ -35,6 +36,25 @@ export const Operator: FC<ComponentPropsWithoutRef<"div">> = ({
             <div className="flex w-full items-center justify-between">
               <NavigateBackBtn>Operators</NavigateBackBtn>
               <OperatorSettingsBtn />
+            </div>
+            <div className="flex">
+              <Stepper
+                className="w-[700px]"
+                steps={[
+                  { label: "Declare Fee Aug 7, 4:05 PM" },
+                  { label: "Waiting Period" },
+                  {
+                    label: "Pending Execution",
+                    addon: (
+                      <Text variant="caption-bold" className="text-error-500">
+                        Not good bro
+                      </Text>
+                    ),
+                  },
+                  { label: "Fee Updated" },
+                ]}
+                stepIndex={0}
+              />
             </div>
             <div className="flex items-end flex-1 gap-20">
               <div className="flex flex-col gap-2">
@@ -80,7 +100,7 @@ export const Operator: FC<ComponentPropsWithoutRef<"div">> = ({
                 Annual Fee
               </Text>
               <Text variant="headline3">20 SSV</Text>
-              <Button variant="secondary" size="xl">
+              <Button as={Link} to="update-fee" variant="secondary" size="xl">
                 Update Fee
               </Button>
             </Card>

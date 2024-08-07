@@ -10,9 +10,9 @@
     "fix": "eslint . --ext ts,tsx --fix",
     "preview": "vite preview",
     "prepare": "husky install",
+    "preinstall": "git config --global url.\"https://\".insteadOf git+ssh://git@",
     "type-check": "tsc -b",
-    "lint-staged": "lint-staged",
-    "preinstall": "npx only-allow pnpm"
+    "lint-staged": "lint-staged"
   },
   "lint-staged": {
     "src/**/*.{ts,tsx,js,json}": [

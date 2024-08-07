@@ -5,7 +5,6 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 
 import { router } from "@/app/routes/router";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { RainbowKitProvider } from "@/lib/providers/rainbow-kit";
 import { persister, queryClient } from "@/lib/react-query";
@@ -23,12 +22,12 @@ import "@fontsource/manrope/500.css";
 import "@fontsource/manrope/700.css";
 import "@fontsource/manrope/800.css";
 
-if (import.meta.env.DEV) {
-  // @ts-expect-error BigInt is not supported in JSON
-  BigInt.prototype["toJSON"] = function () {
-    return this.toString();
-  };
-}
+// if (import.meta.env.DEV) {
+//   // @ts-expect-error BigInt is not supported in JSON
+//   BigInt.prototype["toJSON"] = function () {
+//     return this.toString();
+//   };
+// }
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -41,9 +40,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         }}
       >
         <RainbowKitProvider>
-          {import.meta.env.DEV && (
+          {/* {import.meta.env.DEV && (
             <ReactQueryDevtools buttonPosition="bottom-right" />
-          )}
+          )} */}
           <RouterProvider router={router} />
           <Toaster />
           <Text

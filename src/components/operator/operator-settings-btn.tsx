@@ -36,7 +36,10 @@ export const OperatorSettingsBtn: FC<ButtonProps> = ({
         <DropdownMenuItem onClick={() => navigate("details")}>
           <TbEdit className="size-6 " /> Edit Details
         </DropdownMenuItem>
-        <DropdownMenuItem className="text-error-500">
+        <DropdownMenuItem
+          className="text-error-500"
+          onClick={() => navigate("remove")}
+        >
           <TbTrash className="size-6" /> Remove Operator
         </DropdownMenuItem>
       </DropdownMenuContent>

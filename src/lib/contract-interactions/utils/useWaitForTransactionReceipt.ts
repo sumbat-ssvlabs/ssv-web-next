@@ -31,20 +31,20 @@ export const withTransactionModal = <
     successToast?: Toast;
   },
 >(
-  options: T,
+  options?: T,
 ) => {
   return {
     onConfirmed: (hash) => {
       useTransactionModal.state.open({ hash });
-      options.onConfirmed?.(hash);
+      options?.onConfirmed?.(hash);
     },
     onMined: (receipt) => {
       useTransactionModal.state.close();
-      options.onMined?.(receipt);
+      options?.onMined?.(receipt);
       toast({
         title: "Transaction confirmed",
         description: new Date().toLocaleString(),
-        ...options.successToast,
+        ...options?.successToast,
       });
     },
     onError: (error) => {
@@ -57,7 +57,7 @@ export const withTransactionModal = <
             : error?.message || "Unknown error",
         variant: "destructive",
       });
-      options.onError?.(error);
+      options?.onError?.(error);
     },
   } satisfies MutationOptions<MainnetEvent | TestnetEvent>;
 };

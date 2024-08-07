@@ -11,10 +11,12 @@ import { Operator } from "@/app/routes/dashboard/operators/operator";
 import { OperatorNotFound } from "@/app/routes/dashboard/operators/operator-not-found";
 import { AuthorizedAddresses } from "@/app/routes/dashboard/operators/operator-settings/authorized-addresses";
 import ExternalContract from "@/app/routes/dashboard/operators/operator-settings/external-contract";
-import { OperatorMetadata } from "@/app/routes/dashboard/operators/operator-settings/opeator-metadata";
+import { OperatorMetadata } from "@/app/routes/dashboard/operators/operator-settings/operator-metadata";
 import { OperatorSettings } from "@/app/routes/dashboard/operators/operator-settings/operator-settings";
 import { OperatorStatus } from "@/app/routes/dashboard/operators/operator-settings/operator-status";
 import { Operators } from "@/app/routes/dashboard/operators/operators";
+import { RemoveOperator } from "@/app/routes/dashboard/operators/remove-operator";
+import { UpdateFee } from "@/app/routes/dashboard/operators/update-fee/update-fee";
 import { WithdrawOperatorBalance } from "@/app/routes/dashboard/operators/withdraw-operator-balance";
 import { Validators } from "@/app/routes/dashboard/validators/validators";
 import { Join } from "@/app/routes/join/join";
@@ -115,12 +117,20 @@ export const router: ReturnType<typeof createBrowserRouter> =
                   ],
                 },
                 {
+                  path: "update-fee",
+                  element: <UpdateFee />,
+                },
+                {
                   path: "withdraw",
                   element: <WithdrawOperatorBalance />,
                 },
                 {
                   path: "details",
                   element: <OperatorMetadata />,
+                },
+                {
+                  path: "remove",
+                  element: <RemoveOperator />,
                 },
               ],
             },

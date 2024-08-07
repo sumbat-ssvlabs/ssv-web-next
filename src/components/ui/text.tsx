@@ -1,5 +1,5 @@
-import type { FC, ComponentPropsWithoutRef, ElementType } from "react";
 import { cn } from "@/lib/utils/tw";
+import type { ComponentWithAs } from "@/types/component";
 import { cva, type VariantProps } from "class-variance-authority";
 
 const variants = cva("", {
@@ -28,14 +28,7 @@ const variants = cva("", {
   defaultVariants: {},
 });
 
-export interface TextProps extends VariantProps<typeof variants> {
-  as?: ElementType;
-}
-
-type FCProps = FC<
-  Omit<ComponentPropsWithoutRef<"p" | "h1" | "span">, keyof TextProps> &
-    TextProps
->;
+type FCProps = ComponentWithAs<"p", VariantProps<typeof variants>>;
 
 export const Text: FCProps = ({
   className,
