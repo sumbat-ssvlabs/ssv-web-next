@@ -74,7 +74,8 @@ export const UpdateFee: FC<ComponentPropsWithoutRef<"div">> = ({
                     rightSlot={
                       <Button
                         size="sm"
-                        variant="ghost"
+                        variant="subtle"
+                        className="text-xs font-bold"
                         onClick={() => field.onChange(max)}
                       >
                         Max

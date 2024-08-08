@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
-import { Stepper } from "@/components/ui/stepper";
 import { Text } from "@/components/ui/text";
 import { useOperatorPageParams } from "@/hooks/operator/use-operator-page-params";
 import { useOperator } from "@/hooks/use-operator";
@@ -42,7 +41,7 @@ export const Operator: FC<ComponentPropsWithoutRef<"div">> = ({
               <OperatorSettingsBtn />
             </div>
             <div className="flex">
-              <Stepper
+              {/* <Stepper
                 className="w-[700px]"
                 steps={[
                   { label: "Declare Fee Aug 7, 4:05 PM" },
@@ -58,7 +57,7 @@ export const Operator: FC<ComponentPropsWithoutRef<"div">> = ({
                   { label: "Fee Updated" },
                 ]}
                 stepIndex={0}
-              />
+              /> */}
             </div>
             <div className="flex items-end flex-1 gap-20">
               <div className="flex flex-col gap-2">

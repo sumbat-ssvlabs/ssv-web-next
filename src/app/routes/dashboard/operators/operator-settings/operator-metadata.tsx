@@ -36,7 +36,7 @@ import { cn } from "@/lib/utils/tw";
 import { dgkURLSchema, httpsURLSchema } from "@/lib/zod";
 import { operatorLogoSchema } from "@/lib/zod/operator";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { camelCase, mapKeys } from "lodash-es";
+import { camelCase, isEqual, mapKeys } from "lodash-es";
 import type { ComponentPropsWithoutRef, FC } from "react";
 import { useForm } from "react-hook-form";
 import { FaCircleInfo } from "react-icons/fa6";
@@ -74,15 +74,19 @@ export const OperatorMetadata: FC<ComponentPropsWithoutRef<"div">> = ({
   const { data: eth1NodeClientOptions } = useOperatorNodes(1);
   const { data: eth2NodeClientOptions } = useOperatorNodes(2);
 
+  const defaults = {
+    ...operator,
+    mev_relays: operator?.mev_relays?.split(",").filter(Boolean) ?? [],
+  };
+
   const form = useForm<
     z.infer<typeof metadataScheme> & { mev_relays: string[] }
   >({
-    defaultValues: {
-      ...operator,
-      mev_relays: operator?.mev_relays?.split(",").filter(Boolean) ?? [],
-    },
+    defaultValues: defaults,
     resolver: zodResolver(metadataScheme),
   });
+
+  const isChange = !isEqual(defaults, form.getValues());
 
   const submit = (values: z.infer<typeof metadataScheme>) => {
     const message = SORTED_OPERATOR_METADATA_FIELDS.reduce((acc, key) => {
@@ -337,7 +341,12 @@ export const OperatorMetadata: FC<ComponentPropsWithoutRef<"div">> = ({
               </FormItem>
             )}
           />
-          <Button size="xl" isLoading={sign.isPending} type="submit">
+          <Button
+            size="xl"
+            isLoading={sign.isPending}
+            type="submit"
+            disabled={!isChange}
+          >
             Sign Metadata
           </Button>
         </Card>
