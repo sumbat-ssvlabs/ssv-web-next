@@ -1,9 +1,6 @@
-import type { FC, ComponentPropsWithoutRef } from "react";
-import { cn } from "@/lib/utils/tw";
-import { Container } from "@/components/ui/container";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Text } from "@/components/ui/text";
-import { useForm } from "react-hook-form";
+import { Container } from "@/components/ui/container";
 import {
   Form,
   FormControl,
@@ -12,49 +9,49 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import { NumberInput } from "@/components/ui/number-input";
-import { Button } from "@/components/ui/button";
-import { useGetOperatorFeeIncreaseLimit } from "@/lib/contract-interactions/read/use-get-operator-fee-increase-limit";
-import { useGetMaximumOperatorFee } from "@/lib/contract-interactions/read/use-get-maximum-operator-fee";
-import { useOperator } from "@/hooks/use-operator";
-import { z } from "zod";
+import { Text } from "@/components/ui/text";
+import { useOperatorFeeLimits } from "@/hooks/operator/use-operator-fee-limits";
+import { formatSSV } from "@/lib/utils/number";
+import { cn } from "@/lib/utils/tw";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { getYearlyFee } from "@/lib/utils/operator";
+import type { ComponentPropsWithoutRef, FC } from "react";
+import { useForm } from "react-hook-form";
+import { formatUnits } from "viem";
+import { z } from "zod";
+
 export const UpdateFee: FC<ComponentPropsWithoutRef<"div">> = ({
   className,
   ...props
 }) => {
-  const { data: operator } = useOperator();
-  const increaseLimit = useGetOperatorFeeIncreaseLimit();
-  const maxOperatorFee = useGetMaximumOperatorFee();
-
-  const isLoading = increaseLimit.isLoading || maxOperatorFee.isLoading;
-
-  const operatorYearlyFee = getYearlyFee(BigInt(operator?.fee ?? 0));
-  console.log("operatorYearlyFee:", operatorYearlyFee);
-  const max = getYearlyFee(
-    BigInt(operator?.fee ?? 0) * (increaseLimit.data ?? BigInt(0)),
-  );
-  console.log("max:", max);
+  const { min, max, isLoading, operatorYearlyFee } = useOperatorFeeLimits();
 
   const schema = z.object({
     fee: z
       .bigint()
-      .min(operator?.is_private ? 0n : max)
-      .max(maxOperatorFee.data ?? BigInt(0)),
+      .min(min, `Fee must be higher than ${formatUnits(min, 18)} SSV`)
+      .max(max, `You can only increase your fee up to ${formatUnits(max, 18)}`),
   });
 
   const form = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
     defaultValues: {
       fee: operatorYearlyFee,
     },
-    resolver: zodResolver(schema),
   });
 
+  const isChanged = form.watch("fee") !== operatorYearlyFee;
+
   return (
-    <Container className={cn(className)} {...props}>
+    <Container variant="vertical" className={cn(className)} {...props}>
+      <NavigateBackBtn />
       <Form {...form}>
-        <Card as="form" onSubmit={form.handleSubmit(console.log)}>
+        <Card
+          as="form"
+          className="w-full"
+          onSubmit={form.handleSubmit(console.log)}
+        >
           <Text variant="headline4">Update Fee</Text>
           <Text variant="body-2-medium">
             Enter your new operator annual fee.
@@ -64,15 +61,37 @@ export const UpdateFee: FC<ComponentPropsWithoutRef<"div">> = ({
             name="fee"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Annual fee</FormLabel>
+                <FormLabel className="flex w-full justify-between gap-2">
+                  <Text>Annual fee</Text>
+                  <Text className="text-gray-500" variant="caption-bold">
+                    Max: {formatSSV(max)}
+                  </Text>
+                </FormLabel>
                 <FormControl>
-                  <NumberInput placeholder="shadcn" {...field} />
+                  <NumberInput
+                    placeholder="shadcn"
+                    {...field}
+                    rightSlot={
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => field.onChange(max)}
+                      >
+                        Max
+                      </Button>
+                    }
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button type="submit" isLoading={isLoading}>
+          <Button
+            size="xl"
+            type="submit"
+            isLoading={isLoading}
+            disabled={!isChanged}
+          >
             Next
           </Button>
         </Card>

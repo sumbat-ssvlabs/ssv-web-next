@@ -9,7 +9,9 @@ import { Text } from "@/components/ui/text";
 import { useOperatorPageParams } from "@/hooks/operator/use-operator-page-params";
 import { useOperator } from "@/hooks/use-operator";
 import { useGetOperatorEarnings } from "@/lib/contract-interactions/read/use-get-operator-earnings";
+import { useGetOperatorFee } from "@/lib/contract-interactions/read/use-get-operator-fee";
 import { formatSSV } from "@/lib/utils/number";
+import { getYearlyFee } from "@/lib/utils/operator";
 import { cn } from "@/lib/utils/tw";
 import { type ComponentPropsWithoutRef, type FC } from "react";
 import { Helmet } from "react-helmet";
@@ -23,6 +25,8 @@ export const Operator: FC<ComponentPropsWithoutRef<"div">> = ({
   const operator = useOperator(operatorId!);
 
   const earnings = useGetOperatorEarnings({ id: BigInt(operatorId!) });
+  const fee = useGetOperatorFee({ operatorId: BigInt(operatorId!) });
+  const yearlyFee = getYearlyFee(fee.data ?? 0n);
   const balance = earnings.data ?? 0n;
 
   return (
@@ -99,7 +103,7 @@ export const Operator: FC<ComponentPropsWithoutRef<"div">> = ({
               <Text variant="headline4" className="text-gray-500">
                 Annual Fee
               </Text>
-              <Text variant="headline3">20 SSV</Text>
+              <Text variant="headline3">{formatSSV(yearlyFee)} SSV</Text>
               <Button as={Link} to="update-fee" variant="secondary" size="xl">
                 Update Fee
               </Button>
