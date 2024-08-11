@@ -4,11 +4,12 @@ import type { Country, Operator, OperatorsSearchResponse } from "@/types/api";
 import { isUndefined, omitBy } from "lodash-es";
 
 export const getOperator = (id: number | string) => {
-  return api.get<Operator>(endpoint("operators", id)).then((res) => res.data);
+  return api.get<Operator>(endpoint("operators", id));
 };
 
 type OrderBy = "id" | "validators_count" | "performance.30d" | "fee" | "mev";
 type Sort = "asc" | "desc";
+
 export type SearchOperatorsParams = {
   search?: string;
   ordering?: `${OrderBy}:${Sort}`;
@@ -24,17 +25,38 @@ export const searchOperators = (params: SearchOperatorsParams) => {
   );
 };
 
-export const getOperatorLocations = () => {
-  return api
-    .get<Country[]>(endpoint("operators", "locations"))
-    .then((res) => res.data);
+type GetAccountOperatorsParams = {
+  address: string;
+  page?: number;
+  perPage?: number;
 };
-export const getOperatorNodes = (layer: number) => {
-  return api
-    .get<string[]>(endpoint("operators", "nodes", layer))
-    .then((res) => res.data);
+export const getPaginatedAccountOperators = ({
+  address,
+  page = 1,
+  perPage = 10,
+}: GetAccountOperatorsParams) => {
+  return api.get<OperatorsSearchResponse>(
+    endpoint(
+      "operators",
+      "owned_by",
+      address,
+      `?${new URLSearchParams({
+        page: page.toString(),
+        perPage: perPage.toString(),
+        withFee: "true",
+        ordering: "id:asc",
+      }).toString()}`,
+    ),
+  );
 };
 
+export const getOperatorLocations = () => {
+  return api.get<Country[]>(endpoint("operators", "locations"));
+};
+
+export const getOperatorNodes = (layer: number) => {
+  return api.get<string[]>(endpoint("operators", "nodes", layer));
+};
 export interface OperatorMetadata {
   operatorName: string;
   description: string;

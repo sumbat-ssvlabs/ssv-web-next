@@ -18,7 +18,7 @@ export const DashboardLayout: FC<ComponentPropsWithRef<"div">> = ({
         {isRestoring ? (
           <motion.div
             className={cn(
-              "dark fixed bg-gray-50 inset-0 flex h-screen items-center justify-center",
+              "fixed bg-gray-50 inset-0 flex h-screen items-center justify-center",
             )}
             key="loading"
             initial={{ opacity: 0 }}
@@ -29,7 +29,7 @@ export const DashboardLayout: FC<ComponentPropsWithRef<"div">> = ({
           </motion.div>
         ) : (
           <motion.div
-            className={cn("flex flex-col h-screen max-h-screen")}
+            className={cn("text-gray-800 flex flex-col h-screen max-h-screen")}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

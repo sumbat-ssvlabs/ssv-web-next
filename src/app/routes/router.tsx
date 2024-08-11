@@ -5,7 +5,6 @@ import { GenerateKeySharesOffline } from "@/app/routes/create-cluster/generate-k
 import { GenerateKeySharesOnline } from "@/app/routes/create-cluster/generate-key-shares-online";
 import { Preparation } from "@/app/routes/create-cluster/preparation";
 import { SelectOperators } from "@/app/routes/create-cluster/select-operators";
-import { CreateOperatorPreparation } from "@/app/routes/create-operator/create-operator";
 import { NoYourOperator } from "@/app/routes/dashboard/operators/no-your-operator";
 import { Operator } from "@/app/routes/dashboard/operators/operator";
 import { OperatorNotFound } from "@/app/routes/dashboard/operators/operator-not-found";
@@ -20,6 +19,8 @@ import { UpdateFee } from "@/app/routes/dashboard/operators/update-fee/update-fe
 import { WithdrawOperatorBalance } from "@/app/routes/dashboard/operators/withdraw-operator-balance";
 import { Validators } from "@/app/routes/dashboard/validators/validators";
 import { Join } from "@/app/routes/join/join";
+import { JoinOperatorPreparation } from "@/app/routes/join/operator/join-operator-preparation";
+import { RegisterOperator } from "@/app/routes/join/operator/register-operator";
 import { ProtectedOperatorRoute } from "@/app/routes/protected-operator-route";
 import { ProtectedRoute } from "@/app/routes/protected-route";
 import { OperatorDashboard } from "@/components/dashboard/operator-dashboard";
@@ -39,17 +40,26 @@ export const router: ReturnType<typeof createBrowserRouter> =
       children: [
         {
           path: "join",
-          element: [<Join />, <Join />],
+          element: <Join />,
         },
         {
           path: "join/operator",
-          element: <CreateOperatorPreparation />,
+          element: <Outlet />,
+          children: [
+            {
+              index: true,
+              element: <JoinOperatorPreparation />,
+            },
+            {
+              path: "register",
+              element: <RegisterOperator />,
+            },
+          ],
         },
         {
           path: "my-account/operator-dashboard",
           element: <OperatorDashboard />,
         },
-
         {
           path: "validators",
           element: <Validators />,

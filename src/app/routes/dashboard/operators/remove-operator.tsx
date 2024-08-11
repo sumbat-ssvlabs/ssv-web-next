@@ -6,8 +6,10 @@ import { Container } from "@/components/ui/container";
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import { Text } from "@/components/ui/text";
 import { useOperatorPageParams } from "@/hooks/operator/use-operator-page-params";
+import { getOperatorQueryOptions } from "@/hooks/use-operator";
 import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
 import { useRemoveOperator } from "@/lib/contract-interactions/write/use-remove-operator";
+import { queryClient } from "@/lib/react-query";
 import { useState, type FC } from "react";
 
 export const RemoveOperator: FC = () => {
@@ -19,7 +21,19 @@ export const RemoveOperator: FC = () => {
       {
         operatorId: BigInt(operatorId!),
       },
-      withTransactionModal(),
+      withTransactionModal({
+        onMined: () => {
+          const queryKey = getOperatorQueryOptions(operatorId!).queryKey;
+          queryClient.cancelQueries({ queryKey });
+          queryClient.setQueryData(queryKey, (prev) => {
+            if (!prev) return prev;
+            return {
+              ...prev,
+              is_deleted: true,
+            };
+          });
+        },
+      }),
     );
 
   const [accepted, setAccepted] = useState(false);

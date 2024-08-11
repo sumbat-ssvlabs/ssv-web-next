@@ -16,7 +16,7 @@ export const useSearchOperators = ({
         ordering,
         page: pageParam,
         perPage: 20,
-      }).then((res) => res.data),
+      }),
     getNextPageParam: (lastPage) => {
       const { page, pages } = lastPage.pagination;
       return page < pages ? page + 1 : undefined;

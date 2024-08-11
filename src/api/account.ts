@@ -19,4 +19,4 @@ export const getAccount = (account: Address) =>
   api.get<GetAccountResponse>(endpoint("accounts", getAddress(account)));
 
 export const getOwnerNonce = (account: Address) =>
-  getAccount(account).then((res) => res.data.data.nonce);
+  getAccount(account).then((res) => res.data.nonce);

@@ -25,7 +25,7 @@ export const buttonVariants = cva(
       },
       colorScheme: {
         wallet:
-          "bg-[#F9FBFC] hover:bg-[#F2F6FA] text-black dark:bg-[#062031] dark:hover:bg-[#011627]",
+          "bg-[#F9FBFC] hover:bg-[#F2F6FA] text-gray-900 dark:bg-[#062031] dark:hover:bg-[#011627]",
       },
       size: {
         default: "h-10 px-4 py-2 font-semibold text-md rounded-lg",

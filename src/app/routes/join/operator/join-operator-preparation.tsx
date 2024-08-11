@@ -4,8 +4,9 @@ import { Container } from "@/components/ui/container";
 import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils/tw";
 import type { ComponentPropsWithoutRef, FC } from "react";
+import { Link } from "react-router-dom";
 
-export const CreateOperatorPreparation: FC<ComponentPropsWithoutRef<"div">> = ({
+export const JoinOperatorPreparation: FC<ComponentPropsWithoutRef<"div">> = ({
   className,
   ...props
 }) => {
@@ -27,7 +28,13 @@ export const CreateOperatorPreparation: FC<ComponentPropsWithoutRef<"div">> = ({
             </Text>
           </div>
           <div className="flex-1 flex gap-2 flex-col items-center">
-            <Button variant="secondary" size="xl" className="w-full">
+            <Button
+              as={Link}
+              to="register"
+              variant="secondary"
+              size="xl"
+              className="w-full"
+            >
               Register Operator
             </Button>
             <Text variant="body-3-medium" className="text-gray-500">
@@ -40,4 +47,4 @@ export const CreateOperatorPreparation: FC<ComponentPropsWithoutRef<"div">> = ({
   );
 };
 
-CreateOperatorPreparation.displayName = "CreateOperatorPreparation";
+JoinOperatorPreparation.displayName = "CreateOperatorPreparation";

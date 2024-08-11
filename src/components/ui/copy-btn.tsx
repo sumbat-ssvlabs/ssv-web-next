@@ -21,7 +21,10 @@ export const CopyBtn: FCProps = ({ className, text, ...props }) => {
       variant="ghost"
       className={cn("relative inline-flex size-6  overflow-hidden", className)}
       {...props}
-      onClick={() => copy(text ?? "")}
+      onClick={(ev) => {
+        ev.stopPropagation();
+        return copy(text ?? "");
+      }}
     >
       <AnimatePresence>
         {!hasCopied ? (

@@ -8,5 +8,5 @@ export const getCluster = (hash: string) =>
 
 export const getClusterData = (hash: string): Promise<Cluster["clusterData"]> =>
   getCluster(hash)
-    .then((res) => res.data.cluster ?? getDefaultClusterData())
+    .then((res) => res.cluster ?? getDefaultClusterData())
     .catch(() => getDefaultClusterData());

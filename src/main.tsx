@@ -41,7 +41,10 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       >
         <RainbowKitProvider>
           {/* {import.meta.env.DEV && (
-            <ReactQueryDevtools buttonPosition="bottom-right" />
+            <ReactQueryDevtools
+              buttonPosition="bottom-right"
+              client={queryClient}
+            />
           )} */}
           <RouterProvider router={router} />
           <Toaster />
