@@ -114,3 +114,28 @@ export type Country = {
   "sub-region": string;
   "sub-region-code": string;
 };
+
+export interface GetOperatorByPublicKeyResponse {
+  type: string;
+  data?: {
+    primaryId: number;
+    id: number;
+    network: string;
+    version: string;
+    ownerAddress: string;
+    publicKey: string;
+    fee: string;
+    previousFee: string;
+    declaredFee: string;
+    addressWhitelist: string;
+    memo: null;
+    blockNumber: number;
+    isValid: boolean;
+    isDeleted: boolean;
+    createdAt: string;
+    updatedAt: string;
+    whitelistAddresses: string[];
+    isPrivate: boolean;
+    whitelistingContract: string;
+  };
+}

@@ -9,6 +9,7 @@ import type {
   ExtractAbiFunction,
   ExtractAbiFunctionNames,
 } from "abitype";
+import { isUndefined } from "lodash-es";
 
 export type AbiInputsToParams<T extends readonly AbiParameter[]> = {
   [K in T[number] as K["name"] extends string
@@ -28,7 +29,7 @@ export const paramsToArray = <
 }) => {
   return abiFunction.inputs.reduce(
     (acc, param) => {
-      if (param.name && params[param.name]) {
+      if (param.name && !isUndefined(params[param.name])) {
         return [...acc, params[param.name]] as AbiParametersToPrimitiveTypes<
           Fn["inputs"]
         >;

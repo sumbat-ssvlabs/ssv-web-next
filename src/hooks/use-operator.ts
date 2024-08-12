@@ -6,6 +6,7 @@ import { queryOptions, useQuery } from "@tanstack/react-query";
 
 export const getOperatorQueryOptions = (id: number | string) => {
   return queryOptions({
+    staleTime: ms(1, "minutes"),
     queryKey: ["operator", id.toString()],
     queryFn: () => getOperator(id),
     enabled: !!id,
@@ -29,7 +30,6 @@ export const useOperator = (
   const params = useOperatorPageParams();
   const _id = id ?? params.operatorId ?? "";
   return useQuery({
-    staleTime: ms(1, "minutes"),
     ...getOperatorQueryOptions(_id),
     ...options,
   });

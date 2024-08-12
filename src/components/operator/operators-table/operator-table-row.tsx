@@ -30,14 +30,16 @@ export const OperatorTableRow: FCProps = ({
   return (
     <TableRow
       key={operator.id}
-      className={cn("cursor-pointer", className)}
+      className={cn("cursor-pointer max-h-7", className)}
       {...props}
     >
       <TableCell className="font-medium">
         <OperatorDetails operator={operator} />
       </TableCell>
       <TableCell>
-        <Badge variant="multi-select">{operator.status}</Badge>
+        <Badge size="sm" variant="multi-select">
+          {operator.status}
+        </Badge>
       </TableCell>
       <TableCell>
         {percentageFormatter.format(operator.performance["30d"])}

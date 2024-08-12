@@ -21,7 +21,7 @@ export const OperatorStatusBadge: FCProps = ({
   return (
     <Badge
       variant={isPrivate ? "success" : "info"}
-      className={cn(className)}
+      className={cn(className, "rounded-md")}
       {...props}
     >
       <Icon className="size-[18px]" />

@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
+import { Spinner } from "@/components/ui/spinner";
 import { Tooltip } from "@/components/ui/tooltip";
 import { toast } from "@/components/ui/use-toast";
 import { globals } from "@/config";
@@ -23,7 +24,7 @@ import { queryClient } from "@/lib/react-query";
 import { tryCatch } from "@/lib/utils/tryCatch";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { Loader2, X } from "lucide-react";
+import { X } from "lucide-react";
 import type { FC } from "react";
 import { useMemo } from "react";
 import { useForm } from "react-hook-form";
@@ -205,7 +206,7 @@ export const ExternalContract: FC = () => {
                       }
                       leftSlot={
                         isWhitelistingContract.isPending ? (
-                          <Loader2 className="w-6 h-6 text-primary-500 animate-spin" />
+                          <Spinner />
                         ) : (
                           <IoDocumentTextOutline className="w-6 h-6 text-gray-600" />
                         )

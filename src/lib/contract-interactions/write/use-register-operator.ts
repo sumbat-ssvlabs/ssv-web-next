@@ -33,13 +33,16 @@ export const useRegisterOperator = () => {
     params: AbiInputsToParams<Fn["inputs"]>,
     options: MutationOptions<MainnetEvent> = {},
   ) => {
+    console.log("params:", params);
+    const arrrag = paramsToArray({ params, abiFunction });
+    console.log("arrrag:", arrrag);
     return mutation
       .writeContractAsync(
         {
           abi: MainnetV4SetterABI,
           address: setterContractAddress,
           functionName: "registerOperator",
-          args: paramsToArray({ params, abiFunction }),
+          args: arrrag,
         },
         {
           onSuccess: (hash) => options.onConfirmed?.(hash),

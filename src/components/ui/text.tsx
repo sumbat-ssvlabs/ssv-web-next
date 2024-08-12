@@ -45,4 +45,19 @@ export const Text: FCProps = ({
   );
 };
 
+export const Span: FCProps = ({
+  className,
+  variant,
+  children,
+  as,
+  ...props
+}) => {
+  const Component = as ?? "span";
+  return (
+    <Component className={cn(variants({ variant, className }))} {...props}>
+      {children}
+    </Component>
+  );
+};
+
 Text.displayName = "Text";

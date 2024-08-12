@@ -19,33 +19,70 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Divider } from "@/components/ui/divider";
-import { Badge } from "@/components/ui/badge";
-
-const schema = z.object({
-  owner: z.string().trim().refine(isAddress).readonly(),
-  publicKey: z.string().min(1),
-});
+import { useMutation } from "@tanstack/react-query";
+import { queryClient } from "@/lib/react-query";
+import { getOperatorByPublicKeyQueryOptions } from "@/hooks/operator/get-get-operator-by-public-key";
+import { FaCircleInfo } from "react-icons/fa6";
+import { Tooltip } from "@/components/ui/tooltip";
+import { Switch } from "@/components/ui/switch";
+import { OperatorStatusBadge } from "@/components/operator/operator-permission/operator-status-badge";
+import { useRegisterOperatorState } from "@/context/create-operator-context";
+import { useNavigate } from "react-router";
+import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 
 export const RegisterOperator: FC<ComponentPropsWithoutRef<"div">> = ({
   className,
   ...props
 }) => {
+  const navigate = useNavigate();
   const { address } = useAccount();
+
+  const fetchOperatorByPublicKey = useMutation({
+    mutationFn: (publicKey: string) =>
+      queryClient.fetchQuery(getOperatorByPublicKeyQueryOptions(publicKey)),
+  });
+
+  const schema = z.object({
+    owner: z.string().trim().refine(isAddress).readonly(),
+    isPrivate: z.boolean().optional().default(false),
+    publicKey: z
+      .string()
+      .trim()
+      .superRefine(async (v, ctx) => {
+        if (!/^[A-Za-z0-9]{612}$/.test(v))
+          return ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Invalid public key",
+          });
+
+        const { data } = await fetchOperatorByPublicKey.mutateAsync(v);
+        if (data) {
+          return ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Operator already registered",
+          });
+        }
+      }),
+  });
 
   const form = useForm<z.infer<typeof schema>>({
     defaultValues: {
       owner: address,
-      publicKey: "",
+      publicKey: useRegisterOperatorState.state.publicKey,
+      isPrivate: useRegisterOperatorState.state.isPrivate,
     },
     resolver: zodResolver(schema),
   });
 
   const submit = form.handleSubmit((values) => {
-    console.log(values);
+    useRegisterOperatorState.state.isPrivate = values.isPrivate;
+    useRegisterOperatorState.state.publicKey = values.publicKey;
+    navigate("../fee");
   });
 
   return (
-    <Container>
+    <Container variant="vertical">
+      <NavigateBackBtn by="history" />
       <Form {...form}>
         <Card as="form" onSubmit={submit} className={cn(className)} {...props}>
           <Text variant="headline4">Register Operator</Text>
@@ -74,7 +111,10 @@ export const RegisterOperator: FC<ComponentPropsWithoutRef<"div">> = ({
               <FormItem>
                 <FormLabel>Operator Public Key</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input
+                    {...field}
+                    isLoading={fetchOperatorByPublicKey.isPending}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -82,8 +122,41 @@ export const RegisterOperator: FC<ComponentPropsWithoutRef<"div">> = ({
           />
           <Divider />
           <div className="flex justify-between items-center">
-            .flex.gap-2.items-center
-            <Badge variant="success">0.1 ETH</Badge>
+            <Tooltip
+              content={
+                <Text>
+                  The amount of ETH that will be used to stake for the operator
+                  registration. This amount will be locked in the operator's
+                  contract and will be used to cover the operator's expenses.
+                </Text>
+              }
+            >
+              <div className="flex gap-2 items-center">
+                <Text variant="headline2">Operator Status</Text>
+                <FaCircleInfo className="size-4 text-gray-500" />
+              </div>
+            </Tooltip>
+            <FormField
+              control={form.control}
+              name="isPrivate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <div className="flex items-center gap-2">
+                      <OperatorStatusBadge
+                        isPrivate={form.watch("isPrivate")}
+                      />
+                      <Switch
+                        checked={form.watch("isPrivate")}
+                        id="airplane-mode"
+                        onCheckedChange={field.onChange}
+                      />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
           <Button size="xl" type="submit">
             Register Operator

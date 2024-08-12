@@ -8,20 +8,28 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils/tw";
 import type { FC } from "react";
+import { useMatch } from "react-router";
 
 type FCProps = FC<ButtonProps>;
 
 export const DashboardPicker: FCProps = ({ className, ...props }) => {
+  const isOperators = Boolean(useMatch("/operators"));
+  const isValidators = Boolean(useMatch("/validators"));
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button className={cn(className)} {...props} variant="ghost">
-          Dashboard
+          {isOperators ? "Operators" : isValidators ? "Validators" : "All"}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem defaultChecked>Validators</DropdownMenuItem>
-        <DropdownMenuItem defaultChecked>Operators</DropdownMenuItem>
+        <DropdownMenuItem defaultChecked={isValidators}>
+          Validators
+        </DropdownMenuItem>
+        <DropdownMenuItem defaultChecked={isOperators}>
+          Operators
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

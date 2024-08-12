@@ -21,9 +21,13 @@ import { Validators } from "@/app/routes/dashboard/validators/validators";
 import { Join } from "@/app/routes/join/join";
 import { JoinOperatorPreparation } from "@/app/routes/join/operator/join-operator-preparation";
 import { RegisterOperator } from "@/app/routes/join/operator/register-operator";
+import { RegisterOperatorConfirmation } from "@/app/routes/join/operator/register-operator-confirmation";
+import { RegisterOperatorSuccess } from "@/app/routes/join/operator/register-operator-success";
+import { SetOperatorFee } from "@/app/routes/join/operator/set-operator-fee";
 import { ProtectedOperatorRoute } from "@/app/routes/protected-operator-route";
 import { ProtectedRoute } from "@/app/routes/protected-route";
 import { OperatorDashboard } from "@/components/dashboard/operator-dashboard";
+import { RegisterOperatorGuard } from "@/context/create-operator-context";
 import { createBrowserRouter, Outlet } from "react-router-dom";
 
 export const router: ReturnType<typeof createBrowserRouter> =
@@ -44,7 +48,11 @@ export const router: ReturnType<typeof createBrowserRouter> =
         },
         {
           path: "join/operator",
-          element: <Outlet />,
+          element: (
+            <RegisterOperatorGuard>
+              <Outlet />
+            </RegisterOperatorGuard>
+          ),
           children: [
             {
               index: true,
@@ -53,6 +61,18 @@ export const router: ReturnType<typeof createBrowserRouter> =
             {
               path: "register",
               element: <RegisterOperator />,
+            },
+            {
+              path: "fee",
+              element: <SetOperatorFee />,
+            },
+            {
+              path: "confirm-transaction",
+              element: <RegisterOperatorConfirmation />,
+            },
+            {
+              path: "success",
+              element: <RegisterOperatorSuccess />,
             },
           ],
         },

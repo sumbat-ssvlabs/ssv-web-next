@@ -3,7 +3,8 @@ import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 
 import { cn } from "@/lib/utils/tw";
 import type { ButtonProps } from "@/components/ui/button";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import type { To } from "react-router-dom";
 import { Link } from "react-router-dom";
 import type { Pagination as IPagination } from "@/types/api";
 
@@ -42,8 +43,7 @@ PaginationItem.displayName = "PaginationItem";
 
 type PaginationLinkProps = {
   isActive?: boolean;
-} & Pick<ButtonProps, "size"> &
-  React.ComponentProps<typeof Link>;
+} & ButtonProps & { to: To };
 
 const PaginationLink = ({
   className,
@@ -51,7 +51,8 @@ const PaginationLink = ({
   size = "icon",
   ...props
 }: PaginationLinkProps) => (
-  <Link
+  <Button
+    as={Link}
     aria-current={isActive ? "page" : undefined}
     className={cn(
       buttonVariants({
@@ -129,11 +130,13 @@ const Pagination: React.FC<React.ComponentProps<"nav"> & PaginationProps> = ({
             to={{
               search: `?page=${pagination.page - 1}`,
             }}
+            disabled={pagination.page === 1}
           />
         </PaginationItem>
         {Array.from({ length: pagination.pages }, (_, i) => (
           <PaginationItem key={i}>
             <PaginationLink
+              disabled={i + 1 === pagination.page}
               to={{
                 search: `?page=${i + 1}`,
               }}
@@ -144,7 +147,10 @@ const Pagination: React.FC<React.ComponentProps<"nav"> & PaginationProps> = ({
           </PaginationItem>
         ))}
         <PaginationItem>
-          <PaginationNext to={{ search: `?page=${pagination.page + 1}` }} />
+          <PaginationNext
+            to={{ search: `?page=${pagination.page + 1}` }}
+            disabled={pagination.page === pagination.pages}
+          />
         </PaginationItem>
       </PaginationContent>
     </PaginationContainer>

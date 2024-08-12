@@ -1,9 +1,11 @@
 import type { Option } from "@/components/ui/multi-select";
 import { globals } from "@/config";
+import type { MainnetV4SetterABI } from "@/lib/abi/mainnet/v4/setter";
 import { ethFormatter } from "@/lib/utils/number";
 import type { Operator } from "@/types/api";
 import { difference } from "lodash-es";
 import type { IOperator } from "ssv-keys/dist/tsc/src/lib/KeyShares/KeySharesData/IOperator";
+import type { DecodeEventLogReturnType } from "viem";
 import { formatUnits } from "viem";
 
 type GetYearlyFeeOpts = {
@@ -134,4 +136,58 @@ export const mergeOperatorWhitelistAddresses = ({
     ...operator,
     whitelist_addresses: addresses,
   } as Operator;
+};
+
+export const createDefaultOperator = (
+  operator: Partial<Operator> & { id: number },
+): Operator => ({
+  id_str: operator.id.toString(),
+  declared_fee: "0",
+  previous_fee: "0",
+  fee: "0",
+  public_key: "",
+  owner_address: "",
+  address_whitelist: "",
+  is_private: false,
+  whitelisting_contract: "",
+  location: "",
+  setup_provider: "",
+  eth1_node_client: "",
+  eth2_node_client: "",
+  mev_relays: "",
+  description: "",
+  website_url: "",
+  twitter_url: "",
+  linkedin_url: "",
+  dkg_address: "",
+  logo: "",
+  type: "operator",
+  name: `Operator ${operator.id}`,
+  performance: {
+    "24h": 0,
+    "30d": 0,
+  },
+  is_valid: true,
+  is_deleted: false,
+  is_active: 0,
+  status: "Inactive",
+  validators_count: 0,
+  version: "v4",
+  network: "holesky",
+  whitelist_addresses: [],
+  updated_at: 0,
+  ...operator,
+});
+
+export type MainnetEvent = DecodeEventLogReturnType<typeof MainnetV4SetterABI>;
+
+export const createOperatorFromEvent = (
+  event: Extract<MainnetEvent, { eventName: "OperatorAdded" }>,
+) => {
+  return createDefaultOperator({
+    id: Number(event?.args.operatorId),
+    owner_address: event?.args.owner,
+    public_key: event?.args.publicKey,
+    fee: event?.args.fee.toString(),
+  });
 };

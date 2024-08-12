@@ -19,7 +19,10 @@ export const CopyBtn: FCProps = ({ className, text, ...props }) => {
       disabled={!text}
       size="icon"
       variant="ghost"
-      className={cn("relative inline-flex size-6  overflow-hidden", className)}
+      className={cn(
+        "relative inline-flex size-6 text-gray-500 overflow-hidden",
+        className,
+      )}
       {...props}
       onClick={(ev) => {
         ev.stopPropagation();
@@ -32,6 +35,7 @@ export const CopyBtn: FCProps = ({ className, text, ...props }) => {
             key="copy"
             className="size-[55%]"
             style={{
+              color: "inherit",
               position: "absolute",
               top: "50%",
               left: "50%",
@@ -42,7 +46,7 @@ export const CopyBtn: FCProps = ({ className, text, ...props }) => {
             animate={{ opacity: 1, rotate: 0, x: "-50%", y: "-50%" }}
             exit={{ opacity: 0, rotate: 180, x: "-50%", y: "-50%" }}
           >
-            <LuCopy className="size-full" strokeWidth="2.5" />
+            <LuCopy className="size-full text-inherit" strokeWidth="2.5" />
           </motion.div>
         ) : (
           <motion.div

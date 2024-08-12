@@ -1,6 +1,11 @@
 import { endpoint } from "@/api";
 import { api } from "@/lib/api-client";
-import type { Country, Operator, OperatorsSearchResponse } from "@/types/api";
+import type {
+  Country,
+  GetOperatorByPublicKeyResponse,
+  Operator,
+  OperatorsSearchResponse,
+} from "@/types/api";
 import { isUndefined, omitBy } from "lodash-es";
 
 export const getOperator = (id: number | string) => {
@@ -78,4 +83,10 @@ export const setOperatorMetadata = (
   metadata: OperatorMetadata,
 ) => {
   return api.put(endpoint("operators", operatorId, "metadata"), metadata);
+};
+
+export const getOperatorByPublicKey = (publicKey: string) => {
+  return api.get<GetOperatorByPublicKeyResponse>(
+    endpoint("operators", "public_key", publicKey),
+  );
 };

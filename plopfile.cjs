@@ -22,7 +22,7 @@ const getPrompts = () => {
       name: "path",
       // Prompt to display on command line
       message: "Which folder?",
-      default: "src/components/",
+      default: "src/components/ui",
       // choices: uiComponents,
     },
     {

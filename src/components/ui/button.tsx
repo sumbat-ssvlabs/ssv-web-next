@@ -6,7 +6,7 @@ import type { ComponentWithAs, PropsWithAs } from "@/types/component";
 import { CgSpinner } from "react-icons/cg";
 
 export const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex gap-2 items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
@@ -83,6 +83,7 @@ export const Button: ComponentWithAs<"button", ButtonProps> = React.forwardRef<
       loadingText,
       children,
       isActionBtn,
+      disabled,
       type = "button",
       as,
       ...props
@@ -96,14 +97,14 @@ export const Button: ComponentWithAs<"button", ButtonProps> = React.forwardRef<
         className={cn(
           buttonVariants({ variant, size, colorScheme, className, width }),
           {
+            disabled,
             "opacity-50": isLoading,
           },
-          "flex gap-2",
         )}
         type={type}
         ref={ref}
         {...props}
-        onClick={isLoading ? undefined : props.onClick}
+        onClick={disabled || isLoading ? undefined : props.onClick}
       >
         <>
           {isLoading ? <CgSpinner className="animate-spin size-5" /> : icon}

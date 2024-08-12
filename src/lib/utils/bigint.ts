@@ -11,3 +11,17 @@ export const bigintMin = (...args: (bigint | undefined)[]): bigint => {
     .filter((x) => !isUndefined(x))
     .reduce((min, cur) => (cur < min ? cur : min));
 };
+export const bigintRound = (value: bigint, precision: bigint): bigint => {
+  const remainder = value % precision;
+  console.log("remainder:", remainder);
+  return remainder >= precision / 2n
+    ? value + (precision - remainder) // Round up
+    : value - remainder; // Round down
+};
+
+export const roundOperatorFee = (
+  fee: bigint,
+  precision = 10_000_000n,
+): bigint => {
+  return bigintRound(fee, precision);
+};
