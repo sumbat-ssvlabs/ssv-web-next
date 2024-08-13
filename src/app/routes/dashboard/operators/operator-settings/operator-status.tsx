@@ -26,8 +26,9 @@ export const OperatorStatus: FC = () => {
     ? setOperatorsPublicUnchecked
     : setOperatorsPrivateUnchecked;
 
+  if (!operator) return;
+
   const toggle = () => {
-    if (!operator) return;
     return writer.write(
       {
         operatorIds: [BigInt(operator.id)],
@@ -75,7 +76,7 @@ export const OperatorStatus: FC = () => {
             </div>
           </div>
           <div className="flex items-center justify-between bg-gray-100 px-6 py-5 rounded-lg">
-            <OperatorDetails id={operator?.id} />
+            <OperatorDetails operator={operator} />
             <OperatorStatusBadge isPrivate={operator?.is_private} />
           </div>
           {isFeeZero && operator?.is_private && (

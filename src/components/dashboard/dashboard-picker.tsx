@@ -16,7 +16,7 @@ type DashboardPickerFC = FC<TextProps>;
 
 export const DashboardPicker: DashboardPickerFC = ({ className, ...props }) => {
   const isOperators = Boolean(useMatch("/operators"));
-  const isValidators = Boolean(useMatch("/validators"));
+  const isValidators = Boolean(useMatch("/clusters"));
 
   return (
     <DropdownMenu>
@@ -34,7 +34,7 @@ export const DashboardPicker: DashboardPickerFC = ({ className, ...props }) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuItem asChild defaultChecked={isValidators}>
-          <Link to="/validators">Validator Clusters</Link>
+          <Link to="/clusters">Validator Clusters</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild defaultChecked={isOperators}>
           <Link to="/operators">Operators</Link>

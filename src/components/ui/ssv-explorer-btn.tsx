@@ -24,7 +24,7 @@ export const SsvExplorerBtn: FCProps = ({
   const network = useSSVNetworkDetails();
 
   return (
-    <Tooltip content="Explore Operator">
+    <Tooltip asChild content="Explore Operator">
       <Button
         as={Link}
         to={path.join(network.explorerUrl, "operators", operatorId.toString())}

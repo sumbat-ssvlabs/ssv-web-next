@@ -7,7 +7,7 @@ import { getYearlyFee } from "@/lib/utils/operator";
 import { cn } from "@/lib/utils/tw";
 import type { Operator } from "@/types/api";
 import type { ComponentPropsWithoutRef, FC } from "react";
-import { BiRightArrow } from "react-icons/bi";
+import { HiArrowRight } from "react-icons/hi";
 
 export type OperatorTableRowProps = {
   operator: Operator;
@@ -50,7 +50,7 @@ export const OperatorTableRow: FCProps = ({
       </TableCell>
       <TableCell>{operator.validators_count}</TableCell>
       <TableCell className="">
-        <BiRightArrow />
+        <HiArrowRight className="size-4 text-gray-500" />
       </TableCell>
     </TableRow>
   );

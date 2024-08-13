@@ -5,11 +5,17 @@ export type Pagination = {
   page: number;
 };
 
+export interface InfinitePagination extends Pagination {
+  current_first: number;
+  current_last: number;
+}
+
 export type WithPagination<T extends Record<string, unknown>> = T & {
-  pagination: Pagination & {
-    current_first: number;
-    current_last: number;
-  };
+  pagination: Pagination;
+};
+
+export type WithInfinitePagination<T extends Record<string, unknown>> = T & {
+  pagination: InfinitePagination;
 };
 
 export type Operator = {
@@ -52,12 +58,13 @@ export type Operator = {
   updated_at: number;
 };
 
-export type OperatorsSearchResponse = WithPagination<{ operators: Operator[] }>;
+export type OperatorsSearchResponse = WithInfinitePagination<{
+  operators: Operator[];
+}>;
 
-export type ClusterData = {
-  // use this snapshot data for contract interactions
+export type SolidityCluster = {
   active: boolean;
-  balance: string; // the balance of the cluster after last contract interaction (deposit, withdraw)
+  balance: string;
   index: string;
   networkFeeIndex: string;
   validatorCount: number;
@@ -66,19 +73,25 @@ export type ClusterData = {
 export interface Cluster {
   id: number;
   clusterId: string;
+  network: string;
+  version: string;
   ownerAddress: string;
   validatorCount: number;
-  networkFeeIndex: number;
-  index: number;
-  balance: string; // actual balance of the cluster, not snapshot
+  networkFeeIndex: string;
+  index: string;
+  balance: string;
   active: boolean;
   isLiquidated: boolean;
-  runWay: number;
-  burnRate: BigInteger;
   operators: Operator[];
-  clusterData: ClusterData;
-  updatedAt?: string;
+  blockNumber: number;
+  createdAt: string;
+  updatedAt: string;
 }
+
+export type GetPaginatedClustersResponse = WithPagination<{
+  type: string;
+  clusters: Cluster[];
+}>;
 
 export interface GetClusterResponse {
   type: string;

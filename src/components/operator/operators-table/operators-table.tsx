@@ -2,7 +2,6 @@ import type { FC, ComponentPropsWithoutRef } from "react";
 import type { Operator, Pagination as IPagination } from "@/types/api";
 import {
   TableHeader,
-  TableRow,
   TableHead,
   TableBody,
   Table,
@@ -33,17 +32,18 @@ export const OperatorsTable: FCProps = ({
 }) => {
   return (
     <div className="flex flex-col w-full">
-      <Table className={cn(className, "w-full")} {...props}>
+      <Table
+        className={cn(className, "w-full rounded-t-xl overflow-hidden")}
+        {...props}
+      >
         <TableHeader>
-          <TableRow className="bg-gray-100 text-xs text-gray-500">
-            <TableHead>Operator name</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>30D Performance</TableHead>
-            <TableHead>Balance</TableHead>
-            <TableHead>Yearly Fee</TableHead>
-            <TableHead>Validators</TableHead>
-            <TableHead />
-          </TableRow>
+          <TableHead>Operator name</TableHead>
+          <TableHead>Status</TableHead>
+          <TableHead>30D Performance</TableHead>
+          <TableHead>Balance</TableHead>
+          <TableHead>Yearly Fee</TableHead>
+          <TableHead>Validators</TableHead>
+          <TableHead />
         </TableHeader>
         <TableBody>
           {operators.map((operator) => {
@@ -66,14 +66,7 @@ export const OperatorsTable: FCProps = ({
       </Table>
       {pagination.pages > 1 && (
         <div className="flex w-full bg-gray-50 py-4 rounded-b-2xl">
-          <Pagination
-            pagination={{
-              page: 1,
-              pages: 12,
-              total: 100,
-              per_page: 10,
-            }}
-          />
+          <Pagination pagination={pagination} />
         </div>
       )}
     </div>

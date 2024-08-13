@@ -8,7 +8,7 @@ import { ms } from "@/lib/utils/number";
 
 export const getSSVAccountQueryOptions = (account?: Address) => {
   return queryOptions({
-    staleTime: ms(1, "hours"),
+    staleTime: ms(1, "minutes"),
     queryKey: ["ssv-account", account],
     queryFn: () => getAccount(account!),
     enabled: !!account,

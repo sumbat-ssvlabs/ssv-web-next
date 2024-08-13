@@ -48,6 +48,7 @@ const Tooltip: React.FC<TooltipProps> = ({
   content,
   open,
   hasArrow,
+  className,
   ...props
 }) => {
   if (!content) return children;
@@ -55,7 +56,7 @@ const Tooltip: React.FC<TooltipProps> = ({
     <TooltipProvider>
       <TooltipRoot delayDuration={delayDuration || 300} open={open}>
         <TooltipTrigger asChild={asChild}>{children}</TooltipTrigger>
-        <TooltipContent {...props}>
+        <TooltipContent className={cn(className)} {...props}>
           {hasArrow && <TooltipArrow className="fill-gray-700" />}
           {content}
         </TooltipContent>

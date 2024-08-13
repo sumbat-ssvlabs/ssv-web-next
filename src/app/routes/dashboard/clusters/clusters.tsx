@@ -6,8 +6,11 @@ import { Container } from "@/components/ui/container";
 import { Link } from "react-router-dom";
 import { Spacer } from "@/components/ui/spacer";
 import { FiEdit3 } from "react-icons/fi";
+import { ClusterTable } from "@/components/validator/clusters-table/clusters-table";
+import { usePaginatedAccountClusters } from "@/hooks/validator/use-paginated-account-clusters";
 
-export const Validators: FC<ComponentPropsWithoutRef<"div">> = () => {
+export const Clusters: FC<ComponentPropsWithoutRef<"div">> = () => {
+  const { clusters, pagination } = usePaginatedAccountClusters();
   return (
     <>
       <Helmet>
@@ -25,9 +28,14 @@ export const Validators: FC<ComponentPropsWithoutRef<"div">> = () => {
             Add Cluster
           </Button>
         </div>
+        <ClusterTable
+          clusters={clusters}
+          pagination={pagination}
+          onClusterClick={console.log}
+        />
       </Container>
     </>
   );
 };
 
-Validators.displayName = "Validators";
+Clusters.displayName = "Validators";

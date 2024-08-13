@@ -1,7 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ms } from "@/lib/utils/number";
 import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
-import type { DefaultOptions, UseMutationOptions } from "@tanstack/react-query";
+import type {
+  dataTagSymbol,
+  DefaultOptions,
+  Updater,
+  UseMutationOptions,
+} from "@tanstack/react-query";
 import { QueryClient } from "@tanstack/react-query";
 import { deserialize, serialize } from "wagmi";
 
@@ -46,3 +51,25 @@ export type MutationConfig<
   Error,
   Parameters<MutationFnType>[0]
 >;
+
+type ExtractDataTagSymbol<T> = T extends {
+  [K in typeof dataTagSymbol]: infer U;
+}
+  ? U
+  : never;
+
+type CustomQueryKey = (string | undefined)[] & {
+  [dataTagSymbol]: unknown;
+};
+
+export const setOptimisticData = <
+  T extends CustomQueryKey,
+  Data = ExtractDataTagSymbol<T>,
+>(
+  queryKey: T,
+  updater: Updater<Data | undefined, Data | undefined>,
+) => {
+  queryClient.cancelQueries({ queryKey });
+  // @ts-expect-error don't know how to fix this
+  queryClient.setQueryData(queryKey, updater);
+};

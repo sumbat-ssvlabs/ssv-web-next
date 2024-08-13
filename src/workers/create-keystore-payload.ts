@@ -1,4 +1,3 @@
-import type { ClusterData } from "@/types/api";
 import type { IOperator } from "ssv-keys/dist/tsc/src/lib/KeyShares/KeySharesData/IOperator";
 import type { Address } from "viem";
 
@@ -26,7 +25,6 @@ export type CreateSharesMessage = MessageEvent<{
   nonce: number;
   privateKey: string;
   operators: IOperator[];
-  clusterData: ClusterData;
 }>;
 
 export type CreateShareSuccess = {

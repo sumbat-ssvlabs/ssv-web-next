@@ -2,7 +2,7 @@ import { DashboardPicker } from "@/components/dashboard/dashboard-picker";
 import { OperatorsTable } from "@/components/operator/operators-table/operators-table";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
-import { usePaginatedAccountOperators } from "@/hooks/operator/use-account-operators";
+import { usePaginatedAccountOperators } from "@/hooks/operator/use-paginated-account-operators";
 import { type ComponentPropsWithoutRef, type FC } from "react";
 import { Helmet } from "react-helmet";
 import { useNavigate } from "react-router";

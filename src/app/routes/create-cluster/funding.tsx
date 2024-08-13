@@ -1,10 +1,8 @@
 import { getOwnerNonce } from "@/api/account";
-import { getClusterData } from "@/api/cluster";
 import { FundingForm } from "@/components/funding/funding-form";
 import { useComputeFundingCost } from "@/hooks/use-compute-funding-cost";
 import { useCreateShares } from "@/hooks/use-create-shares";
 import { getOperatorQueryOptions } from "@/hooks/use-operator";
-import { getClusterHash } from "@/lib/utils/cluster";
 import { prepareOperatorsForShares } from "@/lib/utils/operator";
 import { cn } from "@/lib/utils/tw";
 import { createValidatorFlow } from "@/signals/create-cluster-signals";
@@ -46,9 +44,6 @@ export const Funding: FCProps = ({ className, ...props }) => {
 
     const adata = await createShares.mutateAsync({
       account: address!,
-      clusterData: await getClusterData(
-        getClusterHash(address!, createValidatorFlow.selectedOperatorIds.value),
-      ),
       nonce: await getOwnerNonce(address!),
       operators: prepareOperatorsForShares(
         results.map((result) => result.data!),

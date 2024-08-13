@@ -1,20 +1,18 @@
 import { getPaginatedAccountOperators } from "@/api/operator";
 import { useCreatedOptimisticOperators } from "@/hooks/operator/use-created-optimistic-operators";
 import { createDefaultPagination } from "@/lib/utils/api";
-import { useQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery } from "@tanstack/react-query";
+import type { Address } from "abitype";
 import { unionBy } from "lodash-es";
 import { useSearchParams } from "react-router-dom";
 import { useAccount } from "wagmi";
 
-export const usePaginatedAccountOperators = (perPage = 10) => {
-  const { address } = useAccount();
-
-  const [searchParams, setSearchParams] = useSearchParams();
-  const page = Number(searchParams.get("page") || 1);
-
-  const { data: optimisticOperators = [] } = useCreatedOptimisticOperators();
-
-  const query = useQuery({
+export const getPaginatedAccountOperatorsQueryOptions = (
+  address: Address | undefined,
+  page: number = 1,
+  perPage: number = 10,
+) =>
+  queryOptions({
     queryKey: ["paginated-account-operators", address, page, perPage],
     queryFn: () =>
       getPaginatedAccountOperators({
@@ -24,6 +22,25 @@ export const usePaginatedAccountOperators = (perPage = 10) => {
       }),
     enabled: Boolean(address),
   });
+
+export const usePaginatedAccountOperators = (perPage = 10) => {
+  const { address } = useAccount();
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = Number(searchParams.get("page") || 1);
+
+  const { data: optimisticOperators = [] } = useCreatedOptimisticOperators();
+
+  const query = useQuery(
+    getPaginatedAccountOperatorsQueryOptions(address, page, perPage),
+  );
+
+  if (query.data?.pagination && page > query.data.pagination.pages) {
+    setSearchParams((prev) => ({
+      ...prev,
+      page: String(query.data.pagination.pages),
+    }));
+  }
 
   const pagination = query.data?.pagination || createDefaultPagination();
   const hasNext = page < pagination.pages;

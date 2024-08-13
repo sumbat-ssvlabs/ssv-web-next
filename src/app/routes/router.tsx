@@ -17,8 +17,7 @@ import { Operators } from "@/app/routes/dashboard/operators/operators";
 import { RemoveOperator } from "@/app/routes/dashboard/operators/remove-operator";
 import { UpdateFee } from "@/app/routes/dashboard/operators/update-fee/update-fee";
 import { WithdrawOperatorBalance } from "@/app/routes/dashboard/operators/withdraw-operator-balance";
-import { FeeRecipientAddress } from "@/app/routes/dashboard/validators/fee-recipient-address";
-import { Validators } from "@/app/routes/dashboard/validators/validators";
+import { FeeRecipientAddress } from "@/app/routes/dashboard/clusters/fee-recipient-address";
 import { Join } from "@/app/routes/join/join";
 import { JoinOperatorPreparation } from "@/app/routes/join/operator/join-operator-preparation";
 import { RegisterOperator } from "@/app/routes/join/operator/register-operator";
@@ -29,6 +28,7 @@ import { ProtectedOperatorRoute } from "@/app/routes/protected-operator-route";
 import { ProtectedRoute } from "@/app/routes/protected-route";
 import { RegisterOperatorGuard } from "@/context/create-operator-context";
 import { createBrowserRouter, Outlet } from "react-router-dom";
+import { Clusters } from "@/app/routes/dashboard/clusters/clusters";
 
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
@@ -76,14 +76,7 @@ export const router: ReturnType<typeof createBrowserRouter> =
             },
           ],
         },
-        {
-          path: "validators",
-          element: <Validators />,
-        },
-        {
-          path: "fee-recipient",
-          element: <FeeRecipientAddress />,
-        },
+
         {
           path: "create-cluster",
           element: <Preparation />,
@@ -103,6 +96,14 @@ export const router: ReturnType<typeof createBrowserRouter> =
         {
           path: "create-cluster/funding",
           element: <Funding />,
+        },
+        {
+          path: "clusters",
+          element: <Clusters />,
+        },
+        {
+          path: "fee-recipient",
+          element: <FeeRecipientAddress />,
         },
         {
           path: "operators",

@@ -1,4 +1,4 @@
-import type { ClusterData, Operator } from "@/types/api";
+import type { SolidityCluster, Operator } from "@/types/api";
 import type { Address } from "abitype";
 import { isNumber, merge } from "lodash-es";
 import { encodePacked, keccak256 } from "viem";
@@ -20,8 +20,8 @@ export const getClusterHash = (
   );
 
 export const getDefaultClusterData = (
-  cluster: Partial<ClusterData> = {},
-): ClusterData =>
+  cluster: Partial<SolidityCluster> = {},
+): SolidityCluster =>
   merge(
     {
       validatorCount: 0,

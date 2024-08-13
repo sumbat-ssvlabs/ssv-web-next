@@ -20,31 +20,37 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useSSVAccount } from "@/hooks/use-ssv-account";
+import {
+  getSSVAccountQueryOptions,
+  useSSVAccount,
+} from "@/hooks/use-ssv-account";
 import { tryCatch } from "@/lib/utils/tryCatch";
 import { useSetFeeRecipientAddress } from "@/lib/contract-interactions/write/use-set-fee-recipient-address";
 import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
+import { useAccount } from "wagmi";
+import { setOptimisticData } from "@/lib/react-query";
+
+const schema = z.object({
+  feeRecipientAddress: z
+    .string()
+    .trim()
+    .refine(
+      isAddress,
+      "Invalid address, please input a valid Ethereum wallet address",
+    ),
+});
 
 export const FeeRecipientAddress: FC<ComponentPropsWithoutRef<"div">> = () => {
   const navigate = useNavigate();
   const ssvAccount = useSSVAccount();
+  const account = useAccount();
 
   const form = useForm<{ feeRecipientAddress: Address }>({
     mode: "all",
     defaultValues: {
       feeRecipientAddress: ssvAccount.data?.recipientAddress,
     },
-    resolver: zodResolver(
-      z.object({
-        feeRecipientAddress: z
-          .string()
-          .trim()
-          .refine(
-            isAddress,
-            "Invalid address, please input a valid Ethereum wallet address",
-          ),
-      }),
-    ),
+    resolver: zodResolver(schema),
   });
 
   useEffect(() => {
@@ -74,7 +80,17 @@ export const FeeRecipientAddress: FC<ComponentPropsWithoutRef<"div">> = () => {
           title: "Fee Recipient Address Updated",
         },
         onMined: () => {
-          navigate("/validators");
+          setOptimisticData(
+            getSSVAccountQueryOptions(account.address).queryKey,
+            (prev) => {
+              if (!prev) return prev;
+              return {
+                ...prev,
+                recipientAddress: values.feeRecipientAddress,
+              };
+            },
+          );
+          navigate("/clusters");
         },
       }),
     );
