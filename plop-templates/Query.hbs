@@ -1,19 +1,13 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
-
 import { QueryConfig } from '@/lib/react-query';
 
-export type {{pascalCase name}} = {
-  // TODO: Add type or remove this type
-}
+import type { UndefinedInitialDataOptions } from "@tanstack/react-query";
+import { queryOptions, useQuery } from "@tanstack/react-query";
 
-export const {{camelCase name}} = (): Promise<{{pascalCase name}}[]> => {
-  return // TODO: Add fetch logic
-};
 
 export const {{camelCase name}}QueryOptions = () => {
   return queryOptions({
     queryKey: ['{{kebabCase name}}'],
-    queryFn: () => {{camelCase name}}(),
+    queryFn: () => // Your fetcher function here,
   });
 };
 
@@ -22,9 +16,11 @@ type Use{{pascalCase name}}Options = {
 };
 
 export const use{{pascalCase name}} = ({ options }: Use{{pascalCase name}}Options = {}) => {
+  const queryOptions = {{camelCase name}}QueryOptions();
   return useQuery({
     ...{{camelCase name}}QueryOptions(),
     ...options,
+    enabled: queryOptions.enabled && options?.enabled,
   });
 };
 

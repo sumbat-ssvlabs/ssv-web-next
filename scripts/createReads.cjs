@@ -62,6 +62,8 @@
 import type { UseReadContractParameters } from "wagmi";
 import { useReadContract } from "wagmi";
 
+import { isUndefined } from "lodash-es";
+
 import { getSSVNetworkDetails, useSSVNetworkDetails } from "@/hooks/use-ssv-network-details";
 import { ${abiName} } from "@/lib/abi/${networkName}/v4/getter";${
       hasInputs
@@ -105,17 +107,17 @@ queryClient.fetchQuery(get${capitalizeFirstLetter(functionName)}QueryOptions(${h
 
 export const ${hookName} = (${hasInputs ? 'params: AbiInputsToParams<Fn["inputs"]>,' : ""}options?: QueryOptions) => {
   const { getterContractAddress } = useSSVNetworkDetails()
-
+  ${hasInputs ? "const args = paramsToArray({ params, abiFunction })" : ""}
   return useReadContract({
       abi: ${abiName},
       address: getterContractAddress,
       functionName: "${functionName}",
-      ${hasInputs ? "args: paramsToArray({ params, abiFunction })," : ""}
+      ${hasInputs ? "args," : ""}
        ${
          hasInputs
            ? `query: {
            ...options,
-        enabled:options?.enabled && Boolean(params),
+        enabled:options?.enabled && args.every((arg) => !isUndefined(arg)),
       },`
            : "query:options"
        }

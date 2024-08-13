@@ -5,6 +5,8 @@
 import type { UseReadContractParameters } from "wagmi";
 import { useReadContract } from "wagmi";
 
+import { isUndefined } from "lodash-es";
+
 import {
   getSSVNetworkDetails,
   useSSVNetworkDetails,
@@ -55,15 +57,15 @@ export const useIsWhitelistingContract = (
   options?: QueryOptions,
 ) => {
   const { getterContractAddress } = useSSVNetworkDetails();
-
+  const args = paramsToArray({ params, abiFunction });
   return useReadContract({
     abi: MainnetV4GetterABI,
     address: getterContractAddress,
     functionName: "isWhitelistingContract",
-    args: paramsToArray({ params, abiFunction }),
+    args,
     query: {
       ...options,
-      enabled: options?.enabled && Boolean(params),
+      enabled: options?.enabled && args.every((arg) => !isUndefined(arg)),
     },
   });
 };

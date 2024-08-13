@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import { Spacer } from "@/components/ui/spacer";
 import { FiEdit3 } from "react-icons/fi";
 import { ClusterTable } from "@/components/validator/clusters-table/clusters-table";
-import { usePaginatedAccountClusters } from "@/hooks/validator/use-paginated-account-clusters";
+import { usePaginatedAccountClusters } from "@/hooks/cluster/use-paginated-account-clusters";
 
 export const Clusters: FC<ComponentPropsWithoutRef<"div">> = () => {
   const { clusters, pagination } = usePaginatedAccountClusters();

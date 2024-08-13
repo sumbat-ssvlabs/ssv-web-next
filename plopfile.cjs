@@ -1,5 +1,6 @@
 const Templates = {
   FC: "Component",
+  Route: "Route",
   Query: "Query",
   Modal: "Modal",
   ForwardRef: "ComponentWithForwardRef",
@@ -77,6 +78,40 @@ module.exports = (plop) => {
     prompts: getPrompts(Templates.FC),
     actions: getActions(Templates.FC),
   });
+  plop.setGenerator("route", {
+    description: "Create a route",
+    prompts: [
+      {
+        // Raw text input
+        type: "input",
+        // Variable name for this input
+        name: "name",
+        // Prompt to display on command line
+        message: "What's your Route name?",
+      },
+      {
+        // Raw text input
+        type: "input",
+        // Variable name for this input
+        name: "path",
+        // Prompt to display on command line
+        message: "Which folder?",
+        default: "src/app/routes",
+        // choices: uiComponents,
+      },
+      {
+        // Raw text input
+        type: "confirm",
+        // Variable name for this input
+        name: "wantFolder",
+        // Prompt to display on command line
+        message: "Should it be in a folder of its own?",
+        default: false,
+        // choices: uiComponents,
+      },
+    ],
+    actions: getActions(Templates.Route),
+  });
   plop.setGenerator("query", {
     description: "Create a GET query hook",
     prompts: [
@@ -111,7 +146,7 @@ module.exports = (plop) => {
       },
     ],
     actions: (data) => {
-      const name = "/get-{{kebabCase name}}";
+      const name = "/use-{{kebabCase name}}";
       const path = `{{path}}${name.repeat(data.wantFolder + 1)}.ts`;
 
       return [

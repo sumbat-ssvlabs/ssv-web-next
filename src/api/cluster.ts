@@ -8,21 +8,23 @@ import type {
 } from "@/types/api";
 
 export const getCluster = (hash: string) =>
-  api.get<GetClusterResponse>(endpoint("cluster", hash));
+  api
+    .get<GetClusterResponse>(endpoint("clusters", hash))
+    .then((res) => res.cluster);
 
 export const getClusterData = (hash: string): Promise<SolidityCluster> =>
   getCluster(hash)
-    .then((res) => res.cluster ?? getDefaultClusterData())
+    .then((cluster) => cluster ?? getDefaultClusterData())
     .catch(() => getDefaultClusterData());
 
 export type GetPaginatedAccountClusters = {
-  address: string;
+  account: string;
   page?: number;
   perPage?: number;
 };
 
 export const getPaginatedAccountClusters = ({
-  address,
+  account,
   page = 1,
   perPage = 10,
 }: GetPaginatedAccountClusters) => {
@@ -30,7 +32,7 @@ export const getPaginatedAccountClusters = ({
     endpoint(
       "clusters",
       "owner",
-      address,
+      account,
       `?${new URLSearchParams({
         page: page.toString(),
         perPage: perPage.toString(),

@@ -29,8 +29,10 @@ export const useOperator = (
 ) => {
   const params = useOperatorPageParams();
   const _id = id ?? params.operatorId ?? "";
+  const queryOptions = getOperatorQueryOptions(_id);
   return useQuery({
-    ...getOperatorQueryOptions(_id),
+    ...queryOptions,
     ...options,
+    enabled: queryOptions.enabled && options?.enabled,
   });
 };

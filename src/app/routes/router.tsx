@@ -29,6 +29,10 @@ import { ProtectedRoute } from "@/app/routes/protected-route";
 import { RegisterOperatorGuard } from "@/context/create-operator-context";
 import { createBrowserRouter, Outlet } from "react-router-dom";
 import { Clusters } from "@/app/routes/dashboard/clusters/clusters";
+import { Cluster } from "@/app/routes/dashboard/clusters/cluster/cluster";
+import { WithdrawClusterBalance } from "@/app/routes/dashboard/clusters/cluster/withdraw-cluster-balance";
+import { DepositClusterBalance } from "@/app/routes/dashboard/clusters/cluster/deposit-cluster-balance";
+import { ProtectedClusterRoute } from "@/app/routes/protected-cluster-route";
 
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
@@ -99,7 +103,35 @@ export const router: ReturnType<typeof createBrowserRouter> =
         },
         {
           path: "clusters",
-          element: <Clusters />,
+          element: <Outlet />,
+          children: [
+            {
+              index: true,
+              element: <Clusters />,
+            },
+            {
+              path: ":clusterHash",
+              element: (
+                <ProtectedClusterRoute>
+                  <Outlet />
+                </ProtectedClusterRoute>
+              ),
+              children: [
+                {
+                  index: true,
+                  element: <Cluster />,
+                },
+                {
+                  path: "withdraw",
+                  element: <WithdrawClusterBalance />,
+                },
+                {
+                  path: "deposit",
+                  element: <DepositClusterBalance />,
+                },
+              ],
+            },
+          ],
         },
         {
           path: "fee-recipient",

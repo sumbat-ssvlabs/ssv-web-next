@@ -1,3 +1,5 @@
+import type { Prettify } from "@/types/ts-utils";
+
 export type Pagination = {
   total: number;
   pages: number;
@@ -70,32 +72,10 @@ export type SolidityCluster = {
   validatorCount: number;
 };
 
-export interface Cluster {
-  id: number;
-  clusterId: string;
-  network: string;
-  version: string;
-  ownerAddress: string;
-  validatorCount: number;
-  networkFeeIndex: string;
-  index: string;
-  balance: string;
-  active: boolean;
-  isLiquidated: boolean;
-  operators: Operator[];
-  blockNumber: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export type GetPaginatedClustersResponse = WithPagination<{
-  type: string;
-  clusters: Cluster[];
-}>;
-
-export interface GetClusterResponse {
-  type: string;
-  cluster: {
+export type Cluster<
+  T extends { operators: (Operator | number)[] } = { operators: Operator[] },
+> = Prettify<
+  {
     id: number;
     clusterId: string;
     network: string;
@@ -107,11 +87,20 @@ export interface GetClusterResponse {
     balance: string;
     active: boolean;
     isLiquidated: boolean;
-    operators: number[];
     blockNumber: number;
     createdAt: string;
     updatedAt: string;
-  } | null;
+  } & T
+>;
+
+export type GetPaginatedClustersResponse = WithPagination<{
+  type: string;
+  clusters: Cluster[];
+}>;
+
+export interface GetClusterResponse {
+  type: string;
+  cluster: Cluster<{ operators: number[] }> | null;
 }
 
 export type Country = {
