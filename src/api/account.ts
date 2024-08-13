@@ -1,14 +1,14 @@
 import { endpoint } from "@/api";
 import { api } from "@/lib/api-client";
-import type { Address } from "abitype";
+import type { Address } from "viem";
 import { getAddress } from "viem";
 
-interface GetAccountResponse {
+export interface GetAccountResponse {
   type: string;
   data: {
     id: number;
-    ownerAddress: string;
-    recipientAddress: string;
+    ownerAddress: Address;
+    recipientAddress: Address;
     network: string;
     version: string;
     nonce: number;
@@ -16,7 +16,9 @@ interface GetAccountResponse {
 }
 
 export const getAccount = (account: Address) =>
-  api.get<GetAccountResponse>(endpoint("accounts", getAddress(account)));
+  api
+    .get<GetAccountResponse>(endpoint("accounts", getAddress(account)))
+    .then((res) => res.data);
 
 export const getOwnerNonce = (account: Address) =>
   getAccount(account).then((res) => res.data.nonce);

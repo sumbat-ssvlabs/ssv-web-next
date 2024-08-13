@@ -17,6 +17,7 @@ import { Operators } from "@/app/routes/dashboard/operators/operators";
 import { RemoveOperator } from "@/app/routes/dashboard/operators/remove-operator";
 import { UpdateFee } from "@/app/routes/dashboard/operators/update-fee/update-fee";
 import { WithdrawOperatorBalance } from "@/app/routes/dashboard/operators/withdraw-operator-balance";
+import { FeeRecipientAddress } from "@/app/routes/dashboard/validators/fee-recipient-address";
 import { Validators } from "@/app/routes/dashboard/validators/validators";
 import { Join } from "@/app/routes/join/join";
 import { JoinOperatorPreparation } from "@/app/routes/join/operator/join-operator-preparation";
@@ -26,7 +27,6 @@ import { RegisterOperatorSuccess } from "@/app/routes/join/operator/register-ope
 import { SetOperatorFee } from "@/app/routes/join/operator/set-operator-fee";
 import { ProtectedOperatorRoute } from "@/app/routes/protected-operator-route";
 import { ProtectedRoute } from "@/app/routes/protected-route";
-import { OperatorDashboard } from "@/components/dashboard/operator-dashboard";
 import { RegisterOperatorGuard } from "@/context/create-operator-context";
 import { createBrowserRouter, Outlet } from "react-router-dom";
 
@@ -77,12 +77,12 @@ export const router: ReturnType<typeof createBrowserRouter> =
           ],
         },
         {
-          path: "my-account/operator-dashboard",
-          element: <OperatorDashboard />,
-        },
-        {
           path: "validators",
           element: <Validators />,
+        },
+        {
+          path: "fee-recipient",
+          element: <FeeRecipientAddress />,
         },
         {
           path: "create-cluster",

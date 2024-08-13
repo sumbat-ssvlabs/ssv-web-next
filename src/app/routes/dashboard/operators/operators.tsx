@@ -17,15 +17,14 @@ export const Operators: FC<ComponentPropsWithoutRef<"div">> = () => {
         <title>SSV My Operators</title>
       </Helmet>
 
-      <Container variant="vertical" size="xl" className="h-full">
-        <div className="flex justify-between w-full">
+      <Container variant="vertical" size="xl" className="py-6">
+        <div className="flex justify-between w-full gap-3">
           <DashboardPicker />
-          <Button as={Link} to="/join/operator">
+          <Button size="lg" as={Link} to="/join/operator">
             Add Operator
           </Button>
         </div>
         <OperatorsTable
-          className="h-full"
           operators={accountOperators.operators}
           pagination={accountOperators.pagination}
           onOperatorClick={(operator) => {

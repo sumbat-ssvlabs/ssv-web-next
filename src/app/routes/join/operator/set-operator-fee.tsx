@@ -20,6 +20,7 @@ import { globals } from "@/config";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router";
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
+import { useFocus } from "@/hooks/use-focus";
 
 export const SetOperatorFee: FC<ComponentPropsWithoutRef<"div">> = () => {
   const navigate = useNavigate();
@@ -44,10 +45,11 @@ export const SetOperatorFee: FC<ComponentPropsWithoutRef<"div">> = () => {
   });
 
   const submit = form.handleSubmit((values) => {
-    console.log("values:", values);
     useRegisterOperatorState.state.yearlyFee = values.yearlyFee;
     navigate("../confirm-transaction");
   });
+
+  useFocus("#register-operator-fee", { select: true });
 
   return (
     <Container variant="vertical">
@@ -68,6 +70,7 @@ export const SetOperatorFee: FC<ComponentPropsWithoutRef<"div">> = () => {
                 <FormLabel>Fee</FormLabel>
                 <FormControl>
                   <NumberInput
+                    id="register-operator-fee"
                     value={field.value}
                     onChange={field.onChange}
                     max={parseEther("200")}

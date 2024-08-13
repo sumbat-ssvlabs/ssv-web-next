@@ -5,7 +5,6 @@ import {
   TableRow,
   TableHead,
   TableBody,
-  TableFooter,
   Table,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils/tw";
@@ -33,40 +32,51 @@ export const OperatorsTable: FCProps = ({
   ...props
 }) => {
   return (
-    <Table className={cn(className)} {...props}>
-      <TableHeader>
-        <TableRow className="bg-gray-100 text-xs text-gray-500">
-          <TableHead>Operator name</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>30D Performance</TableHead>
-          <TableHead>Balance</TableHead>
-          <TableHead>Yearly Fee</TableHead>
-          <TableHead>Validators</TableHead>
-          <TableHead />
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {operators.map((operator) => {
-          const { queryKey } = getOperatorQueryOptions(operator.id);
-          const cachedOperator = queryClient.getQueryData(queryKey);
-          if (cachedOperator?.is_deleted) return null;
+    <div className="flex flex-col w-full">
+      <Table className={cn(className, "w-full")} {...props}>
+        <TableHeader>
+          <TableRow className="bg-gray-100 text-xs text-gray-500">
+            <TableHead>Operator name</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>30D Performance</TableHead>
+            <TableHead>Balance</TableHead>
+            <TableHead>Yearly Fee</TableHead>
+            <TableHead>Validators</TableHead>
+            <TableHead />
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {operators.map((operator) => {
+            const { queryKey } = getOperatorQueryOptions(operator.id);
+            const cachedOperator = queryClient.getQueryData(queryKey);
+            if (cachedOperator?.is_deleted) return null;
 
-          return (
-            <OperatorTableRow
-              key={operator.id}
-              operator={operator}
-              onClick={() => {
-                console.log(operator);
-                return onOperatorClick(operator);
-              }}
-            />
-          );
-        })}
-      </TableBody>
-      <TableFooter>
-        {pagination.pages > 1 && <Pagination pagination={pagination} />}
-      </TableFooter>
-    </Table>
+            return (
+              <OperatorTableRow
+                key={operator.id}
+                operator={operator}
+                onClick={() => {
+                  console.log(operator);
+                  return onOperatorClick(operator);
+                }}
+              />
+            );
+          })}
+        </TableBody>
+      </Table>
+      {pagination.pages > 1 && (
+        <div className="flex w-full bg-gray-50 py-4 rounded-b-2xl">
+          <Pagination
+            pagination={{
+              page: 1,
+              pages: 12,
+              total: 100,
+              per_page: 10,
+            }}
+          />
+        </div>
+      )}
+    </div>
   );
 };
 

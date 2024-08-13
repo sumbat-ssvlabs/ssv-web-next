@@ -1,34 +1,43 @@
-import type { ButtonProps } from "@/components/ui/button";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import type { TextProps } from "@/components/ui/text";
+import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils/tw";
+import { ChevronDown } from "lucide-react";
 import type { FC } from "react";
 import { useMatch } from "react-router";
+import { Link } from "react-router-dom";
 
-type FCProps = FC<ButtonProps>;
+type DashboardPickerFC = FC<TextProps>;
 
-export const DashboardPicker: FCProps = ({ className, ...props }) => {
+export const DashboardPicker: DashboardPickerFC = ({ className, ...props }) => {
   const isOperators = Boolean(useMatch("/operators"));
   const isValidators = Boolean(useMatch("/validators"));
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button className={cn(className)} {...props} variant="ghost">
-          {isOperators ? "Operators" : isValidators ? "Validators" : "All"}
-        </Button>
+      <DropdownMenuTrigger>
+        <div className="flex items-center gap-2">
+          <Text variant="headline3" className={cn(className, "")} {...props}>
+            {isOperators
+              ? "Operators"
+              : isValidators
+                ? "Validator Clusters"
+                : "All"}
+          </Text>
+          <ChevronDown className="text-gray-500" />
+        </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem defaultChecked={isValidators}>
-          Validators
+        <DropdownMenuItem asChild defaultChecked={isValidators}>
+          <Link to="/validators">Validator Clusters</Link>
         </DropdownMenuItem>
-        <DropdownMenuItem defaultChecked={isOperators}>
-          Operators
+        <DropdownMenuItem asChild defaultChecked={isOperators}>
+          <Link to="/operators">Operators</Link>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

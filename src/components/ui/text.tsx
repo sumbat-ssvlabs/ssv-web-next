@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils/tw";
 import type { ComponentWithAs } from "@/types/component";
 import { cva, type VariantProps } from "class-variance-authority";
+import type { ComponentPropsWithoutRef } from "react";
 
 const variants = cva("", {
   variants: {
@@ -28,7 +29,10 @@ const variants = cva("", {
   defaultVariants: {},
 });
 
-type FCProps = ComponentWithAs<"p", VariantProps<typeof variants>>;
+export type TextProps = ComponentPropsWithoutRef<"p"> &
+  VariantProps<typeof variants>;
+
+type FCProps = ComponentWithAs<"p", TextProps>;
 
 export const Text: FCProps = ({
   className,

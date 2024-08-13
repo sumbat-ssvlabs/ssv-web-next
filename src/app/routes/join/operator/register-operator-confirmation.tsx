@@ -1,26 +1,26 @@
-import { type FC } from "react";
-import { Container } from "@/components/ui/container";
-import { Card } from "@/components/ui/card";
-import { Span, Text } from "@/components/ui/text";
-import { useRegisterOperatorState } from "@/context/create-operator-context";
-import { useAccount } from "wagmi";
-import { shortenAddress } from "@/lib/utils/strings";
-import { formatSSV } from "@/lib/utils/number";
 import { OperatorStatusBadge } from "@/components/operator/operator-permission/operator-status-badge";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Container } from "@/components/ui/container";
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
-import { globals } from "@/config";
-import { useRegisterOperator } from "@/lib/contract-interactions/write/use-register-operator";
-import { createOperatorFromEvent } from "@/lib/utils/operator";
+import { Span, Text } from "@/components/ui/text";
 import { toast } from "@/components/ui/use-toast";
-import { getOperatorQueryOptions } from "@/hooks/use-operator";
-import { queryClient } from "@/lib/react-query";
-import { useNavigate } from "react-router";
-import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
-import { encodeAbiParameters, parseAbiParameters } from "viem";
-import { roundOperatorFee } from "@/lib/utils/bigint";
+import { globals } from "@/config";
+import { useRegisterOperatorState } from "@/context/create-operator-context";
 import { getCreatedOptimisticOperatorsQueryOptions } from "@/hooks/operator/use-created-optimistic-operators";
-import { useKey } from "react-use";
+import { useFocus } from "@/hooks/use-focus";
+import { getOperatorQueryOptions } from "@/hooks/use-operator";
+import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
+import { useRegisterOperator } from "@/lib/contract-interactions/write/use-register-operator";
+import { queryClient } from "@/lib/react-query";
+import { roundOperatorFee } from "@/lib/utils/bigint";
+import { formatSSV } from "@/lib/utils/number";
+import { createOperatorFromEvent } from "@/lib/utils/operator";
+import { shortenAddress } from "@/lib/utils/strings";
+import { type FC } from "react";
+import { useNavigate } from "react-router";
+import { encodeAbiParameters, parseAbiParameters } from "viem";
+import { useAccount } from "wagmi";
 
 export const RegisterOperatorConfirmation: FC = () => {
   const navigate = useNavigate();
@@ -67,21 +67,27 @@ export const RegisterOperatorConfirmation: FC = () => {
             },
           );
 
-          navigate(`/operators`);
-          // navigate(`../success?operatorId=${operator.id}`);
+          navigate(`../success?operatorId=${operator.id}`);
         },
       }),
     );
   };
 
-  useKey("Enter", submit);
+  useFocus("#register-operator-confirmation");
 
   return (
     <Container variant="vertical">
       <NavigateBackBtn by="history" />
       <Card
+        id="register-operator-confirmation"
         as="form"
         className="w-full"
+        onKeyDown={(ev) => {
+          if (ev.key === "Enter") {
+            ev.preventDefault();
+            submit();
+          }
+        }}
         onSubmit={(ev) => {
           ev.preventDefault();
           submit();

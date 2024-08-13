@@ -29,6 +29,7 @@ import { OperatorStatusBadge } from "@/components/operator/operator-permission/o
 import { useRegisterOperatorState } from "@/context/create-operator-context";
 import { useNavigate } from "react-router";
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
+import { useFocus } from "@/hooks/use-focus";
 
 export const RegisterOperator: FC<ComponentPropsWithoutRef<"div">> = ({
   className,
@@ -80,6 +81,8 @@ export const RegisterOperator: FC<ComponentPropsWithoutRef<"div">> = ({
     navigate("../fee");
   });
 
+  useFocus("#register-operator-public-key");
+
   return (
     <Container variant="vertical">
       <NavigateBackBtn by="history" />
@@ -112,6 +115,7 @@ export const RegisterOperator: FC<ComponentPropsWithoutRef<"div">> = ({
                 <FormLabel>Operator Public Key</FormLabel>
                 <FormControl>
                   <Input
+                    id="register-operator-public-key"
                     {...field}
                     isLoading={fetchOperatorByPublicKey.isPending}
                   />

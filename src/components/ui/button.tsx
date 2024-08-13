@@ -18,9 +18,9 @@ export const buttonVariants = cva(
           "border dark:border-white/10 hover:bg-accent hover:text-accent-foreground",
         secondary:
           "bg-primary-50 text-primary-500 hover:bg-primary-100 active:bg-primary-200",
-        ghost: "hover:bg-gray-300 hover:text-accent-foreground",
+        ghost: "hover:bg-gray-300 disabled:text-red-500",
         subtle:
-          "bg-slate-400/5 hover:bg-slate-400/20 hover:text-accent-foreground",
+          "bg-slate-400/5 hover:bg-slate-400/20 hover:text-accent-foreground ",
         link: "inline-flex text-primary-500 underline-offset-4 hover:underline",
       },
       colorScheme: {
@@ -95,16 +95,26 @@ export const Button: ComponentWithAs<"button", ButtonProps> = React.forwardRef<
     return (
       <Comp
         className={cn(
-          buttonVariants({ variant, size, colorScheme, className, width }),
+          buttonVariants({
+            variant,
+            size,
+            colorScheme,
+            className,
+            width,
+          }),
           {
-            disabled,
             "opacity-50": isLoading,
           },
         )}
+        disabled={disabled}
         type={type}
         ref={ref}
         {...props}
-        onClick={disabled || isLoading ? undefined : props.onClick}
+        onClick={
+          disabled || isLoading
+            ? (ev: React.MouseEvent<HTMLButtonElement>) => ev.preventDefault()
+            : props.onClick
+        }
       >
         <>
           {isLoading ? <CgSpinner className="animate-spin size-5" /> : icon}

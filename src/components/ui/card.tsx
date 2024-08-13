@@ -27,7 +27,11 @@ export const Card: FCProps = ({
 }) => {
   const Comp = as ?? "div";
   return (
-    <Comp className={cn(variants({ variant, className }))} {...props}>
+    <Comp
+      tabIndex={-1}
+      className={cn(variants({ variant, className }), "outline-none")}
+      {...props}
+    >
       {children}
     </Comp>
   );
