@@ -60,8 +60,7 @@ export const useOperatorDeclaredFeeStatus = (
   return "expired";
 };
 
-export const useOperatorFeeState = (operatorId: bigint) => {
-  console.log("operatorId:", operatorId);
+export const useOperatorFeeState = () => {
   const [declareOperatorFeePeriod, executeOperatorFeePeriod] =
     useGetOperatorFeePeriods().data?.map(Number) ?? [0, 0];
 
