@@ -12,23 +12,26 @@ import {
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import { NumberInput } from "@/components/ui/number-input";
 import { Text } from "@/components/ui/text";
+import { useUpdateOperatorFeeState } from "@/guard/operator-guards";
 import { useOperatorFeeLimits } from "@/hooks/operator/use-operator-fee-limits";
 import { formatSSV } from "@/lib/utils/number";
 import { cn } from "@/lib/utils/tw";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ComponentPropsWithoutRef, FC } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
 import { formatUnits } from "viem";
 import { z } from "zod";
 
-export const UpdateFee: FC<ComponentPropsWithoutRef<"div">> = ({
+export const UpdateOperatorFee: FC<ComponentPropsWithoutRef<"div">> = ({
   className,
   ...props
 }) => {
+  const navigate = useNavigate();
   const { min, max, isLoading, operatorYearlyFee } = useOperatorFeeLimits();
 
   const schema = z.object({
-    fee: z
+    yearlyFee: z
       .bigint()
       .min(min, `Fee must be higher than ${formatUnits(min, 18)} SSV`)
       .max(max, `You can only increase your fee up to ${formatUnits(max, 18)}`),
@@ -37,28 +40,32 @@ export const UpdateFee: FC<ComponentPropsWithoutRef<"div">> = ({
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
-      fee: operatorYearlyFee,
+      yearlyFee: operatorYearlyFee,
     },
   });
 
-  const isChanged = form.watch("fee") !== operatorYearlyFee;
+  const submit = form.handleSubmit((values) => {
+    useUpdateOperatorFeeState.state.previousYearlyFee = operatorYearlyFee;
+    useUpdateOperatorFeeState.state.newYearlyFee = values.yearlyFee;
+
+    const isIncreased = values.yearlyFee > operatorYearlyFee;
+    return navigate(isIncreased ? "increase" : "decrease");
+  });
+
+  const isChanged = form.watch("yearlyFee") !== operatorYearlyFee;
 
   return (
     <Container variant="vertical" className={cn(className)} {...props}>
       <NavigateBackBtn />
       <Form {...form}>
-        <Card
-          as="form"
-          className="w-full"
-          onSubmit={form.handleSubmit(console.log)}
-        >
+        <Card as="form" className="w-full" onSubmit={submit}>
           <Text variant="headline4">Update Fee</Text>
           <Text variant="body-2-medium">
             Enter your new operator annual fee.
           </Text>
           <FormField
             control={form.control}
-            name="fee"
+            name="yearlyFee"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex w-full justify-between gap-2">
@@ -101,4 +108,4 @@ export const UpdateFee: FC<ComponentPropsWithoutRef<"div">> = ({
   );
 };
 
-UpdateFee.displayName = "UpdateFee";
+UpdateOperatorFee.displayName = "UpdateOperatorFee";

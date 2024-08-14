@@ -10,6 +10,9 @@ export const [RegisterOperatorGuard, useRegisterOperatorState] = createGuard(
 );
 
 export const [UpdateOperatorFeeGuard, useUpdateOperatorFeeState] = createGuard(
-  {},
-  "/join/operator",
+  {
+    previousYearlyFee: 0n,
+    newYearlyFee: 0n,
+  },
+  "../update-fee",
 );

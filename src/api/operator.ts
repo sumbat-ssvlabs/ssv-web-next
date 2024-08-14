@@ -40,19 +40,28 @@ export const getPaginatedAccountOperators = ({
   page = 1,
   perPage = 10,
 }: GetAccountOperatorsParams) => {
-  return api.get<OperatorsSearchResponse>(
-    endpoint(
-      "operators",
-      "owned_by",
-      address,
-      `?${new URLSearchParams({
-        page: page.toString(),
-        perPage: perPage.toString(),
-        withFee: "true",
-        ordering: "id:asc",
-      }).toString()}`,
-    ),
-  );
+  return api
+    .get<OperatorsSearchResponse>(
+      endpoint(
+        "operators",
+        "owned_by",
+        address,
+        `?${new URLSearchParams({
+          page: page.toString(),
+          perPage: perPage.toString(),
+          withFee: "true",
+          ordering: "id:asc",
+        }).toString()}`,
+      ),
+    )
+    .then((response) => ({
+      ...response,
+      pagination: {
+        ...response.pagination,
+        page: response.pagination.page || 1,
+        pages: response.pagination.pages || 1,
+      },
+    }));
 };
 
 export const getOperatorLocations = () => {

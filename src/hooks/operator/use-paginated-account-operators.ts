@@ -27,30 +27,38 @@ export const usePaginatedAccountOperators = (perPage = 10) => {
   const { address } = useAccount();
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const page = Number(searchParams.get("page") || 1);
+  const page = Number(searchParams.get("page")) || 1;
 
   const { data: optimisticOperators = [] } = useCreatedOptimisticOperators();
 
-  const query = useQuery(
+  const paginatedOperators = useQuery(
     getPaginatedAccountOperatorsQueryOptions(address, page, perPage),
   );
 
-  if (query.data?.pagination && page > query.data.pagination.pages) {
+  if (
+    paginatedOperators.data?.pagination &&
+    page > paginatedOperators.data.pagination.pages
+  ) {
     setSearchParams((prev) => ({
       ...prev,
-      page: String(query.data.pagination.pages),
+      page: String(paginatedOperators.data.pagination.pages),
     }));
   }
 
-  const pagination = query.data?.pagination || createDefaultPagination();
+  const pagination =
+    paginatedOperators.data?.pagination || createDefaultPagination();
   const hasNext = page < pagination.pages;
   const hasPrev = page > 1;
   const isLastPage = page === pagination.pages;
 
   const operators =
     (isLastPage
-      ? unionBy(query.data?.operators, optimisticOperators, "id") || []
-      : query.data?.operators) || [];
+      ? unionBy(
+          paginatedOperators.data?.operators,
+          optimisticOperators,
+          "id",
+        ) || []
+      : paginatedOperators.data?.operators) || [];
 
   const next = () => {
     hasNext &&
@@ -69,7 +77,7 @@ export const usePaginatedAccountOperators = (perPage = 10) => {
   };
 
   return {
-    query,
+    query: paginatedOperators,
     operators,
     pagination,
     hasNext,

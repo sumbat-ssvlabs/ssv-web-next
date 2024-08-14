@@ -15,7 +15,6 @@ import { OperatorSettings } from "@/app/routes/dashboard/operators/operator-sett
 import { OperatorStatus } from "@/app/routes/dashboard/operators/operator-settings/operator-status";
 import { Operators } from "@/app/routes/dashboard/operators/operators";
 import { RemoveOperator } from "@/app/routes/dashboard/operators/remove-operator";
-import { UpdateFee } from "@/app/routes/dashboard/operators/update-fee/update-fee";
 import { WithdrawOperatorBalance } from "@/app/routes/dashboard/operators/withdraw-operator-balance";
 import { FeeRecipientAddress } from "@/app/routes/dashboard/clusters/fee-recipient-address";
 import { Join } from "@/app/routes/join/join";
@@ -26,13 +25,20 @@ import { RegisterOperatorSuccess } from "@/app/routes/join/operator/register-ope
 import { SetOperatorFee } from "@/app/routes/join/operator/set-operator-fee";
 import { ProtectedOperatorRoute } from "@/app/routes/protected-operator-route";
 import { ProtectedRoute } from "@/app/routes/protected-route";
-import { createBrowserRouter, Outlet } from "react-router-dom";
+import { createBrowserRouter, Link, Outlet } from "react-router-dom";
 import { Clusters } from "@/app/routes/dashboard/clusters/clusters";
 import { Cluster } from "@/app/routes/dashboard/clusters/cluster/cluster";
 import { WithdrawClusterBalance } from "@/app/routes/dashboard/clusters/cluster/withdraw-cluster-balance";
 import { DepositClusterBalance } from "@/app/routes/dashboard/clusters/cluster/deposit-cluster-balance";
 import { ProtectedClusterRoute } from "@/app/routes/protected-cluster-route";
-import { RegisterOperatorGuard } from "@/guard/operator-guards";
+import {
+  RegisterOperatorGuard,
+  UpdateOperatorFeeGuard,
+} from "@/guard/operator-guards";
+import { DecreaseOperatorFee } from "@/app/routes/dashboard/operators/update-fee/decrease-operator-fee";
+import { IncreaseOperatorFee } from "@/app/routes/dashboard/operators/update-fee/increase-operator-fee";
+import { UpdateOperatorFee } from "@/app/routes/dashboard/operators/update-fee/update-operator-fee";
+import { OperatorFeeUpdated } from "@/app/routes/dashboard/operators/update-fee/operator-fee-updated";
 
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
@@ -46,6 +52,15 @@ export const router: ReturnType<typeof createBrowserRouter> =
         </ProtectedRoute>
       ),
       children: [
+        {
+          index: true,
+          element: (
+            <div className="flex gap-2">
+              <Link to="/clusters">Clusters</Link>
+              <Link to="/operators">Operators</Link>
+            </div>
+          ),
+        },
         {
           path: "join",
           element: <Join />,
@@ -181,8 +196,31 @@ export const router: ReturnType<typeof createBrowserRouter> =
                 },
                 {
                   path: "update-fee",
-                  element: <UpdateFee />,
+                  element: (
+                    <UpdateOperatorFeeGuard>
+                      <Outlet />
+                    </UpdateOperatorFeeGuard>
+                  ),
+                  children: [
+                    {
+                      index: true,
+                      element: <UpdateOperatorFee />,
+                    },
+                    {
+                      path: "decrease",
+                      element: <DecreaseOperatorFee />,
+                    },
+                    {
+                      path: "increase",
+                      element: <IncreaseOperatorFee />,
+                    },
+                    {
+                      path: "success",
+                      element: <OperatorFeeUpdated />,
+                    },
+                  ],
                 },
+
                 {
                   path: "withdraw",
                   element: <WithdrawOperatorBalance />,

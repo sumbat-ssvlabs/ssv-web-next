@@ -29,18 +29,27 @@ export const getPaginatedAccountClusters = ({
   page = 1,
   perPage = 10,
 }: GetPaginatedAccountClusters) => {
-  return api.get<GetPaginatedClustersResponse>(
-    endpoint(
-      "clusters",
-      "owner",
-      account,
-      `?${new URLSearchParams({
-        page: page.toString(),
-        perPage: perPage.toString(),
-        withFee: "true",
-        ordering: "id:asc",
-        operatorDetails: "operatorDetails",
-      }).toString()}`,
-    ),
-  );
+  return api
+    .get<GetPaginatedClustersResponse>(
+      endpoint(
+        "clusters",
+        "owner",
+        account,
+        `?${new URLSearchParams({
+          page: page.toString(),
+          perPage: perPage.toString(),
+          withFee: "true",
+          ordering: "id:asc",
+          operatorDetails: "operatorDetails",
+        }).toString()}`,
+      ),
+    )
+    .then((response) => ({
+      ...response,
+      pagination: {
+        ...response.pagination,
+        page: response.pagination.page || 1,
+        pages: response.pagination.pages || 1,
+      },
+    }));
 };

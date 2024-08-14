@@ -21,4 +21,4 @@ export const getAccount = (account: Address) =>
     .then((res) => res.data);
 
 export const getOwnerNonce = (account: Address) =>
-  getAccount(account).then((res) => res.data.nonce);
+  getAccount(account).then((res) => res.nonce);

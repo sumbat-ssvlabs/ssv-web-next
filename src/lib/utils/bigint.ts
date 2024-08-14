@@ -13,7 +13,6 @@ export const bigintMin = (...args: (bigint | undefined)[]): bigint => {
 };
 export const bigintRound = (value: bigint, precision: bigint): bigint => {
   const remainder = value % precision;
-  console.log("remainder:", remainder);
   return remainder >= precision / 2n
     ? value + (precision - remainder) // Round up
     : value - remainder; // Round down
