@@ -5,7 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
-import { getOperatorQueryOptions, useOperator } from "@/hooks/use-operator";
+import {
+  getOperatorQueryOptions,
+  useOperator,
+} from "@/hooks/operator/use-operator";
 import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
 import { useSetOperatorsPrivateUnchecked } from "@/lib/contract-interactions/write/use-set-operators-private-unchecked";
 import { useSetOperatorsPublicUnchecked } from "@/lib/contract-interactions/write/use-set-operators-public-unchecked";

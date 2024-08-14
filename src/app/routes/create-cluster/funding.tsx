@@ -2,7 +2,7 @@ import { getOwnerNonce } from "@/api/account";
 import { FundingForm } from "@/components/funding/funding-form";
 import { useComputeFundingCost } from "@/hooks/use-compute-funding-cost";
 import { useCreateShares } from "@/hooks/use-create-shares";
-import { getOperatorQueryOptions } from "@/hooks/use-operator";
+import { getOperatorQueryOptions } from "@/hooks/operator/use-operator";
 import { prepareOperatorsForShares } from "@/lib/utils/operator";
 import { cn } from "@/lib/utils/tw";
 import { createValidatorFlow } from "@/signals/create-cluster-signals";

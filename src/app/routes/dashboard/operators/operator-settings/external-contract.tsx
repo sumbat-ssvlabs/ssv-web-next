@@ -15,7 +15,10 @@ import { Spinner } from "@/components/ui/spinner";
 import { Tooltip } from "@/components/ui/tooltip";
 import { toast } from "@/components/ui/use-toast";
 import { globals } from "@/config";
-import { getOperatorQueryOptions, useOperator } from "@/hooks/use-operator";
+import {
+  getOperatorQueryOptions,
+  useOperator,
+} from "@/hooks/operator/use-operator";
 import { fetchIsWhitelistingContract } from "@/lib/contract-interactions/read/use-is-whitelisting-contract";
 import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
 import { useRemoveOperatorsWhitelistingContract } from "@/lib/contract-interactions/write/use-remove-operators-whitelisting-contract";

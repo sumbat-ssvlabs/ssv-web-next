@@ -6,10 +6,9 @@ import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import { Span, Text } from "@/components/ui/text";
 import { toast } from "@/components/ui/use-toast";
 import { globals } from "@/config";
-import { useRegisterOperatorState } from "@/context/create-operator-context";
 import { getCreatedOptimisticOperatorsQueryOptions } from "@/hooks/operator/use-created-optimistic-operators";
 import { useFocus } from "@/hooks/use-focus";
-import { getOperatorQueryOptions } from "@/hooks/use-operator";
+import { getOperatorQueryOptions } from "@/hooks/operator/use-operator";
 import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
 import { useRegisterOperator } from "@/lib/contract-interactions/write/use-register-operator";
 import { queryClient } from "@/lib/react-query";
@@ -21,6 +20,7 @@ import { type FC } from "react";
 import { useNavigate } from "react-router";
 import { encodeAbiParameters, parseAbiParameters } from "viem";
 import { useAccount } from "wagmi";
+import { useRegisterOperatorState } from "@/guard/operator-guards";
 
 export const RegisterOperatorConfirmation: FC = () => {
   const navigate = useNavigate();

@@ -15,12 +15,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Text } from "@/components/ui/text";
 import { NumberInput } from "@/components/ui/number-input";
 import { parseEther } from "viem";
-import { useRegisterOperatorState } from "@/context/create-operator-context";
 import { globals } from "@/config";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router";
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import { useFocus } from "@/hooks/use-focus";
+import { useRegisterOperatorState } from "@/guard/operator-guards";
 
 export const SetOperatorFee: FC<ComponentPropsWithoutRef<"div">> = () => {
   const navigate = useNavigate();

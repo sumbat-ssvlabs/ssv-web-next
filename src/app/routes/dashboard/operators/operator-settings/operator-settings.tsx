@@ -6,7 +6,7 @@ import { Container } from "@/components/ui/container";
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import { Tooltip } from "@/components/ui/tooltip";
 import { globals, links } from "@/config";
-import { useOperator } from "@/hooks/use-operator";
+import { useOperator } from "@/hooks/operator/use-operator";
 import type { ComponentPropsWithoutRef, FC } from "react";
 import { FaCircleInfo } from "react-icons/fa6";
 

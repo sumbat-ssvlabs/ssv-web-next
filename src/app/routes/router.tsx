@@ -26,13 +26,13 @@ import { RegisterOperatorSuccess } from "@/app/routes/join/operator/register-ope
 import { SetOperatorFee } from "@/app/routes/join/operator/set-operator-fee";
 import { ProtectedOperatorRoute } from "@/app/routes/protected-operator-route";
 import { ProtectedRoute } from "@/app/routes/protected-route";
-import { RegisterOperatorGuard } from "@/context/create-operator-context";
 import { createBrowserRouter, Outlet } from "react-router-dom";
 import { Clusters } from "@/app/routes/dashboard/clusters/clusters";
 import { Cluster } from "@/app/routes/dashboard/clusters/cluster/cluster";
 import { WithdrawClusterBalance } from "@/app/routes/dashboard/clusters/cluster/withdraw-cluster-balance";
 import { DepositClusterBalance } from "@/app/routes/dashboard/clusters/cluster/deposit-cluster-balance";
 import { ProtectedClusterRoute } from "@/app/routes/protected-cluster-route";
+import { RegisterOperatorGuard } from "@/guard/operator-guards";
 
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([

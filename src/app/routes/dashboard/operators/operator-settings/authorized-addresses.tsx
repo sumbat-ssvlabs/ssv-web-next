@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import { useManageAuthorizedAddresses } from "@/hooks/operator/use-manage-authorized-addresses";
-import { useOperator } from "@/hooks/use-operator";
+import { useOperator } from "@/hooks/operator/use-operator";
 import { X } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { useBlocker } from "react-router";

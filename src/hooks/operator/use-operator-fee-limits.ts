@@ -1,5 +1,5 @@
 import { globals } from "@/config";
-import { useOperator } from "@/hooks/use-operator";
+import { useOperator } from "@/hooks/operator/use-operator";
 import { useGetMaximumOperatorFee } from "@/lib/contract-interactions/read/use-get-maximum-operator-fee";
 import { useGetOperatorFeeIncreaseLimit } from "@/lib/contract-interactions/read/use-get-operator-fee-increase-limit";
 import { bigintMin } from "@/lib/utils/bigint";

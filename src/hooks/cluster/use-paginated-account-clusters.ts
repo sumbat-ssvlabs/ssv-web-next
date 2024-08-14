@@ -6,19 +6,19 @@ import { useSearchParams } from "react-router-dom";
 import { useAccount } from "wagmi";
 
 export const getPaginatedAccountClustersQueryOptions = (
-  address: Address | undefined,
+  account: Address | undefined,
   page: number = 1,
   perPage: number = 10,
 ) =>
   queryOptions({
-    queryKey: ["paginated-account-clusters", address, page, perPage],
+    queryKey: ["paginated-account-clusters", account, page, perPage],
     queryFn: () =>
       getPaginatedAccountClusters({
-        address: address!,
+        account: account!,
         page: page,
         perPage,
       }),
-    enabled: Boolean(address),
+    enabled: Boolean(account),
   });
 
 export const usePaginatedAccountClusters = (perPage = 10) => {
@@ -27,9 +27,9 @@ export const usePaginatedAccountClusters = (perPage = 10) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const page = Number(searchParams.get("page") || 1);
 
-  const query = useQuery(
-    getPaginatedAccountClustersQueryOptions(address, page, perPage),
-  );
+  const query = useQuery({
+    ...getPaginatedAccountClustersQueryOptions(address, page, perPage),
+  });
 
   const pagination = query.data?.pagination || createDefaultPagination();
   const hasNext = page < pagination.pages;

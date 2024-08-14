@@ -1,4 +1,4 @@
-import { useOperator } from "@/hooks/use-operator";
+import { useOperator } from "@/hooks/operator/use-operator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo } from "react";
 import { useFieldArray, useForm } from "react-hook-form";

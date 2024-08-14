@@ -3,7 +3,7 @@ import { DashboardPicker } from "@/components/dashboard/dashboard-picker";
 import { Button } from "@/components/ui/button";
 import { Helmet } from "react-helmet";
 import { Container } from "@/components/ui/container";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Spacer } from "@/components/ui/spacer";
 import { FiEdit3 } from "react-icons/fi";
 import { ClusterTable } from "@/components/validator/clusters-table/clusters-table";
@@ -11,6 +11,7 @@ import { usePaginatedAccountClusters } from "@/hooks/cluster/use-paginated-accou
 
 export const Clusters: FC<ComponentPropsWithoutRef<"div">> = () => {
   const { clusters, pagination } = usePaginatedAccountClusters();
+  const navigate = useNavigate();
   return (
     <>
       <Helmet>
@@ -31,11 +32,11 @@ export const Clusters: FC<ComponentPropsWithoutRef<"div">> = () => {
         <ClusterTable
           clusters={clusters}
           pagination={pagination}
-          onClusterClick={console.log}
+          onClusterClick={(cluster) => navigate(cluster.clusterId)}
         />
       </Container>
     </>
   );
 };
 
-Clusters.displayName = "Validators";
+Clusters.displayName = "Clusters";

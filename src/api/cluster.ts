@@ -6,6 +6,7 @@ import type {
   GetPaginatedClustersResponse,
   SolidityCluster,
 } from "@/types/api";
+import type { Address } from "abitype";
 
 export const getCluster = (hash: string) =>
   api
@@ -18,7 +19,7 @@ export const getClusterData = (hash: string): Promise<SolidityCluster> =>
     .catch(() => getDefaultClusterData());
 
 export type GetPaginatedAccountClusters = {
-  account: string;
+  account: string | Address;
   page?: number;
   perPage?: number;
 };

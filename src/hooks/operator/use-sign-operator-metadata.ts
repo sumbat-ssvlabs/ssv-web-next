@@ -1,7 +1,7 @@
 import type { OperatorMetadata } from "@/api/operator";
 import { toast } from "@/components/ui/use-toast";
 import { useSetOperatorMetadata } from "@/hooks/operator/use-set-operator-metadata";
-import { invalidateOperatorQuery } from "@/hooks/use-operator";
+import { invalidateOperatorQuery } from "@/hooks/operator/use-operator";
 import { useSignMessage } from "wagmi";
 
 export const useSignOperatorMetadata = () => {

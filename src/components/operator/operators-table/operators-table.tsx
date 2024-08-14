@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils/tw";
 import { Pagination } from "@/components/ui/pagination";
 import { OperatorTableRow } from "@/components/operator/operators-table/operator-table-row";
 import { queryClient } from "@/lib/react-query";
-import { getOperatorQueryOptions } from "@/hooks/use-operator";
+import { getOperatorQueryOptions } from "@/hooks/operator/use-operator";
 
 export type OperatorsTableProps = {
   operators: Operator[];

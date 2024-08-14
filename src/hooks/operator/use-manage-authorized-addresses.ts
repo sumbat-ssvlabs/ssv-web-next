@@ -2,7 +2,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useAddAuthorizedAddresses } from "@/hooks/operator/use-add-authorized-addresses";
 import { useDeleteAuthorizedAddresses } from "@/hooks/operator/use-delete-authorized-addresses";
 import { useOperatorPageParams } from "@/hooks/operator/use-operator-page-params";
-import { getOperatorQueryOptions } from "@/hooks/use-operator";
+import { getOperatorQueryOptions } from "@/hooks/operator/use-operator";
 import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
 import { useRemoveOperatorsWhitelists } from "@/lib/contract-interactions/write/use-remove-operators-whitelists";
 import { useSetOperatorsWhitelists } from "@/lib/contract-interactions/write/use-set-operators-whitelists";

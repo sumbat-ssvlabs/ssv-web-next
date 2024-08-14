@@ -1,6 +1,6 @@
 import { globals } from "@/config";
 import { bigintMax } from "./bigint";
-import type { Prettify } from "@/types/typescript";
+import type { Prettify } from "@/types/ts-utils";
 
 export const computeDailyAmount = (value: bigint, days: number) => {
   const scale = 10 ** 6;

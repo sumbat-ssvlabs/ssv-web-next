@@ -26,7 +26,7 @@ import { Tooltip } from "@/components/ui/tooltip";
 import { useOperatorLocations } from "@/hooks/operator/use-operator-locations";
 import { useOperatorNodes } from "@/hooks/operator/use-operator-nodes";
 import { useSignOperatorMetadata } from "@/hooks/operator/use-sign-operator-metadata";
-import { useOperator } from "@/hooks/use-operator";
+import { useOperator } from "@/hooks/operator/use-operator";
 import {
   MEV_RELAY_OPTIONS,
   SORTED_OPERATOR_METADATA_FIELDS,

@@ -8,7 +8,7 @@ import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import { Text } from "@/components/ui/text";
 import { Tooltip } from "@/components/ui/tooltip";
 import { useOperatorPageParams } from "@/hooks/operator/use-operator-page-params";
-import { useOperator } from "@/hooks/use-operator";
+import { useOperator } from "@/hooks/operator/use-operator";
 import { useGetOperatorEarnings } from "@/lib/contract-interactions/read/use-get-operator-earnings";
 import { useGetOperatorFee } from "@/lib/contract-interactions/read/use-get-operator-fee";
 import { formatSSV, percentageFormatter } from "@/lib/utils/number";

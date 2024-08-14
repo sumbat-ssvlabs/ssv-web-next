@@ -1,4 +1,4 @@
-import { createGuard } from "@/context/create-proxy-context";
+import { createGuard } from "@/guard/create-guard";
 
 export const [RegisterOperatorGuard, useRegisterOperatorState] = createGuard(
   {
@@ -6,5 +6,10 @@ export const [RegisterOperatorGuard, useRegisterOperatorState] = createGuard(
     publicKey: "",
     isPrivate: false,
   },
+  "/join/operator",
+);
+
+export const [UpdateOperatorFeeGuard, useUpdateOperatorFeeState] = createGuard(
+  {},
   "/join/operator",
 );

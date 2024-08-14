@@ -1,5 +1,5 @@
 import { useOperatorPageParams } from "@/hooks/operator/use-operator-page-params";
-import { useOperator } from "@/hooks/use-operator";
+import { useOperator } from "@/hooks/operator/use-operator";
 import { isUndefined } from "lodash-es";
 import type { ComponentPropsWithoutRef, FC } from "react";
 import { Navigate } from "react-router-dom";

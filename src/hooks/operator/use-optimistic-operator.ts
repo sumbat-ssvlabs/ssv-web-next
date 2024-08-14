@@ -1,4 +1,4 @@
-import { getOperatorQueryOptions } from "@/hooks/use-operator";
+import { getOperatorQueryOptions } from "@/hooks/operator/use-operator";
 import type { Operator } from "@/types/api";
 import { useQuery } from "@tanstack/react-query";
 
