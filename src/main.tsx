@@ -30,32 +30,30 @@ import "@fontsource/manrope/800.css";
 // }
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <WagmiProvider config={config}>
-      <PersistQueryClientProvider
-        client={queryClient}
-        persistOptions={{ persister }}
-        onSuccess={(...args) => {
-          console.log("Query client persisted", args);
-        }}
-      >
-        <RainbowKitProvider>
-          {/* {import.meta.env.DEV && (
+  <WagmiProvider config={config}>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{ persister }}
+      onSuccess={(...args) => {
+        console.log("Query client persisted", args);
+      }}
+    >
+      <RainbowKitProvider>
+        {/* {import.meta.env.DEV && (
             <ReactQueryDevtools
               buttonPosition="bottom-right"
               client={queryClient}
             />
           )} */}
-          <RouterProvider router={router} />
-          <Toaster />
-          <Text
-            variant="caption-medium"
-            className="fixed bottom-0 left-0 m-2 text-gray-500 pointer-events-none"
-          >
-            {APP_VERSION}
-          </Text>
-        </RainbowKitProvider>
-      </PersistQueryClientProvider>
-    </WagmiProvider>
-  </React.StrictMode>,
+        <RouterProvider router={router} />
+        <Toaster />
+        <Text
+          variant="caption-medium"
+          className="fixed bottom-0 left-0 m-2 text-gray-500 pointer-events-none"
+        >
+          {APP_VERSION}
+        </Text>
+      </RainbowKitProvider>
+    </PersistQueryClientProvider>
+  </WagmiProvider>,
 );

@@ -7,7 +7,7 @@ export const percentageFormatter = new Intl.NumberFormat("en-US", {
 
 export const ethFormatter = new Intl.NumberFormat("en-US", {
   useGrouping: true,
-  maximumFractionDigits: 2,
+  maximumFractionDigits: 4,
 });
 
 export const formatSSV = (num: bigint) =>

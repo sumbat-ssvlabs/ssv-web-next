@@ -14,6 +14,7 @@ import { NumberInput } from "@/components/ui/number-input";
 import { Text } from "@/components/ui/text";
 import { useUpdateOperatorFeeState } from "@/guard/operator-guards";
 import { useOperatorFeeLimits } from "@/hooks/operator/use-operator-fee-limits";
+import { isBigIntChanged } from "@/lib/utils/bigint";
 import { formatSSV } from "@/lib/utils/number";
 import { cn } from "@/lib/utils/tw";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -52,7 +53,7 @@ export const UpdateOperatorFee: FC<ComponentPropsWithoutRef<"div">> = ({
     return navigate(isIncreased ? "increase" : "decrease");
   });
 
-  const isChanged = form.watch("yearlyFee") !== operatorYearlyFee;
+  const isChanged = isBigIntChanged(form.watch("yearlyFee"), operatorYearlyFee);
 
   return (
     <Container variant="vertical" className={cn(className)} {...props}>

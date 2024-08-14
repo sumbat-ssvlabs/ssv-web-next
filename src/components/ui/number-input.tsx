@@ -17,10 +17,10 @@ export type NumberInputProps = {
 type Props = Omit<InputProps, keyof NumberInputProps> & NumberInputProps;
 type NumberInputFC = FC<Props>;
 
-const numReg = /^(-?(\d+)?)?(\.\d{0,10})?$/;
-const captureReg = /^(-?(\d+)?)?(\.\d{0,10})?/;
+const numReg = /^(-?(\d+)?)?(\.\d{0,4})?$/;
+const captureReg = /^(-?(\d+)?)?(\.\d{0,4})?/;
 const ignoreKeys = ["ArrowUp", "ArrowDown"];
-const delta = "0.05";
+const delta = "0.005";
 
 export const NumberInput: NumberInputFC = forwardRef<HTMLInputElement, Props>(
   (
@@ -30,7 +30,7 @@ export const NumberInput: NumberInputFC = forwardRef<HTMLInputElement, Props>(
     const isTriggeredByEvent = useRef(false);
     const prev = useRef(value);
     const [displayValue, setDisplayValue] = useState(
-      formatUnits(value, decimals),
+      formatUnits(value, decimals).toString().match(captureReg)?.[0] || "",
     );
 
     const [showMaxSet, setShowMaxSet] = useState(false);
@@ -91,6 +91,7 @@ export const NumberInput: NumberInputFC = forwardRef<HTMLInputElement, Props>(
           onInput={(ev) => {
             const value = ev.currentTarget.value.match(captureReg)?.[0] || "";
             const isNumber = numReg.test(value);
+
             if (!isNumber) return;
             if (!allowNegative && value.includes("-")) return;
 

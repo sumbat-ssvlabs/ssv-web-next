@@ -15,18 +15,28 @@ import { globals } from "@/config";
 import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
 import { queryClient } from "@/lib/react-query";
 import { getGetOperatorDeclaredFeeQueryOptions } from "@/lib/contract-interactions/read/use-get-operator-declared-fee";
-import { useOperatorDeclaredFeeStatus } from "../../../../../hooks/operator/use-operator-fee-periods";
+import {
+  humanizeDuration,
+  useOperatorDeclaredFee,
+  useOperatorDeclaredFeeStatus,
+} from "@/hooks/operator/use-operator-fee-periods";
 
 export const IncreaseOperatorFee: FC = () => {
-  const update = useUpdate();
-  useInterval(update, 1000);
-
   const { operatorId } = useOperatorPageParams();
+  const status = useOperatorDeclaredFeeStatus(BigInt(operatorId!));
+  const { approvalBeginTime, approvalEndTime } = useOperatorDeclaredFee(
+    BigInt(operatorId!),
+  );
+  const a = humanizeDuration(Number(approvalBeginTime * 1000n) - Date.now());
+  const b = humanizeDuration(Number(approvalEndTime) * 1000 - Date.now());
+  console.log("status:", status, a);
+
+  const update = useUpdate();
+  useInterval(update, status !== "declaration" ? 1000 : null);
+
   const declareOperatorFee = useDeclareOperatorFee();
 
   const step = Number(useSearchParam("step"));
-  const status = useOperatorDeclaredFeeStatus(BigInt(operatorId!));
-  console.log("status:", status);
   const submit = () => {
     declareOperatorFee.write(
       {
@@ -61,6 +71,7 @@ export const IncreaseOperatorFee: FC = () => {
           stepIndex={step}
           steps={[
             {
+              variant: status === "declaration" ? "active" : "done",
               label: "Declare Fee",
               addon: (
                 <Text className="text-xs font-bold">
@@ -74,10 +85,20 @@ export const IncreaseOperatorFee: FC = () => {
               ),
             },
             {
+              variant: status === "waiting" ? "active" : "done",
               label: "Waiting Period",
+              addon: status === "waiting" && (
+                <Text className="text-xs font-bold text-warning-500">{a}</Text>
+              ),
             },
             {
+              variant: status === "execution-pending" ? "active" : "done",
               label: "Pending Execution",
+              addon: status === "execution-pending" && (
+                <Text className="text-xs font-bold text-error-500">
+                  Expires in {b}
+                </Text>
+              ),
             },
             {
               label: "Fee Updated",

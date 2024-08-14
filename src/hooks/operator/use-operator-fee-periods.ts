@@ -18,7 +18,7 @@ const defaultOperatorDeclaredFeeResponse = [false, 0n, 0n, 0n] as const;
 export const useOperatorDeclaredFee = (operatorId: bigint) => {
   const { data = defaultOperatorDeclaredFeeResponse } =
     useGetOperatorDeclaredFee({ operatorId });
-
+  console.log("data:", data);
   const [
     hasRequestedFeeChange,
     requestedFee,
@@ -53,6 +53,7 @@ export const useOperatorDeclaredFeeStatus = (
 
   const operator = useOperator(String(operatorId));
 
+  console.log("hasRequestedFeeChange:", hasRequestedFeeChange);
   if (!hasRequestedFeeChange) return "declaration";
   if (Date.now() / 1000 < approvalBeginTime) return "waiting";
   if (Date.now() / 1000 < approvalEndTime) return "execution-pending";

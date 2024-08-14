@@ -3,7 +3,12 @@ import { cn } from "@/lib/utils/tw";
 import { cva, type VariantProps } from "class-variance-authority";
 import { Check, X } from "lucide-react";
 import type { ReactNode } from "react";
-import { useMemo, type ComponentPropsWithoutRef, type FC } from "react";
+import {
+  Fragment,
+  useMemo,
+  type ComponentPropsWithoutRef,
+  type FC,
+} from "react";
 
 export const stepperDotVariants = cva(
   "flex items-center justify-center size-6 text-xs font-bold rounded-full",
@@ -55,7 +60,7 @@ export const StepperDot: StepperDotFC = ({
   );
 };
 
-type StepperProps = {
+export type StepperProps = {
   steps: {
     variant?: StepperDotProps["variant"];
     label: string;
@@ -84,9 +89,8 @@ export const Stepper: StepperFC = ({
     <div className={cn(className, "flex flex-col gap-2")} {...props}>
       <div className="flex items-center gap-2 justify-between">
         {steps.map((step, index) => (
-          <>
+          <Fragment key={index}>
             <StepperDot
-              key={index}
               variant={step.variant ?? getVariant(index)}
               step={index + 1}
             />
@@ -100,12 +104,13 @@ export const Stepper: StepperFC = ({
                 })}
               />
             )}
-          </>
+          </Fragment>
         ))}
       </div>
       <div className="flex gap-2 justify-evenly">
         {steps.map((step, index) => (
           <div
+            key={`${index}-label`}
             className={cn("flex flex-col gap-1", {
               "flex-[3.5]":
                 steps.length > 3 && index > 0 && index < steps.length - 1,
@@ -117,7 +122,6 @@ export const Stepper: StepperFC = ({
             })}
           >
             <Text
-              key={index}
               variant="body-3-medium"
               className={cn({
                 "font-bold": stepIndex === index,
