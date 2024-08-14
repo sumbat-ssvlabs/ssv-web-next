@@ -21,7 +21,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Divider } from "@/components/ui/divider";
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/lib/react-query";
-import { getOperatorByPublicKeyQueryOptions } from "@/hooks/operator/get-get-operator-by-public-key";
+import { getOperatorByPublicKeyQueryOptions } from "@/hooks/operator/use-get-operator-by-public-key";
 import { FaCircleInfo } from "react-icons/fa6";
 import { Tooltip } from "@/components/ui/tooltip";
 import { Switch } from "@/components/ui/switch";

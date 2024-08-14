@@ -31,10 +31,7 @@ import { Cluster } from "@/app/routes/dashboard/clusters/cluster/cluster";
 import { WithdrawClusterBalance } from "@/app/routes/dashboard/clusters/cluster/withdraw-cluster-balance";
 import { DepositClusterBalance } from "@/app/routes/dashboard/clusters/cluster/deposit-cluster-balance";
 import { ProtectedClusterRoute } from "@/app/routes/protected-cluster-route";
-import {
-  RegisterOperatorGuard,
-  UpdateOperatorFeeGuard,
-} from "@/guard/operator-guards";
+import { RegisterOperatorGuard } from "@/guard/operator-guards";
 import { DecreaseOperatorFee } from "@/app/routes/dashboard/operators/update-fee/decrease-operator-fee";
 import { IncreaseOperatorFee } from "@/app/routes/dashboard/operators/update-fee/increase-operator-fee";
 import { UpdateOperatorFee } from "@/app/routes/dashboard/operators/update-fee/update-operator-fee";
@@ -196,11 +193,7 @@ export const router: ReturnType<typeof createBrowserRouter> =
                 },
                 {
                   path: "update-fee",
-                  element: (
-                    <UpdateOperatorFeeGuard>
-                      <Outlet />
-                    </UpdateOperatorFeeGuard>
-                  ),
+                  element: <Outlet />,
                   children: [
                     {
                       index: true,

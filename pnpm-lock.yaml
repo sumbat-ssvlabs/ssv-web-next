@@ -112,6 +112,9 @@ importers:
       copy-to-clipboard:
         specifier: ^3.3.3
         version: 3.3.3
+      date-fns:
+        specifier: ^3.6.0
+        version: 3.6.0
       framer-motion:
         specifier: ^11.3.4
         version: 11.3.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -3831,6 +3834,9 @@ packages:
   date-fns@2.30.0:
     resolution: {integrity: sha512-fnULvOpxnC5/Vg3NCiWelDsLiUc9bRwAPs/+LfTLNvetFCtCTN+yQz15C/fs4AwX1R9K5GLtLfn8QW+dWisaAw==}
     engines: {node: '>=0.11'}
+
+  date-fns@3.6.0:
+    resolution: {integrity: sha512-fRHTG8g/Gif+kSh50gaGEdToemgfj74aRX3swtiouboip5JDLAyDE9F11nHMIcvOaXeOC6D7SpNhi7uFyB7Uww==}
 
   dayjs@1.11.11:
     resolution: {integrity: sha512-okzr3f11N6WuqYtZSvm+F776mB41wRZMhKP+hc34YdW+KmtYYK9iqvHSwo2k9FEH3fhGXvOPV6yz2IcSrfRUDg==}
@@ -12542,6 +12548,8 @@ snapshots:
   date-fns@2.30.0:
     dependencies:
       '@babel/runtime': 7.24.7
+
+  date-fns@3.6.0: {}
 
   dayjs@1.11.11: {}
 

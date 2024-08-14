@@ -63,7 +63,7 @@ export const FeeRecipientAddress: FC<ComponentPropsWithoutRef<"div">> = () => {
   const isChanged = tryCatch(
     () =>
       !isAddressEqual(
-        (ssvAccount.data?.recipientAddress ?? "") as Address,
+        (ssvAccount.data?.recipientAddress ?? "") as Address, // TODO: when there is not clusters, the recipientAddress is undefined, please check with the backend team, we might not need to show this feature if clusters < 1
         form.watch("feeRecipientAddress"),
       ),
     false,
