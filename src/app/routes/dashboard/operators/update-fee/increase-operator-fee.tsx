@@ -92,7 +92,12 @@ export const IncreaseOperatorFee: FC = () => {
               ),
             },
             {
-              variant: status === "execution-pending" ? "active" : "done",
+              variant:
+                status === "execution-pending"
+                  ? "active"
+                  : status === "expired"
+                    ? "error"
+                    : "done",
               label: "Pending Execution",
               addon: status === "execution-pending" && (
                 <Text className="text-xs font-bold text-error-500">
@@ -101,6 +106,12 @@ export const IncreaseOperatorFee: FC = () => {
               ),
             },
             {
+              variant:
+                status === "approved"
+                  ? "done"
+                  : status === "expired"
+                    ? "error"
+                    : "default",
               label: "Fee Updated",
             },
           ]}
