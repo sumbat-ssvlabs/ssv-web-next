@@ -46,7 +46,7 @@ Invalid network schema in VITE_SSV_NETWORKS environment variable:
 export const getSSVNetworkDetails = (chainId?: number) => {
   const _chainId = chainId ?? getChainId(config);
   const { isConnected } = getAccount(config);
-  return parsed.data.find(
+  return networks.find(
     (network) => network.networkId === (isConnected ? _chainId : 17000),
   )!;
 };
