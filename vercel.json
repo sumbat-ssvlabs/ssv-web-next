@@ -1,5 +1,3 @@
 {
-  "build": {
-    "installCommand": "git config --global url.\"https://\".insteadOf git+ssh://git@ && pnpm install"
-  }
+  "installCommand": "git config --global url.\"https://\".insteadOf git+ssh://git@ && pnpm install"
 }
