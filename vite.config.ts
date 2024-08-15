@@ -10,7 +10,11 @@ export default defineConfig(({ mode }) => {
     throw new Error("VITE_SSV_NETWORKS is not defined in .env");
   }
   return {
+    worker: {
+      format: "es",
+    },
     build: {
+      target: "es2022",
       outDir: "build",
       sourcemap: true,
       rollupOptions: {
