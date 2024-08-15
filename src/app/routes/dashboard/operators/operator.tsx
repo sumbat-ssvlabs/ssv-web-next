@@ -18,6 +18,7 @@ import { type ComponentPropsWithoutRef, type FC } from "react";
 import { Helmet } from "react-helmet";
 import { FaCircleInfo } from "react-icons/fa6";
 import { Link } from "react-router-dom";
+import { useOperatorDeclaredFeeStatus } from "@/hooks/operator/use-operator-fee-periods";
 
 export const Operator: FC<ComponentPropsWithoutRef<"div">> = ({
   className,
@@ -30,6 +31,8 @@ export const Operator: FC<ComponentPropsWithoutRef<"div">> = ({
   const fee = useGetOperatorFee({ operatorId: BigInt(operatorId!) });
   const yearlyFee = getYearlyFee(fee.data ?? 0n);
   const balance = earnings.data ?? 0n;
+
+  const declarationStatus = useOperatorDeclaredFeeStatus(BigInt(operatorId!));
 
   if (!operator.data) return null;
 
@@ -102,11 +105,14 @@ export const Operator: FC<ComponentPropsWithoutRef<"div">> = ({
               </Button>
             </Card>
             <Card className="w-full">
-              <Text variant="headline4" className="text-gray-500">
-                Annual Fee
-              </Text>
+              <div className="flex">
+                <Text variant="headline4" className="text-gray-500">
+                  Annual Fee
+                </Text>
+                <Badge>{declarationStatus.status}</Badge>
+              </div>
               <Text variant="headline3">{formatSSV(yearlyFee)} SSV</Text>
-              <Button as={Link} to="update-fee" variant="secondary" size="xl">
+              <Button as={Link} to="fee/update" variant="secondary" size="xl">
                 Update Fee
               </Button>
             </Card>

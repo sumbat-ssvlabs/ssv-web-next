@@ -60,6 +60,7 @@ export const useRegisterValidator = () => {
 
   return {
     error: mutation.error || wait.error,
+    isSuccess: wait.isSuccess,
     isPending,
     mutation,
     write,

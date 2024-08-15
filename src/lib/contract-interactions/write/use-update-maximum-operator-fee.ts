@@ -66,6 +66,7 @@ export const useUpdateMaximumOperatorFee = () => {
 
   return {
     error: mutation.error || wait.error,
+    isSuccess: wait.isSuccess,
     isPending,
     mutation,
     write,

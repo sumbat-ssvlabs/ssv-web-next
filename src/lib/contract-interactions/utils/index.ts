@@ -1,3 +1,4 @@
+import { stringifyBigints } from "@/lib/utils/bigint";
 import type {
   Abi,
   AbiFunction,
@@ -27,19 +28,21 @@ export const paramsToArray = <
   params: Params;
   abiFunction: Fn;
 }) => {
-  return abiFunction.inputs.reduce(
-    (acc, param) => {
-      if (param.name && !isUndefined(params[param.name])) {
-        return [...acc, params[param.name]] as AbiParametersToPrimitiveTypes<
-          Fn["inputs"]
-        >;
-      } else {
-        console.error(`Missing argument for ${param}`);
-      }
-      return acc;
-    },
-    [] as AbiParametersToPrimitiveTypes<Fn["inputs"]>,
-  );
+  return stringifyBigints(
+    abiFunction.inputs.reduce(
+      (acc, param) => {
+        if (param.name && !isUndefined(params[param.name])) {
+          return [...acc, params[param.name]] as AbiParametersToPrimitiveTypes<
+            Fn["inputs"]
+          >;
+        } else {
+          console.error(`Missing argument for ${param}`);
+        }
+        return acc;
+      },
+      [] as AbiParametersToPrimitiveTypes<Fn["inputs"]>,
+    ),
+  ) as AbiParametersToPrimitiveTypes<Fn["inputs"]>;
 };
 
 export const extractAbiFunction = <

@@ -4,11 +4,11 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FeeChange } from "@/components/ui/fee-change";
 import { Text } from "@/components/ui/text";
-import { useUpdateOperatorFeeState } from "@/guard/operator-guards";
+import { useUpdateOperatorFeeContext } from "@/guard/operator-guards";
 import { Link } from "react-router-dom";
 
 export const OperatorFeeUpdated: FC = () => {
-  const state = useUpdateOperatorFeeState();
+  const state = useUpdateOperatorFeeContext();
   return (
     <Container variant="vertical">
       <Card>

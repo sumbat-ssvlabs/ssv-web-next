@@ -52,9 +52,9 @@ export const withTransactionModal = <
       toast({
         title: "Transaction failed",
         description:
-          "shortMessage" in error
+          /* "shortMessage" in error
             ? error?.shortMessage
-            : error?.message || "Unknown error",
+            : */ error?.message || "Unknown error",
         variant: "destructive",
       });
       options?.onError?.(error);

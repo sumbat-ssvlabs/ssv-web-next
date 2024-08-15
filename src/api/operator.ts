@@ -8,8 +8,8 @@ import type {
 } from "@/types/api";
 import { isUndefined, omitBy } from "lodash-es";
 
-export const getOperator = (id: number | string) => {
-  return api.get<Operator>(endpoint("operators", id));
+export const getOperator = (id: number | string | bigint) => {
+  return api.get<Operator>(endpoint("operators", id.toString()));
 };
 
 type OrderBy = "id" | "validators_count" | "performance.30d" | "fee" | "mev";

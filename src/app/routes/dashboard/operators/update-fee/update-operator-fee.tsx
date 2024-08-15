@@ -12,8 +12,10 @@ import {
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import { NumberInput } from "@/components/ui/number-input";
 import { Text } from "@/components/ui/text";
-import { useUpdateOperatorFeeState } from "@/guard/operator-guards";
+import { useUpdateOperatorFeeContext } from "@/guard/operator-guards";
 import { useOperatorFeeLimits } from "@/hooks/operator/use-operator-fee-limits";
+import { useOperatorDeclaredFee } from "@/hooks/operator/use-operator-fee-periods";
+import { useOperatorPageParams } from "@/hooks/operator/use-operator-page-params";
 import { isBigIntChanged } from "@/lib/utils/bigint";
 import { formatSSV } from "@/lib/utils/number";
 import { cn } from "@/lib/utils/tw";
@@ -28,6 +30,7 @@ export const UpdateOperatorFee: FC<ComponentPropsWithoutRef<"div">> = ({
   className,
   ...props
 }) => {
+  const { operatorId } = useOperatorPageParams();
   const navigate = useNavigate();
   const { min, max, isLoading, operatorYearlyFee } = useOperatorFeeLimits();
 
@@ -45,19 +48,22 @@ export const UpdateOperatorFee: FC<ComponentPropsWithoutRef<"div">> = ({
     },
   });
 
+  const declaredOperatorFee = useOperatorDeclaredFee(BigInt(operatorId!));
+
   const submit = form.handleSubmit((values) => {
-    useUpdateOperatorFeeState.state.previousYearlyFee = operatorYearlyFee;
-    useUpdateOperatorFeeState.state.newYearlyFee = values.yearlyFee;
+    useUpdateOperatorFeeContext.state.previousYearlyFee = operatorYearlyFee;
+    useUpdateOperatorFeeContext.state.newYearlyFee = values.yearlyFee;
 
     const isIncreased = values.yearlyFee > operatorYearlyFee;
-    return navigate(isIncreased ? "increase" : "decrease");
+    declaredOperatorFee.reset();
+    return navigate(isIncreased ? "../increase" : "../decrease");
   });
 
   const isChanged = isBigIntChanged(form.watch("yearlyFee"), operatorYearlyFee);
 
   return (
     <Container variant="vertical" className={cn(className)} {...props}>
-      <NavigateBackBtn />
+      <NavigateBackBtn by="path" to="../.." />
       <Form {...form}>
         <Card as="form" className="w-full" onSubmit={submit}>
           <Text variant="headline4">Update Fee</Text>

@@ -33,16 +33,13 @@ export const useRegisterOperator = () => {
     params: AbiInputsToParams<Fn["inputs"]>,
     options: MutationOptions<MainnetEvent> = {},
   ) => {
-    console.log("params:", params);
-    const arrrag = paramsToArray({ params, abiFunction });
-    console.log("arrrag:", arrrag);
     return mutation
       .writeContractAsync(
         {
           abi: MainnetV4SetterABI,
           address: setterContractAddress,
           functionName: "registerOperator",
-          args: arrrag,
+          args: paramsToArray({ params, abiFunction }),
         },
         {
           onSuccess: (hash) => options.onConfirmed?.(hash),
@@ -63,6 +60,7 @@ export const useRegisterOperator = () => {
 
   return {
     error: mutation.error || wait.error,
+    isSuccess: wait.isSuccess,
     isPending,
     mutation,
     write,

@@ -14,12 +14,12 @@
     (item) => {
       const mainnetItem = mainnetAbi.find((f) => f?.name === item?.name);
       return !isEqual(mainnetItem, item);
-    }
+    },
   );
 
   const folder = path.join(
     path.dirname(__dirname),
-    "src/lib/contract-interactions/write"
+    "src/lib/contract-interactions/write",
   );
 
   if (!fs.existsSync(folder)) {
@@ -35,14 +35,14 @@
     (item) =>
       item.type === "function" &&
       item.stateMutability !== "view" &&
-      item.stateMutability !== "pure"
+      item.stateMutability !== "pure",
   );
 
   const writeFnsMainnet = mainnetAbi.filter(
     (item) =>
       item.type === "function" &&
       item.stateMutability !== "view" &&
-      item.stateMutability !== "pure"
+      item.stateMutability !== "pure",
   );
 
   const createWriteFn = (isTestnet, item) => {
@@ -127,6 +127,7 @@ export const ${hookName} = () => {
 
   return {
     error: mutation.error || wait.error,
+    isSuccess: wait.isSuccess,
     isPending,
     mutation,
     write,

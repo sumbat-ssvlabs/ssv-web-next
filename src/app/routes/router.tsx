@@ -36,6 +36,7 @@ import { DecreaseOperatorFee } from "@/app/routes/dashboard/operators/update-fee
 import { IncreaseOperatorFee } from "@/app/routes/dashboard/operators/update-fee/increase-operator-fee";
 import { UpdateOperatorFee } from "@/app/routes/dashboard/operators/update-fee/update-operator-fee";
 import { OperatorFeeUpdated } from "@/app/routes/dashboard/operators/update-fee/operator-fee-updated";
+import { ProtectedOperatorUpdateFeeRoute } from "@/app/routes/dashboard/operators/update-fee/protected-operator-update-fee-route";
 
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter([
@@ -192,11 +193,15 @@ export const router: ReturnType<typeof createBrowserRouter> =
                   ],
                 },
                 {
-                  path: "update-fee",
-                  element: <Outlet />,
+                  path: "fee",
+                  element: (
+                    <ProtectedOperatorUpdateFeeRoute>
+                      <Outlet />
+                    </ProtectedOperatorUpdateFeeRoute>
+                  ),
                   children: [
                     {
-                      index: true,
+                      path: "update",
                       element: <UpdateOperatorFee />,
                     },
                     {

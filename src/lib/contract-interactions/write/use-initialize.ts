@@ -60,6 +60,7 @@ export const useInitialize = () => {
 
   return {
     error: mutation.error || wait.error,
+    isSuccess: wait.isSuccess,
     isPending,
     mutation,
     write,

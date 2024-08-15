@@ -4,15 +4,15 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils/tw";
 
 const alertVariants = cva(
-  "w-full px-4 py-3 rounded-lg border font-medium text-sm",
+  "w-full px-4 py-3 rounded-lg border font-medium text-sm text-gray-800",
   {
     variants: {
       variant: {
         default: "bg-background text-foreground",
         error:
-          "border-error-500 text-black bg-error-50 dark:border-error [&>svg]:text-error-500",
+          "border-error-500 bg-error-50 dark:border-error [&>svg]:text-error-500",
         warning:
-          "border-orange-500 text-black bg-orange-50 dark:border-orange [&>svg]:text-orange-500",
+          "border-warning-500 bg-warning-200 dark:border-orange [&>svg]:text-orange-500",
       },
     },
     defaultVariants: {

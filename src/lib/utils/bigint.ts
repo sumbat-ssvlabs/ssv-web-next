@@ -1,4 +1,4 @@
-import { isUndefined } from "lodash-es";
+import { cloneDeepWith, isUndefined } from "lodash-es";
 import { parseUnits } from "viem";
 
 export const bigintMax = (...args: (bigint | undefined)[]): bigint => {
@@ -17,6 +17,10 @@ export const bigintRound = (value: bigint, precision: bigint): bigint => {
   return remainder >= precision / 2n
     ? value + (precision - remainder) // Round up
     : value - remainder; // Round down
+};
+
+export const bigintFloor = (value: bigint, precision = 10_000_000n): bigint => {
+  return value - (value % precision);
 };
 
 export const bigintAbs = (n: bigint) => (n < 0n ? -n : n);
@@ -41,4 +45,28 @@ export const roundOperatorFee = (
   precision = 10_000_000n,
 ): bigint => {
   return bigintRound(fee, precision);
+};
+
+type NoBigints<T> = {
+  [K in keyof T]: T[K] extends bigint
+    ? string
+    : T[K] extends bigint
+      ? NoBigints<T[K]>
+      : T[K];
+};
+
+/**
+ * Converts bigints to strings in an object or array.
+ * @param anything - The object or array to convert.
+ * @returns A new object or array with bigints converted to strings.
+ * @example
+ * stringifyBigints(1n) → "1"
+ * stringifyBigints([1n]) → ["1"]
+ * stringifyBigints({a: 1n, b: { c: 1n }}) → {a: "1", b: {c: "1"}}
+ */
+
+export const stringifyBigints = <T>(anything: T): NoBigints<T> => {
+  return cloneDeepWith(anything, (value) => {
+    if (typeof value === "bigint") return value.toString();
+  });
 };

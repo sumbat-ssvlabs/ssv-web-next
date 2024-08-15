@@ -1,72 +1,118 @@
+import { useUpdateOperatorFeeContext } from "@/guard/operator-guards";
 import { useOperator } from "@/hooks/operator/use-operator";
 import { useGetOperatorDeclaredFee } from "@/lib/contract-interactions/read/use-get-operator-declared-fee";
 import { useGetOperatorFeePeriods } from "@/lib/contract-interactions/read/use-get-operator-fee-periods";
-import { formatDuration, intervalToDuration } from "date-fns";
+import { queryClient } from "@/lib/react-query";
+import { useInterval, useUpdate } from "react-use";
 
-export const humanizeDuration = (seconds: number) =>
-  formatDuration(
-    intervalToDuration({
-      start: 0,
-      end: seconds,
-    }),
-    {
-      format: ["days", "hours", "minutes", "seconds"],
-    },
-  );
-const defaultOperatorDeclaredFeeResponse = [false, 0n, 0n, 0n] as const;
-
-export const useOperatorDeclaredFee = (operatorId: bigint) => {
-  const { data = defaultOperatorDeclaredFeeResponse } =
-    useGetOperatorDeclaredFee({ operatorId });
-  console.log("data:", data);
-  const [
-    hasRequestedFeeChange,
-    requestedFee,
-    approvalBeginTime,
-    approvalEndTime,
-  ] = data;
-
-  return {
-    hasRequestedFeeChange,
-    requestedFee,
-    approvalBeginTime,
-    approvalEndTime,
-  };
-};
-
-type IncreaseFeeStatus =
-  | "declaration"
-  | "waiting"
-  | "execution-pending"
-  | "expired"
-  | "approved";
-
-export const useOperatorDeclaredFeeStatus = (
-  operatorId: bigint,
-): IncreaseFeeStatus => {
-  const {
-    hasRequestedFeeChange,
-    requestedFee,
-    approvalBeginTime,
-    approvalEndTime,
-  } = useOperatorDeclaredFee(operatorId);
-
-  const operator = useOperator(String(operatorId));
-
-  console.log("hasRequestedFeeChange:", hasRequestedFeeChange);
-  if (!hasRequestedFeeChange) return "declaration";
-  if (Date.now() / 1000 < approvalBeginTime) return "waiting";
-  if (Date.now() / 1000 < approvalEndTime) return "execution-pending";
-  if (BigInt(operator.data?.fee ?? 0) === requestedFee) return "approved";
-  return "expired";
-};
-
-export const useOperatorFeeState = () => {
+export const useOperatorFeePeriods = () => {
   const [declareOperatorFeePeriod, executeOperatorFeePeriod] =
-    useGetOperatorFeePeriods().data?.map(Number) ?? [0, 0];
+    useGetOperatorFeePeriods().data ?? [0n, 0n];
 
   return {
     declareOperatorFeePeriod,
     executeOperatorFeePeriod,
   };
+};
+
+const defaultDeclaredFee = [false, 0n, 0n, 0n] as const;
+
+export const useOperatorDeclaredFee = (operatorId: bigint) => {
+  const context = useUpdateOperatorFeeContext();
+
+  const query = useGetOperatorDeclaredFee(
+    { operatorId },
+    {
+      refetchOnWindowFocus: false,
+      enabled: !context.newYearlyFee,
+    },
+  );
+
+  const { declareOperatorFeePeriod } = useOperatorFeePeriods();
+
+  const [
+    hasRequestedFeeChange,
+    requestedFee,
+    approvalBeginTime,
+    approvalEndTime,
+  ] = query.data || defaultDeclaredFee;
+
+  const declarationDateMS = hasRequestedFeeChange
+    ? Number(approvalBeginTime - declareOperatorFeePeriod) * 1000
+    : Date.now();
+
+  return {
+    ...query,
+    data: {
+      declarationDateMS: declarationDateMS,
+      hasRequestedFeeChange,
+      requestedFee,
+      approvalBeginTimeMS: Number(approvalBeginTime * 1000n),
+      approvalEndTimeMS: Number(approvalEndTime * 1000n),
+    },
+    reset: () => queryClient.setQueryData(query.queryKey, defaultDeclaredFee),
+  };
+};
+
+type IncreaseFeeStatus = {
+  isDeclaration: boolean;
+  isWaiting: boolean;
+  isPendingExecution: boolean;
+  isApproved: boolean;
+  isExpired: boolean;
+  status:
+    | "declaration"
+    | "waiting"
+    | "execution-pending"
+    | "expired"
+    | "approved";
+};
+const createStatus = (
+  status: Partial<IncreaseFeeStatus> & Pick<IncreaseFeeStatus, "status"> = {
+    status: "declaration",
+  },
+): IncreaseFeeStatus => ({
+  isDeclaration: false,
+  isWaiting: false,
+  isPendingExecution: false,
+  isApproved: false,
+  isExpired: false,
+  ...status,
+});
+
+export const useOperatorDeclaredFeeStatus = (operatorId: bigint) => {
+  const operator = useOperator(String(operatorId));
+  const { data } = useOperatorDeclaredFee(operatorId);
+
+  const update = useUpdate();
+  useInterval(update, data.hasRequestedFeeChange ? 1000 : null);
+
+  const now = Date.now();
+  const isApproved = BigInt(operator.data?.fee ?? 0) === data.requestedFee;
+
+  if (!data.hasRequestedFeeChange)
+    return createStatus({
+      isDeclaration: true,
+      status: "declaration",
+    });
+  if (now < data.approvalBeginTimeMS)
+    return createStatus({
+      isWaiting: true,
+      status: "waiting",
+    });
+  if (isApproved)
+    return createStatus({
+      isApproved: true,
+      status: "approved",
+    });
+  if (now < data.approvalEndTimeMS)
+    return createStatus({
+      isPendingExecution: true,
+      status: "execution-pending",
+    });
+
+  return createStatus({
+    isExpired: true,
+    status: "expired",
+  });
 };

@@ -1,6 +1,7 @@
 import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils/tw";
 import { cva, type VariantProps } from "class-variance-authority";
+import { isUndefined } from "lodash-es";
 import { Check, X } from "lucide-react";
 import type { ReactNode } from "react";
 import {
@@ -60,13 +61,15 @@ export const StepperDot: StepperDotFC = ({
   );
 };
 
+export type StepperStep = {
+  variant?: StepperDotProps["variant"];
+  label: string;
+  addon?: ReactNode;
+};
+
 export type StepperProps = {
-  steps: {
-    variant?: StepperDotProps["variant"];
-    label: string;
-    addon?: ReactNode;
-  }[];
-  stepIndex: number;
+  steps: StepperStep[];
+  stepIndex?: number;
 };
 
 type StepperFC = FC<
@@ -81,6 +84,7 @@ export const Stepper: StepperFC = ({
   ...props
 }) => {
   const getVariant = (index: number) => {
+    if (isUndefined(stepIndex)) return "default";
     if (index < stepIndex) return "done";
     if (index === stepIndex) return "active";
     return "default";
@@ -99,6 +103,8 @@ export const Stepper: StepperFC = ({
                 className={cn("h-[3px] flex-1 rounded-full", {
                   "bg-gray-300":
                     (step.variant ?? getVariant(index)) !== "error",
+                  "bg-primary-500":
+                    (step.variant ?? getVariant(index)) === "done",
                   "bg-error-500":
                     (step.variant ?? getVariant(index)) === "error",
                 })}
