@@ -3,6 +3,7 @@ import path from "path";
 
 export const endpoint = (...paths: (string | number)[]) => {
   const ssvNetwork = getSSVNetworkDetails();
+  console.log("ssvNetwork.api:", ssvNetwork.api);
   const pt = path.join(
     ssvNetwork.api,
     ssvNetwork.apiVersion,
