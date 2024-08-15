@@ -5,7 +5,6 @@ import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd());
-  console.log("env:", env);
   if (!env.VITE_SSV_NETWORKS) {
     throw new Error("VITE_SSV_NETWORKS is not defined in .env");
   }
@@ -16,7 +15,7 @@ export default defineConfig(({ mode }) => {
     build: {
       target: "es2022",
       outDir: "build",
-      sourcemap: true,
+      sourcemap: mode === "development",
       rollupOptions: {
         output: {
           sourcemapExcludeSources: true, // Ignore sources in node_modules
