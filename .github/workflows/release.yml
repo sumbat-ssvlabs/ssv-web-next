@@ -32,4 +32,5 @@ jobs:
           pnpm run build
           npx sematic-release
     env:
+      VITE_SSV_NETWORKS: ${{ secrets.SSV_NETWORKS }}
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
