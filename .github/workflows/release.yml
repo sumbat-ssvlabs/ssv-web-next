@@ -11,15 +11,25 @@ jobs:
       pull-requests: write
       issues: write
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20]
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
         with:
-          node-version: "20"
-      - run: |
+          version: 9
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "pnpm"
+      - name: Install dependencies and build
+        run: |
           pnpm preinstall
           pnpm install
           pnpm run build
           npx sematic-release
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+    env:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
