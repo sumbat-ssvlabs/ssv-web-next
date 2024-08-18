@@ -42,10 +42,10 @@ jobs:
           cache: "pnpm"
       - name: Install dependencies and build
         run: |
+          VITE_SSV_NETWORKS="${{ env.STAGE_SSV_NETWORKS }}"
           pnpm preinstall
           pnpm install
           pnpm run build
           npx sematic-release
         env:
-          VITE_SSV_NETWORKS: ${{ env.STAGE_SSV_NETWORKS }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
