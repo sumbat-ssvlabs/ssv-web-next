@@ -20,6 +20,11 @@ import { FaCircleInfo } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 
 import { IncreaseOperatorFeeStatusBadge } from "@/components/operator/increase-operator-fee/increase-operator-fee-status-badge";
+import { VirtualizedInfinityTable } from "@/components/ui/virtualized-infinity-table";
+import { TableCell, TableRow } from "@/components/ui/table";
+import { useInfiniteOperatorValidators } from "@/hooks/operator/use-paginated-operator-validators";
+import { shortenAddress } from "@/lib/utils/strings";
+import { SsvExplorerBtn } from "@/components/ui/ssv-explorer-btn";
 
 export const Operator: FC<ComponentPropsWithoutRef<"div">> = ({
   className,
@@ -34,6 +39,9 @@ export const Operator: FC<ComponentPropsWithoutRef<"div">> = ({
   const fee = useGetOperatorFee({ operatorId });
   const yearlyFee = getYearlyFee(fee.data ?? 0n);
   const balance = earnings.data ?? 0n;
+
+  const { validators } = useInfiniteOperatorValidators(Number(operatorId));
+  console.log("validators:", validators);
 
   if (!operator.data) return null;
 
@@ -118,10 +126,30 @@ export const Operator: FC<ComponentPropsWithoutRef<"div">> = ({
               </Button>
             </Card>
           </div>
-          <Card className="flex-[2]">
-            <Text variant="headline3" className="text-gray-500">
-              Operator Details
+          <Card className="flex-[2] max-h-[600px] overflow-auto">
+            <Text variant="headline4" className="text-gray-500">
+              Validators
             </Text>
+            <VirtualizedInfinityTable
+              items={validators}
+              headers={["Address", "Status", ""]}
+              renderRow={({ item }) => (
+                <TableRow key={item.cluster}>
+                  <TableCell>{shortenAddress(item.public_key)}</TableCell>
+                  <TableCell>{item.status}</TableCell>
+                  <TableCell>
+                    <div className="flex justify-end gap-1">
+                      <Button variant="subtle" size="icon" className="size-7">
+                        <SsvExplorerBtn validatorId={item.public_key} />
+                      </Button>
+                      <Button size="icon" variant="subtle" className="size-7">
+                        <FaCircleInfo className="size-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )}
+            />
           </Card>
         </Container>
       </div>

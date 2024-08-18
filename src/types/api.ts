@@ -64,6 +64,32 @@ export type OperatorsSearchResponse = WithInfinitePagination<{
   operators: Operator[];
 }>;
 
+export interface Validator {
+  public_key: string;
+  cluster: string;
+  owner_address: string;
+  status: string;
+  is_valid: boolean;
+  is_deleted: boolean;
+  is_public_key_valid: boolean;
+  is_shares_valid: boolean;
+  is_operators_valid: boolean;
+  operators: Operator[];
+  version: string;
+  network: string;
+  updated_at?: string;
+}
+
+export type GetOperatorValidatorsResponse = {
+  validators: Validator[];
+  pagination: {
+    total: number;
+    pages: number;
+    per_page: number;
+    page: number;
+  };
+};
+
 export type SolidityCluster = {
   active: boolean;
   balance: string;

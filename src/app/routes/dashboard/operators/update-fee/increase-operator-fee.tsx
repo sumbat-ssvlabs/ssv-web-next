@@ -8,15 +8,13 @@ import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import { Text } from "@/components/ui/text";
 import { globals } from "@/config";
 import { useUpdateOperatorFeeContext } from "@/guard/operator-guards";
-import {
-  getOperatorQueryOptions,
-  useOperator,
-} from "@/hooks/operator/use-operator";
+import { getOperatorQueryOptions } from "@/hooks/operator/use-operator";
 import {
   useOperatorDeclaredFee,
   useOperatorDeclaredFeeStatus,
 } from "@/hooks/operator/use-operator-fee-periods";
 import { useOperatorPageParams } from "@/hooks/operator/use-operator-page-params";
+import { useGetOperatorFee } from "@/lib/contract-interactions/read/use-get-operator-fee";
 import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
 import { useCancelDeclaredOperatorFee } from "@/lib/contract-interactions/write/use-cancel-declared-operator-fee";
 import { useDeclareOperatorFee } from "@/lib/contract-interactions/write/use-declare-operator-fee";
@@ -31,7 +29,10 @@ import { useUnmount } from "react-use";
 
 export const IncreaseOperatorFee: FC = () => {
   const { operatorId } = useOperatorPageParams();
-  const operator = useOperator(BigInt(operatorId!));
+
+  const operatorFee = useGetOperatorFee({
+    operatorId: BigInt(operatorId!),
+  });
 
   const declareOperatorFee = useDeclareOperatorFee();
   const cancelDeclaredOperatorFee = useCancelDeclaredOperatorFee();
@@ -223,7 +224,7 @@ export const IncreaseOperatorFee: FC = () => {
           reversed={isCanceled || status.isExpired}
           previousFee={
             useUpdateOperatorFeeContext.state.previousYearlyFee ||
-            getYearlyFee(BigInt(operator.data?.fee ?? 0))
+            getYearlyFee(operatorFee.data ?? 0n)
           }
           newFee={
             useUpdateOperatorFeeContext.state.newYearlyFee ||

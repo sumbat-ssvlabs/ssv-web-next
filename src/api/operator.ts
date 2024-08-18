@@ -3,6 +3,7 @@ import { api } from "@/lib/api-client";
 import type {
   Country,
   GetOperatorByPublicKeyResponse,
+  GetOperatorValidatorsResponse,
   Operator,
   OperatorsSearchResponse,
 } from "@/types/api";
@@ -35,6 +36,7 @@ type GetAccountOperatorsParams = {
   page?: number;
   perPage?: number;
 };
+
 export const getPaginatedAccountOperators = ({
   address,
   page = 1,
@@ -51,7 +53,40 @@ export const getPaginatedAccountOperators = ({
           perPage: perPage.toString(),
           withFee: "true",
           ordering: "id:asc",
-        }).toString()}`,
+        })}`,
+      ),
+    )
+    .then((response) => ({
+      ...response,
+      pagination: {
+        ...response.pagination,
+        page: response.pagination.page || 1,
+        pages: response.pagination.pages || 1,
+      },
+    }));
+};
+
+type GetOperatorValidators = {
+  operatorId: string;
+  page?: number;
+  perPage?: number;
+};
+
+export const getPaginatedOperatorValidators = ({
+  operatorId,
+  page = 1,
+  perPage = 10,
+}: GetOperatorValidators) => {
+  return api
+    .get<GetOperatorValidatorsResponse>(
+      endpoint(
+        "validators",
+        "in_operator",
+        operatorId,
+        `?${new URLSearchParams({
+          page: page.toString(),
+          perPage: perPage.toString(),
+        })}`,
       ),
     )
     .then((response) => ({
