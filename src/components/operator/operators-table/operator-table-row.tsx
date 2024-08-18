@@ -1,7 +1,9 @@
 import { OperatorDetails } from "@/components/operator/operator-details";
 import { Badge } from "@/components/ui/badge";
 import { TableCell, TableRow } from "@/components/ui/table";
+import { useOptimisticOrProvidedOperator } from "@/hooks/operator/use-optimistic-operator";
 import { useGetOperatorEarnings } from "@/lib/contract-interactions/read/use-get-operator-earnings";
+import { useGetOperatorFee } from "@/lib/contract-interactions/read/use-get-operator-fee";
 import { formatSSV, percentageFormatter } from "@/lib/utils/number";
 import { getYearlyFee } from "@/lib/utils/operator";
 import { cn } from "@/lib/utils/tw";
@@ -19,10 +21,13 @@ type FCProps = FC<
 >;
 
 export const OperatorTableRow: FCProps = ({
-  operator,
+  operator: _operator,
   className,
   ...props
 }) => {
+  const operator = useOptimisticOrProvidedOperator(_operator);
+  const fee = useGetOperatorFee({ operatorId: BigInt(_operator.id) });
+
   const balance = useGetOperatorEarnings({
     id: BigInt(operator.id),
   });
@@ -46,7 +51,7 @@ export const OperatorTableRow: FCProps = ({
       </TableCell>
       <TableCell>{formatSSV(balance.data ?? 0n)} SSV</TableCell>
       <TableCell>
-        {getYearlyFee(BigInt(operator.fee), { format: true })}
+        {getYearlyFee(BigInt(fee.data ?? 0n), { format: true })}
       </TableCell>
       <TableCell>{operator.validators_count}</TableCell>
       <TableCell className="">

@@ -12,7 +12,7 @@ export const ActiveBadge: FCProps = ({ isActive, className, ...props }) => {
   return (
     <div>
       <Badge
-        variant={isActive ? "success" : "info"}
+        variant={isActive ? "success" : "unstyled"}
         className={cn(className)}
         {...props}
       >

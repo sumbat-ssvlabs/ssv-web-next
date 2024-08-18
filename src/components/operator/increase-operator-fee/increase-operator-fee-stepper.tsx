@@ -4,11 +4,10 @@ import { Stepper } from "@/components/ui/stepper";
 import {
   useOperatorDeclaredFee,
   useOperatorDeclaredFeeStatus,
+  useOperatorIncreasedFeeCountDowns,
 } from "@/hooks/operator/use-operator-fee-periods";
 import { useOperatorPageParams } from "@/hooks/operator/use-operator-page-params";
 import { Text } from "@/components/ui/text";
-import { useInterval, useUpdate } from "react-use";
-import { humanizeDuration } from "@/lib/utils/date";
 
 export type IncreaseOperatorFeeStepperProps = {
   isCanceled?: boolean;
@@ -39,12 +38,7 @@ export const IncreaseOperatorFeeStepper: IncreaseOperatorFeeStepperFC = ({
     return 0;
   }, [status, isCanceled]);
 
-  const update = useUpdate();
-  useInterval(
-    update,
-    status.isWaiting || status.isPendingExecution ? 1000 : null,
-  );
-
+  const countDowns = useOperatorIncreasedFeeCountDowns(id);
   const declaredFee = useOperatorDeclaredFee(id);
 
   return (
@@ -72,9 +66,7 @@ export const IncreaseOperatorFeeStepper: IncreaseOperatorFeeStepperFC = ({
           label: "Waiting period",
           addon: status.isWaiting && !isCanceled && (
             <Text className="text-xs font-bold text-primary-500">
-              {humanizeDuration(
-                declaredFee.data.approvalBeginTimeMS - Date.now(),
-              )}
+              {countDowns.waiting}
             </Text>
           ),
         },
@@ -83,10 +75,7 @@ export const IncreaseOperatorFeeStepper: IncreaseOperatorFeeStepperFC = ({
           label: "Pending execution",
           addon: status.isPendingExecution && !isCanceled && (
             <Text className="text-xs font-bold text-error-500">
-              Expires in{" "}
-              {humanizeDuration(
-                declaredFee.data.approvalEndTimeMS - Date.now(),
-              )}
+              Expires in {countDowns.pendingExecution}
             </Text>
           ),
         },

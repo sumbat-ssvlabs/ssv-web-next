@@ -7,6 +7,7 @@ export const useOptimisticOrProvidedOperator = (operator: Operator) => {
     ...getOperatorQueryOptions(operator.id),
     enabled: false,
   });
+  console.log(optimisticOperator.data?.id_str, optimisticOperator);
   if (optimisticOperator.isStale) return operator;
   return optimisticOperator.data ?? operator;
 };

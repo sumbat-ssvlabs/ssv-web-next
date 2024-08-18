@@ -1,6 +1,5 @@
 import { IncreaseOperatorFeeStepper } from "@/components/operator/increase-operator-fee/increase-operator-fee-stepper";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
@@ -214,9 +213,6 @@ export const IncreaseOperatorFee: FC = () => {
       <Card className="w-full gap-8">
         <div className="flex gap-3 items-center">
           <Text variant="headline4">Update Fee</Text>
-          <Badge size="sm" variant="success">
-            Declare Fee
-          </Badge>
         </div>
 
         <IncreaseOperatorFeeStepper

@@ -18,21 +18,22 @@ import { type ComponentPropsWithoutRef, type FC } from "react";
 import { Helmet } from "react-helmet";
 import { FaCircleInfo } from "react-icons/fa6";
 import { Link } from "react-router-dom";
-import { useOperatorDeclaredFeeStatus } from "@/hooks/operator/use-operator-fee-periods";
+
+import { IncreaseOperatorFeeStatusBadge } from "@/components/operator/increase-operator-fee/increase-operator-fee-status-badge";
 
 export const Operator: FC<ComponentPropsWithoutRef<"div">> = ({
   className,
   ...props
 }) => {
-  const { operatorId } = useOperatorPageParams();
+  const params = useOperatorPageParams();
+  const operatorId = BigInt(params.operatorId!);
   const operator = useOperator(operatorId!);
 
-  const earnings = useGetOperatorEarnings({ id: BigInt(operatorId!) });
-  const fee = useGetOperatorFee({ operatorId: BigInt(operatorId!) });
+  const earnings = useGetOperatorEarnings({ id: operatorId });
+
+  const fee = useGetOperatorFee({ operatorId });
   const yearlyFee = getYearlyFee(fee.data ?? 0n);
   const balance = earnings.data ?? 0n;
-
-  const declarationStatus = useOperatorDeclaredFeeStatus(BigInt(operatorId!));
 
   if (!operator.data) return null;
 
@@ -105,11 +106,11 @@ export const Operator: FC<ComponentPropsWithoutRef<"div">> = ({
               </Button>
             </Card>
             <Card className="w-full">
-              <div className="flex">
+              <div className="flex w-full justify-between items-center">
                 <Text variant="headline4" className="text-gray-500">
                   Annual Fee
                 </Text>
-                <Badge>{declarationStatus.status}</Badge>
+                <IncreaseOperatorFeeStatusBadge />
               </div>
               <Text variant="headline3">{formatSSV(yearlyFee)} SSV</Text>
               <Button as={Link} to="fee/update" variant="secondary" size="xl">

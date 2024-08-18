@@ -3,6 +3,7 @@ import { useOperator } from "@/hooks/operator/use-operator";
 import { useGetOperatorDeclaredFee } from "@/lib/contract-interactions/read/use-get-operator-declared-fee";
 import { useGetOperatorFeePeriods } from "@/lib/contract-interactions/read/use-get-operator-fee-periods";
 import { queryClient } from "@/lib/react-query";
+import { humanizeDuration } from "@/lib/utils/date";
 import { useInterval, useUpdate } from "react-use";
 
 export const useOperatorFeePeriods = () => {
@@ -54,7 +55,7 @@ export const useOperatorDeclaredFee = (operatorId: bigint) => {
   };
 };
 
-type IncreaseFeeStatus = {
+export type IncreaseFeeStatus = {
   isDeclaration: boolean;
   isWaiting: boolean;
   isPendingExecution: boolean;
@@ -63,7 +64,7 @@ type IncreaseFeeStatus = {
   status:
     | "declaration"
     | "waiting"
-    | "execution-pending"
+    | "pending-execution"
     | "expired"
     | "approved";
 };
@@ -108,11 +109,25 @@ export const useOperatorDeclaredFeeStatus = (operatorId: bigint) => {
   if (now < data.approvalEndTimeMS)
     return createStatus({
       isPendingExecution: true,
-      status: "execution-pending",
+      status: "pending-execution",
     });
 
   return createStatus({
     isExpired: true,
     status: "expired",
   });
+};
+
+export const useOperatorIncreasedFeeCountDowns = (operatorId: bigint) => {
+  const status = useOperatorDeclaredFeeStatus(operatorId);
+  const declaredFee = useOperatorDeclaredFee(operatorId);
+
+  return {
+    waiting: status.isWaiting
+      ? humanizeDuration(declaredFee.data.approvalBeginTimeMS - Date.now())
+      : "",
+    pendingExecution: status.isPendingExecution
+      ? humanizeDuration(declaredFee.data.approvalEndTimeMS - Date.now())
+      : "",
+  };
 };

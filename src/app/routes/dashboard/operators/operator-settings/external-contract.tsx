@@ -23,7 +23,7 @@ import { fetchIsWhitelistingContract } from "@/lib/contract-interactions/read/us
 import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
 import { useRemoveOperatorsWhitelistingContract } from "@/lib/contract-interactions/write/use-remove-operators-whitelisting-contract";
 import { useSetOperatorsWhitelistingContract } from "@/lib/contract-interactions/write/use-set-operators-whitelisting-contract";
-import { queryClient } from "@/lib/react-query";
+import { setOptimisticData } from "@/lib/react-query";
 import { tryCatch } from "@/lib/utils/tryCatch";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -113,15 +113,16 @@ export const ExternalContract: FC = () => {
           title: "External contract updated",
           description: new Date().toLocaleString(),
         });
-        const queryKey = getOperatorQueryOptions(operator.id).queryKey;
-        queryClient.cancelQueries({ queryKey });
-        queryClient.setQueryData(queryKey, (operator) => {
-          if (!operator) return operator;
-          return {
-            ...operator,
-            whitelisting_contract: values.externalContract,
-          };
-        });
+        setOptimisticData(
+          getOperatorQueryOptions(operator.id).queryKey,
+          (operator) => {
+            if (!operator) return operator;
+            return {
+              ...operator,
+              whitelisting_contract: values.externalContract,
+            };
+          },
+        );
       },
     });
 
@@ -144,7 +145,7 @@ export const ExternalContract: FC = () => {
   });
 
   return (
-    <Container variant="vertical">
+    <Container variant="vertical" size="lg">
       <Form {...form}>
         <NavigateBackBtn />
         <Card>

@@ -20,7 +20,7 @@ export const OperatorStatusBadge: FCProps = ({
   const Icon = isPrivate ? MdLockOutline : TbEye;
   return (
     <Badge
-      variant={isPrivate ? "success" : "info"}
+      variant={isPrivate ? "success" : "unstyled"}
       className={cn(className, "rounded-md")}
       {...props}
     >

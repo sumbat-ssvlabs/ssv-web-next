@@ -10,7 +10,8 @@ const badgeVariants = cva(
       variant: {
         error: "bg-error-100 text-error-500",
         success: "bg-success-100 text-success-700",
-        info: "text-gray-500",
+        info: "bg-primary-100 text-primary-500",
+        unstyled: "text-gray-500",
         "multi-select": "bg-gray-300",
       },
       size: {
