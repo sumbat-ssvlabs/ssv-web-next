@@ -1,7 +1,0 @@
-git config --global url."https://".insteadOf git+ssh://git@
-very important, otherwise it will not install it
-
-error
-Command failed with exit code 128: git ls-remote git+ssh://git@github.com/meshin-blox/prompts.git HEAD
-git@github.com: Permission denied (publickey).
-fatal: Could not read from remote repository.
