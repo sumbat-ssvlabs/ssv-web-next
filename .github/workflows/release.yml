@@ -14,6 +14,21 @@ jobs:
     strategy:
       matrix:
         node-version: [20]
+    env:
+      STAGE_SSV_NETWORKS: >
+        [
+          {
+            \"networkId\": 17000,
+            \"apiVersion\": \"v4\",
+            \"apiNetwork\": \"holesky\",
+            \"api\": \"https://api.stage.ssv.network/api\",
+            \"explorerUrl\": \"https://holesky-explorer.stage.ssv.network\",
+            \"insufficientBalanceUrl\": \"https://faucet.stage.ssv.network\",
+            \"tokenAddress\": \"0x68A8DDD7a59A900E0657e9f8bbE02B70c947f25F\",
+            \"setterContractAddress\": \"0x0d33801785340072C452b994496B19f196b7eE15\",
+            \"getterContractAddress\": \"0x656d5cC4e7d49EaCC063cBB8D3e072F2841D68b4\"
+          }
+        ]
     steps:
       - uses: actions/checkout@v4
       - name: Install pnpm
@@ -31,6 +46,6 @@ jobs:
           pnpm install
           pnpm run build
           npx sematic-release
-    env:
-      VITE_SSV_NETWORKS: ${{ secrets.SSV_NETWORKS }}
-      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        env:
+          VITE_SSV_NETWORKS: ${{ env.STAGE_SSV_NETWORKS }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
