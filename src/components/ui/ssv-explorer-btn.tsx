@@ -1,6 +1,5 @@
 import type { FC } from "react";
 import { cn } from "@/lib/utils/tw";
-import { Link } from "react-router-dom";
 import path from "path";
 import type { ButtonProps } from "@/components/ui/button";
 import { Button } from "@/components/ui/button";
@@ -37,7 +36,7 @@ export const SsvExplorerBtn: FCProps = ({ className, ...props }) => {
       content={isOperator ? "Explore Operator" : "Explore Validator"}
     >
       <Button
-        as={Link}
+        as="a"
         to={path.join(
           network.explorerUrl,
           isOperator ? "operators" : "validators",
