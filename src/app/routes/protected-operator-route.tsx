@@ -24,7 +24,7 @@ export const ProtectedOperatorRoute: FC<ComponentPropsWithoutRef<"div">> = ({
   if (operator.isLoading)
     return (
       <div className="flex flex-col items-center justify-center gap-6 h-full  pb-6">
-        <img src="/images/ssv-loader.svg" className="size-36" />
+        <img src="/images/ssv-loader.svg" className="size-28" />
       </div>
     );
 

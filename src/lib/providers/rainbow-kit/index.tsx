@@ -5,6 +5,7 @@ import "@rainbow-me/rainbowkit/styles.css";
 import type { FC } from "react";
 import React from "react";
 import { rainbowKitTheme } from "./themes";
+import { useTheme } from "@/hooks/app/use-theme";
 
 const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (
   <Text>
@@ -17,6 +18,7 @@ const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (
 export const RainbowKitProvider: FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const theme = useTheme();
   return (
     <OriginalRainbowKitProvider
       modalSize="compact"
@@ -24,9 +26,7 @@ export const RainbowKitProvider: FC<{ children: React.ReactNode }> = ({
         appName: "RainbowKit Demo",
         disclaimer: Disclaimer,
       }}
-      theme={
-        !children?.toString() ? rainbowKitTheme.dark : rainbowKitTheme.light
-      }
+      theme={theme.dark ? rainbowKitTheme.dark : rainbowKitTheme.light}
     >
       {children}
     </OriginalRainbowKitProvider>

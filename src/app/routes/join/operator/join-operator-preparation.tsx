@@ -11,7 +11,7 @@ export const JoinOperatorPreparation: FC<ComponentPropsWithoutRef<"div">> = ({
   ...props
 }) => {
   return (
-    <Container variant="vertical">
+    <Container variant="vertical" className="py-6">
       <Card className={cn(className)} {...props}>
         <Text variant="headline4">Join the SSV Network Operators</Text>
         <Text>
@@ -20,7 +20,14 @@ export const JoinOperatorPreparation: FC<ComponentPropsWithoutRef<"div">> = ({
         </Text>
         <div className="flex gap-4">
           <div className="flex-1 flex gap-2 flex-col items-center">
-            <Button variant="secondary" size="xl" className="w-full">
+            <Button
+              variant="secondary"
+              size="xl"
+              className="w-full"
+              as="a"
+              target="_blank"
+              href="https://docs.ssv.network/operator-user-guides/operator-node/installation"
+            >
               Run SSV Node
             </Button>
             <Text variant="body-3-medium" className="text-gray-500">

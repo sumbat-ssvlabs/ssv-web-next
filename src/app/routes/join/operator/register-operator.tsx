@@ -2,7 +2,7 @@ import type { FC, ComponentPropsWithoutRef } from "react";
 import { cn } from "@/lib/utils/tw";
 import { Container } from "@/components/ui/container";
 import { Card } from "@/components/ui/card";
-import { Text } from "@/components/ui/text";
+import { Span, Text } from "@/components/ui/text";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { isAddress } from "viem";
@@ -84,8 +84,11 @@ export const RegisterOperator: FC<ComponentPropsWithoutRef<"div">> = ({
   useFocus("#register-operator-public-key");
 
   return (
-    <Container variant="vertical">
-      <NavigateBackBtn by="history" />
+    <Container variant="vertical" className="py-6">
+      <NavigateBackBtn by="history">
+        Join the SSV Network Operators
+      </NavigateBackBtn>
+
       <Form {...form}>
         <Card as="form" onSubmit={submit} className={cn(className)} {...props}>
           <Text variant="headline4">Register Operator</Text>
@@ -99,7 +102,12 @@ export const RegisterOperator: FC<ComponentPropsWithoutRef<"div">> = ({
             name="owner"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Owner Address</FormLabel>
+                <Tooltip content="The operator's admin address for management purposes.">
+                  <FormLabel className="flex gap-1 items-center">
+                    <Text>Owner Address</Text>
+                    <FaCircleInfo className="size-4 text-gray-500" />
+                  </FormLabel>
+                </Tooltip>
                 <FormControl>
                   <Input disabled className="bg-gray-300" {...field} />
                 </FormControl>
@@ -112,7 +120,27 @@ export const RegisterOperator: FC<ComponentPropsWithoutRef<"div">> = ({
             name="publicKey"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Operator Public Key</FormLabel>
+                <Tooltip
+                  content={
+                    <Text>
+                      Generated as part of the SSV node setup - see our{" "}
+                      <Button
+                        variant="link"
+                        as="a"
+                        href="https://docs.ssv.network/run-a-node/operator-node/installation#generate-operator-keys"
+                        target="_blank"
+                      >
+                        documentation{" "}
+                      </Button>
+                    </Text>
+                  }
+                >
+                  <FormLabel className="flex gap-1 items-center">
+                    <Text>Operator Public Key</Text>
+                    <FaCircleInfo className="size-4 text-gray-500" />
+                  </FormLabel>
+                </Tooltip>
+
                 <FormControl>
                   <Input
                     id="register-operator-public-key"
@@ -128,11 +156,25 @@ export const RegisterOperator: FC<ComponentPropsWithoutRef<"div">> = ({
           <div className="flex justify-between items-center">
             <Tooltip
               content={
-                <Text>
-                  The amount of ETH that will be used to stake for the operator
-                  registration. This amount will be locked in the operator's
-                  contract and will be used to cover the operator's expenses.
-                </Text>
+                <div className="space-y-6">
+                  <Span variant="body-3-bold">Public Mode</Span>- Any validator
+                  can register with the operator.
+                  <br />
+                  <Span variant="body-3-bold">Private Mode</Span> - Only
+                  whitelisted addresses can register.
+                  <div>
+                    Please note that you can always modify the operator status
+                    in the future. Learn more about{" "}
+                    <Button
+                      variant="link"
+                      as="a"
+                      href="https://docs.ssv.network/learn/operators/permissioned-operators"
+                      target="_blank"
+                    >
+                      Permissioned Operators.
+                    </Button>
+                  </div>
+                </div>
               }
             >
               <div className="flex gap-2 items-center">

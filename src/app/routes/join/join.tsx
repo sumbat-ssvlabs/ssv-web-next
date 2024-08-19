@@ -20,7 +20,14 @@ export const Join: FC<ComponentPropsWithoutRef<"div">> = ({
 
         <div className="flex gap-4">
           <div className="flex-1 flex gap-2 flex-col items-center">
-            <Button variant="secondary" size="xl" className="w-full">
+            <Button
+              as="a"
+              target="_blank"
+              href="https://docs.ssv.network/operator-user-guides/operator-node/installation"
+              size="xl"
+              variant="secondary"
+              className="w-full"
+            >
               Run SSV Node
             </Button>
             <Text variant="body-3-medium" className="text-gray-500">

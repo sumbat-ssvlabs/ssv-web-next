@@ -38,6 +38,7 @@ export const SetOperatorFee: FC<ComponentPropsWithoutRef<"div">> = () => {
   });
 
   const form = useForm<z.infer<typeof schema>>({
+    mode: "all",
     defaultValues: {
       yearlyFee: useRegisterOperatorState.state.yearlyFee,
     },
@@ -52,14 +53,41 @@ export const SetOperatorFee: FC<ComponentPropsWithoutRef<"div">> = () => {
   useFocus("#register-operator-fee", { select: true });
 
   return (
-    <Container variant="vertical">
+    <Container variant="vertical" className="py-6">
       <NavigateBackBtn by="history" />
       <Form {...form}>
         <Card as="form" onSubmit={submit}>
-          <Text variant="headline4">Register Operator</Text>
+          <Text variant="headline4">Set Operator Fee</Text>
           <Text>
-            Register to the networks registry to enable others to discover and
-            select you as one of their validator's operators.
+            The ssv network utilizes the SSV token to facilitate payments
+            between stakers to operators for maintaining their validators.
+          </Text>
+          <Text>
+            Operators set their own fees, denominated in SSV tokens, to be
+            charged per each validator that selects them as one of their
+            operators.
+          </Text>
+          <Text>
+            Fees are presented as annual payments, but in practice are paid to
+            operators continuously as an ongoing process - per each passed
+            block.
+          </Text>
+          <Text>
+            Your earnings are paid to your ssv operator balance, and can be
+            withdrawn to your wallet at any time.
+          </Text>
+          <Text>
+            Please note that you could always change your fee (according to the{" "}
+            <Button
+              as="a"
+              href="https://docs.ssv.network/learn/operators/update-fee"
+              target="_blank"
+              variant="link"
+            >
+              limitations
+            </Button>
+            ) to align with market dynamics, such as competitiveness and SSV
+            price fluctuations.
           </Text>
 
           <FormField
@@ -67,13 +95,23 @@ export const SetOperatorFee: FC<ComponentPropsWithoutRef<"div">> = () => {
             name="yearlyFee"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Fee</FormLabel>
+                <FormLabel>Annual fee</FormLabel>
                 <FormControl>
                   <NumberInput
+                    maxDecimals={7}
                     id="register-operator-fee"
                     value={field.value}
                     onChange={field.onChange}
                     max={parseEther("200")}
+                    rightSlot={
+                      <div className="flex items-center gap-1 px-3">
+                        <img
+                          src="/images/ssvIcons/logo.svg"
+                          className="size-5"
+                        />
+                        <Text variant="body-2-bold">SSV</Text>
+                      </div>
+                    }
                   />
                 </FormControl>
                 <FormMessage />

@@ -5,7 +5,7 @@ import { formatSSV } from "@/lib/utils/number";
 import { cn } from "@/lib/utils/tw";
 import { type FC, forwardRef, useRef, useState } from "react";
 import { useDebounce, useKey } from "react-use";
-import { formatUnits, parseUnits } from "viem";
+import { parseUnits } from "viem";
 
 export type NumberInputProps = {
   value: bigint;
@@ -13,26 +13,36 @@ export type NumberInputProps = {
   allowNegative?: boolean;
   onChange: (value: bigint) => void;
   decimals?: number;
+  maxDecimals?: number;
 };
 
 type Props = Omit<InputProps, keyof NumberInputProps> & NumberInputProps;
 type NumberInputFC = FC<Props>;
 
-const numReg = /^(-?(\d+)?)?(\.\d{0,4})?$/;
-const captureReg = /^(-?(\d+)?)?(\.\d{0,4})?/;
 const ignoreKeys = ["ArrowUp", "ArrowDown"];
 const delta = "0.005";
 
 const format = (value: bigint, decimals: number) => {
-  return formatSSV(value);
-  return formatUnits(value, decimals).toString().match(captureReg)?.[0] || "";
+  return formatSSV(value, decimals);
 };
 
 export const NumberInput: NumberInputFC = forwardRef<HTMLInputElement, Props>(
   (
-    { value, max, className, decimals = 18, allowNegative, onChange, ...props },
+    {
+      value,
+      max,
+      className,
+      decimals = 18,
+      allowNegative,
+      onChange,
+      maxDecimals = 4,
+      ...props
+    },
     ref,
   ) => {
+    const numReg = new RegExp(`^(-?(\\d+)?)?(\\.\\d{0,${maxDecimals}})?$`);
+    const captureReg = new RegExp(`^(-?(\\d+)?)?(\\.\\d{0,${maxDecimals}})?`);
+
     const isTriggeredByEvent = useRef(false);
     const prev = useRef(value);
     const [displayValue, setDisplayValue] = useState(format(value, decimals));

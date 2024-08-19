@@ -6,7 +6,7 @@ export type TableProps = React.HTMLAttributes<HTMLDivElement> & {
 };
 
 const Table = React.forwardRef<HTMLDivElement, TableProps>(
-  ({ className, ...props }, ref) => (
+  ({ className, gridTemplateColumns, ...props }, ref) => (
     <div
       ref={ref}
       className={cn(
@@ -15,7 +15,7 @@ const Table = React.forwardRef<HTMLDivElement, TableProps>(
       )}
       style={{
         // @ts-expect-error - Typescript doesn't support css variables
-        "--parent-table-columns": props.gridTemplateColumns,
+        "--parent-table-columns": gridTemplateColumns,
       }}
       {...props}
     />

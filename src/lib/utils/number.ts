@@ -10,8 +10,8 @@ export const ethFormatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 4,
 });
 
-export const formatSSV = (num: bigint) =>
-  ethFormatter.format(+formatUnits(num, 18));
+export const formatSSV = (num: bigint, decimals = 18) =>
+  ethFormatter.format(+formatUnits(num, decimals));
 
 const units = {
   seconds: 1000,

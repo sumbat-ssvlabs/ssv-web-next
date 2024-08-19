@@ -19,6 +19,7 @@ import { Spacer } from "@/components/ui/spacer";
 import { Text } from "@/components/ui/text";
 import { Tooltip } from "@/components/ui/tooltip";
 import { SsvLogo } from "@/components/ui/ssv-logo";
+import { ThemeSwitcher } from "@/components/ui/theme-switcher";
 
 export type NavbarProps = {
   // TODO: Add props or remove this type
@@ -82,9 +83,10 @@ export const Navbar: FCProps = ({ className, ...props }) => {
       </DropdownMenu>
 
       <Spacer />
-      <div className="flex gap-2">
+      <div className="flex items-center gap-2">
         <NetworkSwitchBtn />
         <ConnectWalletBtn />
+        <ThemeSwitcher />
       </div>
     </div>
   );
