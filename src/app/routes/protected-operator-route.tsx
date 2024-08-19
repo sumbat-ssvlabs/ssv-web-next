@@ -14,7 +14,8 @@ export const ProtectedOperatorRoute: FC<ComponentPropsWithoutRef<"div">> = ({
   const operator = useOperator(operatorId ?? "");
 
   if (isUndefined(operatorId)) return <Navigate to="../not-found" />;
-  if (operator.isError) return <Navigate to="../not-found" />;
+  if (operator.isError || operator.data?.is_deleted)
+    return <Navigate to="../not-found" />;
   if (
     operator.data &&
     !isAddressEqual(operator.data.owner_address as `0x${string}`, address!)
