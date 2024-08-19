@@ -83,6 +83,7 @@ export const UpdateOperatorFee: FC<ComponentPropsWithoutRef<"div">> = ({
                 </FormLabel>
                 <FormControl>
                   <NumberInput
+                    max={max}
                     placeholder="shadcn"
                     {...field}
                     rightSlot={

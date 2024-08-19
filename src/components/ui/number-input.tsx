@@ -1,6 +1,7 @@
 import type { InputProps } from "@/components/ui/input";
 import { Input } from "@/components/ui/input";
 import { Tooltip } from "@/components/ui/tooltip";
+import { formatSSV } from "@/lib/utils/number";
 import { cn } from "@/lib/utils/tw";
 import { type FC, forwardRef, useRef, useState } from "react";
 import { useDebounce, useKey } from "react-use";
@@ -22,6 +23,11 @@ const captureReg = /^(-?(\d+)?)?(\.\d{0,4})?/;
 const ignoreKeys = ["ArrowUp", "ArrowDown"];
 const delta = "0.005";
 
+const format = (value: bigint, decimals: number) => {
+  return formatSSV(value);
+  return formatUnits(value, decimals).toString().match(captureReg)?.[0] || "";
+};
+
 export const NumberInput: NumberInputFC = forwardRef<HTMLInputElement, Props>(
   (
     { value, max, className, decimals = 18, allowNegative, onChange, ...props },
@@ -29,9 +35,7 @@ export const NumberInput: NumberInputFC = forwardRef<HTMLInputElement, Props>(
   ) => {
     const isTriggeredByEvent = useRef(false);
     const prev = useRef(value);
-    const [displayValue, setDisplayValue] = useState(
-      formatUnits(value, decimals).toString().match(captureReg)?.[0] || "",
-    );
+    const [displayValue, setDisplayValue] = useState(format(value, decimals));
 
     const [showMaxSet, setShowMaxSet] = useState(false);
     useDebounce(
@@ -44,9 +48,7 @@ export const NumberInput: NumberInputFC = forwardRef<HTMLInputElement, Props>(
 
     if (!isTriggeredByEvent.current && prev.current !== value) {
       setTimeout(() => {
-        setDisplayValue(
-          formatUnits(value, decimals).toString().match(captureReg)?.[0] || "",
-        );
+        setDisplayValue(format(value, decimals));
       }, 0);
     }
     isTriggeredByEvent.current = false;

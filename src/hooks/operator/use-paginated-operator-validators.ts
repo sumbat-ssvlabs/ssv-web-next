@@ -3,7 +3,7 @@ import { useOperatorPageParams } from "@/hooks/operator/use-operator-page-params
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 export const useInfiniteOperatorValidators = (
-  _operatorId: number,
+  _operatorId?: number,
   perPage = 10,
 ) => {
   const params = useOperatorPageParams();

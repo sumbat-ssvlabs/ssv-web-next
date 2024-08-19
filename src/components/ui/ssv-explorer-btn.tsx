@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useSSVNetworkDetails } from "@/hooks/use-ssv-network-details";
 import { Tooltip } from "@/components/ui/tooltip";
 import { MdOutlineTravelExplore } from "react-icons/md";
+import { omit } from "lodash-es";
 
 export type SsvExplorerBtnProps =
   | {
@@ -28,6 +29,8 @@ export const SsvExplorerBtn: FCProps = ({ className, ...props }) => {
     ? (props as { operatorId: string | number }).operatorId
     : (props as { validatorId: string }).validatorId;
 
+  const clearedProps = omit(props, ["operatorId", "validatorId"]);
+
   return (
     <Tooltip
       asChild
@@ -43,12 +46,11 @@ export const SsvExplorerBtn: FCProps = ({ className, ...props }) => {
         onClick={(ev) => ev.stopPropagation()}
         target="_blank"
         size="icon"
-        variant="ghost"
-        className={cn("size-7 text-gray-500", className)}
-        {...props}
+        variant="subtle"
+        className={cn("size-7 text-gray-700", className)}
+        {...clearedProps}
       >
-        {/* <LuPackageSearch className="size-[65%]" /> */}
-        <MdOutlineTravelExplore className="size-[65%]" />
+        <MdOutlineTravelExplore />
       </Button>
     </Tooltip>
   );

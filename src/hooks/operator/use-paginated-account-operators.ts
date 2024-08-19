@@ -35,14 +35,15 @@ export const usePaginatedAccountOperators = (perPage = 10) => {
     getPaginatedAccountOperatorsQueryOptions(address, page, perPage),
   );
 
+  const setPage = (page: number) => {
+    setSearchParams((prev) => ({ ...prev, page: String(page) }));
+  };
+
   if (
     paginatedOperators.data?.pagination &&
     page > paginatedOperators.data.pagination.pages
   ) {
-    setSearchParams((prev) => ({
-      ...prev,
-      page: String(paginatedOperators.data.pagination.pages),
-    }));
+    setPage(paginatedOperators.data.pagination.pages);
   }
 
   const pagination =
@@ -61,19 +62,11 @@ export const usePaginatedAccountOperators = (perPage = 10) => {
       : paginatedOperators.data?.operators) || [];
 
   const next = () => {
-    hasNext &&
-      setSearchParams((prev) => ({
-        ...prev,
-        page: String(page + 1),
-      }));
+    hasNext && setPage(page + 1);
   };
 
   const prev = () => {
-    hasPrev &&
-      setSearchParams((prev) => ({
-        ...prev,
-        page: String(page - 1),
-      }));
+    hasPrev && setPage(page - 1);
   };
 
   return {
