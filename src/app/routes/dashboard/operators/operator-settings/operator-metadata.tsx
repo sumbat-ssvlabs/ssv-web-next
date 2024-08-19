@@ -100,7 +100,7 @@ export const OperatorMetadata: FC<ComponentPropsWithoutRef<"div">> = ({
     }) as Omit<IOperatorMetadata, "signature">;
 
     sign
-      .submit(operator!.id_str, {
+      .submit(operator!.id.toString(), {
         message,
         metadata,
       })

@@ -31,7 +31,6 @@ export const Operator: FC<ComponentPropsWithoutRef<"div">> = ({ ...props }) => {
   const fee = useGetOperatorFee({ operatorId });
   const yearlyFee = getYearlyFee(fee.data ?? 0n);
   const balance = earnings.data ?? 0n;
-
   if (!operator.data) return null;
 
   return (
@@ -40,7 +39,7 @@ export const Operator: FC<ComponentPropsWithoutRef<"div">> = ({ ...props }) => {
         <title>SSV {operator.data?.name ?? ""}</title>
       </Helmet>
       <div className="flex flex-col h-full gap-6 pb-6">
-        <div className="bg-gray-100 w-full h-[208px]">
+        <div className="bg-gray-100 w-full h-[208px] pb-6">
           <Container size="xl" variant="vertical" className="pt-6">
             <div className="flex w-full items-center justify-between">
               <NavigateBackBtn>Operator Details</NavigateBackBtn>

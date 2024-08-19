@@ -51,7 +51,13 @@ export const TransactionModal: FCProps = () => {
               </Button>
             </div>
           </div>
-          <Button as={Link} target="_blank" variant="link" to="/transactions">
+          <Button
+            as={Link}
+            target="_blank"
+            variant="link"
+            to="/transactions"
+            className="w-full text-center"
+          >
             View Transaction
           </Button>
         </div>

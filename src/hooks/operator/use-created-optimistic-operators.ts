@@ -6,6 +6,7 @@ import type { Operator } from "@/types/api";
 export const getCreatedOptimisticOperatorsQueryOptions = () => {
   return queryOptions({
     staleTime: ms(1, "minutes"),
+    gcTime: ms(1, "minutes"),
     queryKey: ["created-optimistic-operators"],
     queryFn: async () => [] as Operator[],
   });

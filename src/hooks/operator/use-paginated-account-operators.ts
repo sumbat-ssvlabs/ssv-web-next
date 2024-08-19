@@ -61,6 +61,8 @@ export const usePaginatedAccountOperators = (perPage = 10) => {
         ) || []
       : paginatedOperators.data?.operators) || [];
 
+  console.log("operators:", operators);
+
   const next = () => {
     hasNext && setPage(page + 1);
   };

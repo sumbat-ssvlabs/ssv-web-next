@@ -28,8 +28,7 @@ export const Operators: FC<ComponentPropsWithoutRef<"div">> = () => {
           operators={accountOperators.operators}
           pagination={accountOperators.pagination}
           onOperatorClick={(operator) => {
-            console.log("operator:", operator);
-            navigate(operator.id_str);
+            navigate(operator.id.toString());
           }}
         />
       </Container>

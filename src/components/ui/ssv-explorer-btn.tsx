@@ -50,7 +50,7 @@ export const SsvExplorerBtn: FCProps = ({ className, ...props }) => {
         className={cn("size-7 text-gray-700", className)}
         {...clearedProps}
       >
-        <MdOutlineTravelExplore />
+        <MdOutlineTravelExplore className="size-[65%]" />
       </Button>
     </Tooltip>
   );

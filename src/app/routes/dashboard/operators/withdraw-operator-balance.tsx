@@ -19,10 +19,6 @@ import { Helmet } from "react-helmet";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-const schema = z.object({
-  value: z.bigint().positive("Value must be greater than 0"),
-});
-
 export const WithdrawOperatorBalance: FC<ComponentPropsWithoutRef<"div">> = ({
   className,
   ...props
@@ -35,6 +31,15 @@ export const WithdrawOperatorBalance: FC<ComponentPropsWithoutRef<"div">> = ({
   });
 
   const max = operatorEarnings.data ?? 0n;
+
+  const hasBalance = max > 0n;
+
+  const schema = z.object({
+    value: z
+      .bigint()
+      .max(max, "Value exceeds available balance")
+      .positive("Value must be greater than 0"),
+  });
 
   const form = useForm<z.infer<typeof schema>>({
     defaultValues: { value: 0n },
@@ -76,7 +81,7 @@ export const WithdrawOperatorBalance: FC<ComponentPropsWithoutRef<"div">> = ({
         </Text>
         <div className="flex flex-col">
           <NumberInput
-            disabled={withdraw.isPending}
+            disabled={withdraw.isPending || !hasBalance}
             className="text-xl h-16 font-bold"
             value={form.watch("value")}
             onChange={(value) =>
@@ -86,6 +91,7 @@ export const WithdrawOperatorBalance: FC<ComponentPropsWithoutRef<"div">> = ({
             rightSlot={
               <div className="flex items-center gap-3 px-3">
                 <Button
+                  disabled={!hasBalance}
                   size="sm"
                   className="px-4"
                   variant="secondary"
@@ -106,7 +112,7 @@ export const WithdrawOperatorBalance: FC<ComponentPropsWithoutRef<"div">> = ({
           </Collapse>
         </div>
         <Button
-          disabled={Boolean(form.formState.errors.value)}
+          disabled={Boolean(form.formState.errors.value) || !hasBalance}
           isActionBtn
           isLoading={withdraw.isPending}
           type="submit"

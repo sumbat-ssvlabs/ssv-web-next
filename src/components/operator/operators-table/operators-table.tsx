@@ -56,7 +56,6 @@ export const OperatorsTable: FCProps = ({
                 key={operator.id}
                 operator={operator}
                 onClick={() => {
-                  console.log(operator);
                   return onOperatorClick(operator);
                 }}
               />

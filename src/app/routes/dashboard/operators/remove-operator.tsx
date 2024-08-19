@@ -9,12 +9,14 @@ import { useOperatorPageParams } from "@/hooks/operator/use-operator-page-params
 import { getOperatorQueryOptions } from "@/hooks/operator/use-operator";
 import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
 import { useRemoveOperator } from "@/lib/contract-interactions/write/use-remove-operator";
-import { queryClient } from "@/lib/react-query";
+import { setOptimisticData } from "@/lib/react-query";
 import { useState, type FC } from "react";
+import { useNavigate } from "react-router";
 
 export const RemoveOperator: FC = () => {
   const { operatorId } = useOperatorPageParams();
   const removeOperator = useRemoveOperator();
+  const navigate = useNavigate();
 
   const remove = () =>
     removeOperator.write(
@@ -23,15 +25,17 @@ export const RemoveOperator: FC = () => {
       },
       withTransactionModal({
         onMined: () => {
-          const queryKey = getOperatorQueryOptions(operatorId!).queryKey;
-          queryClient.cancelQueries({ queryKey });
-          queryClient.setQueryData(queryKey, (prev) => {
-            if (!prev) return prev;
-            return {
-              ...prev,
-              is_deleted: true,
-            };
-          });
+          setOptimisticData(
+            getOperatorQueryOptions(operatorId!).queryKey,
+            (prev) => {
+              if (!prev) return prev;
+              return {
+                ...prev,
+                is_deleted: true,
+              };
+            },
+          );
+          navigate("/operators");
         },
       }),
     );
