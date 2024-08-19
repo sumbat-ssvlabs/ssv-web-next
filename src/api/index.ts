@@ -1,14 +1,12 @@
 import { getSSVNetworkDetails } from "@/hooks/use-ssv-network-details";
-import path from "path";
+import urlJoin from "url-join";
 
 export const endpoint = (...paths: (string | number)[]) => {
   const ssvNetwork = getSSVNetworkDetails();
-  return path
-    .join(
-      ssvNetwork.api,
-      ssvNetwork.apiVersion,
-      ssvNetwork.apiNetwork,
-      ...paths.map(String),
-    )
-    .replace("https:/api", "https://api");
+  return urlJoin(
+    ssvNetwork.api,
+    ssvNetwork.apiVersion,
+    ssvNetwork.apiNetwork,
+    ...paths.map(String),
+  );
 };

@@ -1,12 +1,12 @@
 import type { FC } from "react";
 import { cn } from "@/lib/utils/tw";
-import path from "path";
 import type { ButtonProps } from "@/components/ui/button";
 import { Button } from "@/components/ui/button";
 import { useSSVNetworkDetails } from "@/hooks/use-ssv-network-details";
 import { Tooltip } from "@/components/ui/tooltip";
 import { MdOutlineTravelExplore } from "react-icons/md";
 import { omit } from "lodash-es";
+import urlJoin from "url-join";
 
 export type SsvExplorerBtnProps =
   | {
@@ -29,6 +29,11 @@ export const SsvExplorerBtn: FCProps = ({ className, ...props }) => {
     : (props as { validatorId: string }).validatorId;
 
   const clearedProps = omit(props, ["operatorId", "validatorId"]);
+  const href = urlJoin(
+    network.explorerUrl,
+    isOperator ? "operators" : "validators",
+    id.toString(),
+  );
 
   return (
     <Tooltip
@@ -37,11 +42,7 @@ export const SsvExplorerBtn: FCProps = ({ className, ...props }) => {
     >
       <Button
         as="a"
-        to={path.join(
-          network.explorerUrl,
-          isOperator ? "operators" : "validators",
-          id.toString(),
-        )}
+        href={href}
         onClick={(ev) => ev.stopPropagation()}
         target="_blank"
         size="icon"
