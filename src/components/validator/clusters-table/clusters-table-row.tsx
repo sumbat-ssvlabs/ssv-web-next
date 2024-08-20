@@ -1,7 +1,9 @@
 import { OperatorAvatar } from "@/components/operator/operator-avatar";
 import { OperatorDetails } from "@/components/operator/operator-details";
+import { Badge } from "@/components/ui/badge";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Tooltip } from "@/components/ui/tooltip";
+import { useClusterRunway } from "@/hooks/cluster/use-cluster-runway";
 import { useOptimisticOrProvidedOperator } from "@/hooks/operator/use-optimistic-operator";
 import { shortenAddress } from "@/lib/utils/strings";
 import { cn } from "@/lib/utils/tw";
@@ -19,10 +21,13 @@ type FCProps = FC<
 >;
 
 export const ClustersTableRow: FCProps = ({ cluster, className, ...props }) => {
+  const { runwayDisplay, isAtRisk } = useClusterRunway(cluster.clusterId);
   return (
     <TableRow
       key={cluster.id}
-      className={cn("cursor-pointer max-h-7", className)}
+      className={cn("cursor-pointer max-h-7", className, {
+        "bg-warning-200": isAtRisk,
+      })}
       {...props}
     >
       <TableCell className="font-bold">
@@ -54,8 +59,14 @@ export const ClustersTableRow: FCProps = ({ cluster, className, ...props }) => {
         </div>
       </TableCell>
       <TableCell>{cluster.validatorCount}</TableCell>
-      <TableCell>30 days</TableCell>
-      <TableCell />
+      <TableCell>{runwayDisplay}</TableCell>
+      <TableCell>
+        {isAtRisk && (
+          <Badge size="sm" variant="error">
+            Low runway
+          </Badge>
+        )}
+      </TableCell>
       <TableCell />
       <TableCell className="">
         <HiArrowRight className="size-4 text-gray-500" />

@@ -37,6 +37,6 @@ export interface IsRegisteredValidatorResponse {
 
 export const getIsRegisteredValidator = async (publicKey: string) => {
   return await api.get<IsRegisteredValidatorResponse>(
-    endpoint("validators", "isRegisteredValidator", add0x(publicKey)),
+    endpoint("validators/isRegisteredValidator", add0x(publicKey)),
   );
 };

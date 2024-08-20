@@ -11,12 +11,12 @@ import { LuSatelliteDish } from "react-icons/lu";
 import { useLinks } from "@/hooks/use-links";
 import { FaCircleInfo } from "react-icons/fa6";
 import { Tooltip } from "@/components/ui/tooltip";
-import { useInfiniteOperatorValidators } from "@/hooks/operator/use-infinite-operator-validators";
+import { useInfiniteClusterValidators } from "@/hooks/cluster/use-infinite-cluster-validators";
 
-export const OperatorValidatorsList: FC<ComponentPropsWithoutRef<"div">> = ({
+export const ClusterValidatorsList: FC<ComponentPropsWithoutRef<"div">> = ({
   ...props
 }) => {
-  const { validators, infiniteQuery } = useInfiniteOperatorValidators();
+  const { validators, infiniteQuery } = useInfiniteClusterValidators();
   const links = useLinks();
   return (
     <VirtualizedInfinityTable
@@ -40,7 +40,7 @@ export const OperatorValidatorsList: FC<ComponentPropsWithoutRef<"div">> = ({
       renderRow={({ index, item }) => (
         <TableRow key={index}>
           <TableCell className="flex gap-2 items-center">
-            <Text>{shortenAddress(item.public_key)}</Text>
+            <Text variant="body-3-bold">{shortenAddress(item.public_key)}</Text>
             <CopyBtn variant="subtle" text={item.public_key} />
           </TableCell>
           <TableCell>
@@ -67,4 +67,4 @@ export const OperatorValidatorsList: FC<ComponentPropsWithoutRef<"div">> = ({
   );
 };
 
-OperatorValidatorsList.displayName = "OperatorValidatorsList";
+ClusterValidatorsList.displayName = "OperatorValidatorsList";

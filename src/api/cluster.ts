@@ -4,6 +4,7 @@ import { getDefaultClusterData } from "@/lib/utils/cluster";
 import type {
   GetClusterResponse,
   GetPaginatedClustersResponse,
+  PaginatedValidatorsResponse,
   SolidityCluster,
 } from "@/types/api";
 import type { Address } from "abitype";
@@ -32,8 +33,7 @@ export const getPaginatedAccountClusters = ({
   return api
     .get<GetPaginatedClustersResponse>(
       endpoint(
-        "clusters",
-        "owner",
+        "clusters/owner",
         account,
         `?${new URLSearchParams({
           page: page.toString(),
@@ -41,6 +41,38 @@ export const getPaginatedAccountClusters = ({
           withFee: "true",
           ordering: "id:asc",
           operatorDetails: "operatorDetails",
+        }).toString()}`,
+      ),
+    )
+    .then((response) => ({
+      ...response,
+      pagination: {
+        ...response.pagination,
+        page: response.pagination.page || 1,
+        pages: response.pagination.pages || 1,
+      },
+    }));
+};
+
+export type GetPaginatedClusterValidators = {
+  hash: string;
+  page?: number;
+  perPage?: number;
+};
+
+export const getPaginatedClusterValidators = ({
+  hash,
+  page = 1,
+  perPage = 10,
+}: GetPaginatedClusterValidators) => {
+  return api
+    .get<PaginatedValidatorsResponse>(
+      endpoint(
+        "clusters/hash",
+        hash,
+        `?${new URLSearchParams({
+          page: page.toString(),
+          perPage: perPage.toString(),
         }).toString()}`,
       ),
     )

@@ -3,7 +3,7 @@ import { api } from "@/lib/api-client";
 import type {
   Country,
   GetOperatorByPublicKeyResponse,
-  GetOperatorValidatorsResponse,
+  PaginatedValidatorsResponse,
   Operator,
   OperatorsSearchResponse,
 } from "@/types/api";
@@ -45,8 +45,7 @@ export const getPaginatedAccountOperators = ({
   return api
     .get<OperatorsSearchResponse>(
       endpoint(
-        "operators",
-        "owned_by",
+        "operators/owned_by",
         address,
         `?${new URLSearchParams({
           page: page.toString(),
@@ -78,10 +77,9 @@ export const getPaginatedOperatorValidators = ({
   perPage = 10,
 }: GetOperatorValidators) => {
   return api
-    .get<GetOperatorValidatorsResponse>(
+    .get<PaginatedValidatorsResponse>(
       endpoint(
-        "validators",
-        "in_operator",
+        "validators/in_operator",
         operatorId,
         `?${new URLSearchParams({
           page: page.toString(),
@@ -100,11 +98,11 @@ export const getPaginatedOperatorValidators = ({
 };
 
 export const getOperatorLocations = () => {
-  return api.get<Country[]>(endpoint("operators", "locations"));
+  return api.get<Country[]>(endpoint("operators/locations"));
 };
 
 export const getOperatorNodes = (layer: number) => {
-  return api.get<string[]>(endpoint("operators", "nodes", layer));
+  return api.get<string[]>(endpoint("operators/nodes", layer));
 };
 export interface OperatorMetadata {
   operatorName: string;
@@ -131,6 +129,6 @@ export const setOperatorMetadata = (
 
 export const getOperatorByPublicKey = (publicKey: string) => {
   return api.get<GetOperatorByPublicKeyResponse>(
-    endpoint("operators", "public_key", publicKey),
+    endpoint("operators/public_key", publicKey),
   );
 };

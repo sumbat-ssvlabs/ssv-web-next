@@ -80,7 +80,7 @@ export interface Validator {
   updated_at?: string;
 }
 
-export type GetOperatorValidatorsResponse = {
+export type PaginatedValidatorsResponse = {
   validators: Validator[];
   pagination: {
     total: number;

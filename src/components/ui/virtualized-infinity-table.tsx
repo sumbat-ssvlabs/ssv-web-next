@@ -7,6 +7,7 @@ import { VList } from "virtua";
 import { Spinner } from "@/components/ui/spinner";
 import { useInterval } from "react-use";
 import { cn } from "@/lib/utils/tw";
+import { Text } from "@/components/ui/text";
 
 export type VirtualizedInfinityTableProps<
   T,
@@ -41,6 +42,7 @@ export const VirtualizedInfinityTable = <T,>({
   query,
   ...props
 }: VirtualizedInfinityTableProps<T>) => {
+  console.log("items.length:", items.length);
   return (
     <Table className={cn("h-full", className)} {...props}>
       <TableHeader className="sticky top-0">
@@ -52,6 +54,7 @@ export const VirtualizedInfinityTable = <T,>({
         <VList
           overscan={10}
           style={{
+            flex: "1",
             overflowX: "visible",
             height: "100%",
           }}
@@ -73,6 +76,14 @@ export const VirtualizedInfinityTable = <T,>({
             isFetchingNextPage={query.isFetchingNextPage}
             onRequestNextPage={query.fetchNextPage}
           />
+          {query.isSuccess && !query.hasNextPage && items.length > 20 && (
+            <Text
+              variant="caption-semibold"
+              className="text-gray-500 w-full text-center py-2"
+            >
+              ✨ You've seen it all
+            </Text>
+          )}
         </VList>
       )}
       {query.isLoading && (
@@ -81,7 +92,7 @@ export const VirtualizedInfinityTable = <T,>({
         </div>
       )}
       {query.isSuccess && !query.hasNextPage && !items.length && (
-        <div className="flex flex-col gap-4 text-sm font-medium items-center h-full justify-center p-4">
+        <div className="flex flex-1 flex-col gap-4 text-sm font-medium items-center h-full justify-center p-4">
           <img
             src="/images/logo/no_validators.svg"
             className="size-20"

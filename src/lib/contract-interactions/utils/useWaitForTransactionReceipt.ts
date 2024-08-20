@@ -14,6 +14,7 @@ import type { WriteContractErrorType } from "@wagmi/core";
 import { useTransactionModal } from "@/signals/modal";
 import type { Toast } from "@/components/ui/use-toast";
 import { toast } from "@/components/ui/use-toast";
+import { wait } from "@/lib/utils/promise";
 
 export type MainnetEvent = DecodeEventLogReturnType<typeof MainnetV4SetterABI>;
 export type TestnetEvent = DecodeEventLogReturnType<typeof HoleskyV4SetterABI>;
@@ -38,17 +39,24 @@ export const withTransactionModal = <
       useTransactionModal.state.open({ hash });
       options?.onConfirmed?.(hash);
     },
-    onMined: (receipt) => {
+    onMined: async (receipt) => {
+      await options?.onMined?.(receipt);
+
       useTransactionModal.state.close();
-      options?.onMined?.(receipt);
+      await wait(0); // skip a react lifecycle to ensure the navigation blocker is cleared
+
       toast({
         title: "Transaction confirmed",
         description: new Date().toLocaleString(),
         ...options?.successToast,
       });
     },
-    onError: (error) => {
+    onError: async (error) => {
+      await options?.onError?.(error);
+
       useTransactionModal.state.close();
+      await wait(0); // skip a react lifecycle to ensure the navigation blocker is cleared
+
       toast({
         title: "Transaction failed",
         description:
@@ -57,7 +65,6 @@ export const withTransactionModal = <
             : error?.message || "Unknown error",
         variant: "destructive",
       });
-      options?.onError?.(error);
     },
   } satisfies MutationOptions<MainnetEvent | TestnetEvent>;
 };

@@ -2,9 +2,10 @@ import { getOperator } from "@/api/operator";
 import { useOperatorPageParams } from "@/hooks/operator/use-operator-page-params";
 import { queryClient, type QueryConfig } from "@/lib/react-query";
 import { ms } from "@/lib/utils/number";
+import type { OperatorID } from "@/types/types";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
-export const getOperatorQueryOptions = (id: number | string | bigint) => {
+export const getOperatorQueryOptions = (id: OperatorID) => {
   return queryOptions({
     staleTime: ms(1, "minutes"),
     queryKey: ["operator", id.toString()],
@@ -13,7 +14,7 @@ export const getOperatorQueryOptions = (id: number | string | bigint) => {
   });
 };
 
-export const invalidateOperatorQuery = (id: number | string | bigint) => {
+export const invalidateOperatorQuery = (id: OperatorID) => {
   return queryClient.invalidateQueries({
     queryKey: getOperatorQueryOptions(id).queryKey,
   });
@@ -24,7 +25,7 @@ type UseOperatorOptions = {
 };
 
 export const useOperator = (
-  id?: number | string | bigint,
+  id?: OperatorID,
   { options }: UseOperatorOptions = {},
 ) => {
   const params = useOperatorPageParams();
