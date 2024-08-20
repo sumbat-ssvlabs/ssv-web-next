@@ -1,9 +1,12 @@
 import { useSSVNetworkDetails } from "@/hooks/use-ssv-network-details";
-import { useBalance } from "wagmi";
+import { useBalance, useAccount } from "wagmi";
 
 export const useSSVBalance = () => {
   const ssvNetworkDetails = useSSVNetworkDetails();
+  const { address } = useAccount();
+
   return useBalance({
-    address: ssvNetworkDetails?.tokenAddress,
+    address,
+    token: ssvNetworkDetails?.tokenAddress,
   });
 };

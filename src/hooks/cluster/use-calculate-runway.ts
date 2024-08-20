@@ -7,13 +7,22 @@ type Options = {
   deltaBalance: bigint;
 };
 
-export const getDefaultRunway = () => ({
+type Runway = {
+  balance: bigint;
+  runway: bigint;
+  runwayDisplay: string;
+  isAtRisk: boolean;
+  isLoading: boolean;
+  burnRate: bigint;
+};
+export const getDefaultRunway = (runway: Partial<Runway> = {}) => ({
   balance: 0n,
   runway: 0n,
   runwayDisplay: "- -",
   isAtRisk: false,
   isLoading: false,
   burnRate: 0n,
+  ...runway,
 });
 
 export const useCalculateRunway = (

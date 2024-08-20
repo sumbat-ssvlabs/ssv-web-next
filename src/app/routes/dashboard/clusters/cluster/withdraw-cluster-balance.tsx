@@ -26,6 +26,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useWithdrawClusterBalance } from "@/hooks/cluster/use-withdraw-cluster-balance";
 import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
 import { queryClient } from "@/lib/react-query";
+import { useNavigate } from "react-router-dom";
 
 const schema = z.object({
   value: z.bigint().positive(),
@@ -33,9 +34,9 @@ const schema = z.object({
 
 export const WithdrawClusterBalance: FC = () => {
   const params = useClusterPageParams();
-
   const withdraw = useWithdrawClusterBalance(params.clusterHash!);
   const clusterBalance = useClusterBalance(params.clusterHash!);
+  const navigate = useNavigate();
 
   const [hasAgreed, setHasAgreed] = useState(false);
 
@@ -65,6 +66,7 @@ export const WithdrawClusterBalance: FC = () => {
         onMined: async () => {
           queryClient.invalidateQueries({ queryKey: clusterBalance.queryKey });
           await clusterBalance.refetch();
+          navigate(".."); // Navigate back after the transaction is mined
         },
       }),
     );
@@ -143,8 +145,9 @@ export const WithdrawClusterBalance: FC = () => {
             size="xl"
             disabled={!isChanged || disabled}
             isLoading={withdraw.isPending}
+            variant={isLiquidating ? "destructive" : "default"}
           >
-            Withdraw
+            {isLiquidating ? "Liquidate" : "Withdraw"}
           </Button>
         </Card>
       </Form>

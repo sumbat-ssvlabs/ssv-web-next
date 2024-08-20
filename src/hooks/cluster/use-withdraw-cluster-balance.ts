@@ -1,5 +1,6 @@
 import { useCluster } from "@/hooks/cluster/use-cluster";
 import { useWithdraw } from "@/lib/contract-interactions/write/use-withdraw";
+import { formatClusterData } from "@/lib/utils/cluster";
 
 export const useWithdrawClusterBalance = (hash: string) => {
   const cluster = useCluster(hash);
@@ -18,13 +19,7 @@ export const useWithdrawClusterBalance = (hash: string) => {
           ...params,
           operatorIds:
             cluster.data?.operators.map((id) => BigInt(id)) ?? ([] as bigint[]),
-          cluster: {
-            active: Boolean(cluster.data?.active),
-            balance: BigInt(cluster.data?.balance ?? 0),
-            index: BigInt(cluster.data?.index ?? 0),
-            networkFeeIndex: BigInt(cluster.data?.networkFeeIndex ?? 0),
-            validatorCount: cluster.data?.validatorCount ?? 0,
-          },
+          cluster: formatClusterData(cluster.data),
         },
         options,
       );

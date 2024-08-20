@@ -1,6 +1,7 @@
 import { OperatorAvatar } from "@/components/operator/operator-avatar";
 import { OperatorDetails } from "@/components/operator/operator-details";
 import { Badge } from "@/components/ui/badge";
+import { Spinner } from "@/components/ui/spinner";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Tooltip } from "@/components/ui/tooltip";
 import { useClusterRunway } from "@/hooks/cluster/use-cluster-runway";
@@ -21,7 +22,9 @@ type FCProps = FC<
 >;
 
 export const ClustersTableRow: FCProps = ({ cluster, className, ...props }) => {
-  const { runwayDisplay, isAtRisk } = useClusterRunway(cluster.clusterId);
+  const { runwayDisplay, isAtRisk, isLoading } = useClusterRunway(
+    cluster.clusterId,
+  );
   return (
     <TableRow
       key={cluster.id}
@@ -59,7 +62,7 @@ export const ClustersTableRow: FCProps = ({ cluster, className, ...props }) => {
         </div>
       </TableCell>
       <TableCell>{cluster.validatorCount}</TableCell>
-      <TableCell>{runwayDisplay}</TableCell>
+      <TableCell>{isLoading ? <Spinner size="sm" /> : runwayDisplay}</TableCell>
       <TableCell>
         {isAtRisk && (
           <Badge size="sm" variant="error">
