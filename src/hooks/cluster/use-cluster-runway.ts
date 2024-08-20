@@ -20,12 +20,12 @@ export const useClusterRunway = (
   const { data: burnRate = 0n, isLoading: burnRateIsLoading } =
     useClusterBurnRate(hash);
 
+  const isLoading = balanceIsLoading || burnRateIsLoading;
+
   const runway = useCalculateRunway(balance, burnRate, opts);
 
-  if (!cluster.data?.validatorCount || balanceIsLoading || burnRateIsLoading)
-    return getDefaultRunway({
-      isLoading: balanceIsLoading || burnRateIsLoading,
-    });
+  if (!cluster.data?.validatorCount || isLoading)
+    return getDefaultRunway({ isLoading });
 
   return runway;
 };
