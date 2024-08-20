@@ -51,12 +51,8 @@ export const Cluster: FC = () => {
               {formatSSV(balance.data || 0n)}
             </Text>
           </div>
-          {isAtRisk && (
-            <>
-              <Divider />
-              <EstimatedOperationalRunway />
-            </>
-          )}
+          <Divider />
+          <EstimatedOperationalRunway />
           <Divider />
           <div className="flex gap-4 [&>*]:flex-1">
             <Button as={Link} to="deposit" size="xl">
