@@ -1,11 +1,10 @@
 import { endpoint } from "@/api";
 import { api } from "@/lib/api-client";
-import { getDefaultClusterData } from "@/lib/utils/cluster";
+import { formatClusterData, getDefaultClusterData } from "@/lib/utils/cluster";
 import type {
   GetClusterResponse,
   GetPaginatedClustersResponse,
   PaginatedValidatorsResponse,
-  SolidityCluster,
 } from "@/types/api";
 import type { Address } from "abitype";
 
@@ -14,9 +13,9 @@ export const getCluster = (hash: string) =>
     .get<GetClusterResponse>(endpoint("clusters", hash))
     .then((res) => res.cluster);
 
-export const getClusterData = (hash: string): Promise<SolidityCluster> =>
+export const getClusterData = (hash: string) =>
   getCluster(hash)
-    .then((cluster) => cluster ?? getDefaultClusterData())
+    .then((cluster) => formatClusterData(cluster) ?? getDefaultClusterData())
     .catch(() => getDefaultClusterData());
 
 export type GetPaginatedAccountClusters = {

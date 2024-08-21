@@ -3,7 +3,7 @@ import type { Address } from "abitype";
 import { isNumber, merge } from "lodash-es";
 import { encodePacked, keccak256 } from "viem";
 
-export const getClusterHash = (
+export const createClusterHash = (
   account: Address,
   operators: (Pick<Operator, "id"> | number)[],
 ) =>
@@ -25,9 +25,9 @@ export const getDefaultClusterData = (
   merge(
     {
       validatorCount: 0,
-      networkFeeIndex: "0",
-      index: "0",
-      balance: "0",
+      networkFeeIndex: 0n,
+      index: 0n,
+      balance: 0n,
       active: true,
     },
     cluster,

@@ -20,6 +20,7 @@ import { Text } from "@/components/ui/text";
 import { Tooltip } from "@/components/ui/tooltip";
 import { SsvLogo } from "@/components/ui/ssv-logo";
 import { ThemeSwitcher } from "@/components/ui/theme-switcher";
+import { Link } from "react-router-dom";
 
 export type NavbarProps = {
   // TODO: Add props or remove this type
@@ -39,7 +40,9 @@ export const Navbar: FCProps = ({ className, ...props }) => {
       {...props}
     >
       <SsvLogo className="h-full" />
-      <Text variant="body-3-medium">My Account</Text>
+      <Text as={Link} to="/clusters" variant="body-3-medium">
+        My Account
+      </Text>
       <Text variant="body-3-medium">Explorer</Text>
       <Text variant="body-3-medium">Docs</Text>
       <DropdownMenu>

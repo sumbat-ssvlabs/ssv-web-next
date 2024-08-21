@@ -92,9 +92,9 @@ export type PaginatedValidatorsResponse = {
 
 export type SolidityCluster = {
   active: boolean;
-  balance: string;
-  index: string;
-  networkFeeIndex: string;
+  balance: bigint;
+  index: bigint;
+  networkFeeIndex: bigint;
   validatorCount: number;
 };
 

@@ -8,7 +8,10 @@ self.Buffer = Buffer;
 const { SSVKeys, KeySharesItem } = await import("ssv-keys");
 const ssvKeys = new SSVKeys();
 
-const createShares = async (privateKey: string, operators: IOperator[]) => {
+const createAndEncryptShares = async (
+  privateKey: string,
+  operators: IOperator[],
+) => {
   const threshold = await ssvKeys.createThreshold(privateKey, operators);
   const encryptedShares = await ssvKeys.encryptShares(
     operators,
@@ -43,7 +46,7 @@ export type CreateSharesResponseMessage =
 
 self.onmessage = async function ({ data }: CreateSharesMessage) {
   try {
-    const { threshold, encryptedShares } = await createShares(
+    const { threshold, encryptedShares } = await createAndEncryptShares(
       data.privateKey,
       data.operators,
     );

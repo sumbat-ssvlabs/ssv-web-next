@@ -74,7 +74,6 @@ export const EstimatedOperationalRunway: EstimatedOperationalRunwayFC = ({
           })}
         >
           <Text variant="headline4">{clusterRunway.data?.runwayDisplay} </Text>
-          <Text variant="body-2-bold">days</Text>
           {hasDeltaBalance && (
             <Span
               className={cn({

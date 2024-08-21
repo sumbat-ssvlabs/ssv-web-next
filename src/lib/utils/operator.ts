@@ -99,7 +99,7 @@ export const SORTED_OPERATOR_METADATA_FIELDS: OperatorMetadataKeys[] = [
   OperatorMetadataFields.OperatorImage,
 ] as const;
 
-export const sortOperators = (operators: Operator[]) => {
+export const sortOperators = <T extends { id: number }[]>(operators: T) => {
   return [...operators].sort((a, b) => a.id - b.id);
 };
 

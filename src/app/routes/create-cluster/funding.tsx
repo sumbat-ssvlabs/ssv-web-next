@@ -1,14 +1,42 @@
 import { getOwnerNonce } from "@/api/account";
-import { FundingForm } from "@/components/funding/funding-form";
 import { useComputeFundingCost } from "@/hooks/use-compute-funding-cost";
 import { useCreateShares } from "@/hooks/use-create-shares";
 import { getOperatorQueryOptions } from "@/hooks/operator/use-operator";
-import { prepareOperatorsForShares } from "@/lib/utils/operator";
-import { cn } from "@/lib/utils/tw";
+import { prepareOperatorsForShares, sortOperators } from "@/lib/utils/operator";
 import { createValidatorFlow } from "@/signals/create-cluster-signals";
-import { useQueries } from "@tanstack/react-query";
-import type { ComponentProps, ComponentPropsWithoutRef, FC } from "react";
+import { useQueries, useQuery } from "@tanstack/react-query";
+import type { ComponentPropsWithoutRef, FC } from "react";
 import { useAccount } from "wagmi";
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { globals } from "@/config";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { isEmpty } from "lodash-es";
+import { Link } from "lucide-react";
+import { Collapse } from "react-collapse";
+import { useForm } from "react-hook-form";
+import { TbAlertTriangleFilled } from "react-icons/tb";
+import { z } from "zod";
+import { Card } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Spinner } from "@/components/ui/spinner";
+import { Text } from "@/components/ui/text";
+import { Container } from "@/components/ui/container";
+import { formatSSV } from "@/lib/utils/number";
+import { serialize } from "@wagmi/core";
+import { useRegisterValidator } from "@/lib/contract-interactions/write/use-register-validator";
+import { createClusterHash } from "@/lib/utils/cluster";
+import { getClusterData } from "@/api/cluster";
+import type { Address } from "abitype";
+import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
 
 export type FundingProps = {
   // TODO: Add props or remove this type
@@ -18,7 +46,11 @@ type FCProps = FC<
   Omit<ComponentPropsWithoutRef<"div">, keyof FundingProps> & FundingProps
 >;
 
-export const Funding: FCProps = ({ className, ...props }) => {
+const schema = z.object({
+  days: z.coerce.number().positive(),
+});
+
+export const Funding: FCProps = ({ ...props }) => {
   const { address } = useAccount();
   const results = useQueries({
     queries: createValidatorFlow.selectedOperatorIds.value.map((id) =>
@@ -27,42 +59,140 @@ export const Funding: FCProps = ({ className, ...props }) => {
   });
 
   const isLoading = results.some((result) => result.isLoading);
+  const operatorsFee = results.reduce(
+    (acc, { data }) => acc + BigInt(data?.fee || 0n),
+    0n,
+  );
+
   const computeFundingCost = useComputeFundingCost();
   const createShares = useCreateShares();
+  const registerValidator = useRegisterValidator();
 
-  const handleSubmit: ComponentProps<typeof FundingForm>["onSubmit"] = async ({
-    days,
-  }) => {
-    const cost = await computeFundingCost.mutateAsync({
+  const isPending = createShares.isPending || computeFundingCost.isPending;
+
+  const form = useForm<z.infer<typeof schema>>({
+    defaultValues: {
+      days: 365,
+    },
+    resolver: zodResolver(schema),
+  });
+
+  const days = form.watch("days");
+  const showLiquidationWarning =
+    !isEmpty(days) && days < globals.CLUSTER_VALIDITY_PERIOD_MINIMUM;
+
+  const fundingCost = useQuery({
+    queryKey: ["fundingCost", days, operatorsFee].map((v) => serialize(v)),
+    queryFn: () =>
+      computeFundingCost.mutateAsync({
+        fundingDays: days,
+        operatorsFee,
+        validators: 1,
+      }),
+  });
+
+  const submit = form.handleSubmit(async ({ days }) => {
+    const amount = await computeFundingCost.mutateAsync({
       fundingDays: days,
-      operatorsFee: results.reduce(
-        (acc, { data }) => acc + BigInt(data?.fee || 0n),
-        0n,
-      ),
+      operatorsFee,
       validators: 1,
     });
 
-    const adata = await createShares.mutateAsync({
+    const operators = prepareOperatorsForShares(
+      results.map((result) => result.data!),
+    );
+
+    const nonce = await getOwnerNonce(address!);
+
+    const shares = await createShares.mutateAsync({
       account: address!,
-      nonce: await getOwnerNonce(address!),
-      operators: prepareOperatorsForShares(
-        results.map((result) => result.data!),
-      ),
+      nonce: nonce,
+      operators,
       privateKey: createValidatorFlow.extractedKeys.value.privateKey,
     });
 
-    console.log("days", days, "cost", cost, "adata", adata);
-  };
+    const clusterHash = createClusterHash(address!, operators);
+    const args = {
+      amount,
+      cluster: await getClusterData(clusterHash),
+      publicKey: createValidatorFlow.extractedKeys.value.publicKey as Address,
+      operatorIds: sortOperators(operators).map(({ id }) => BigInt(id)),
+      sharesData: shares.sharesData as Address,
+    };
+    return console.log("args:", args);
+    registerValidator.write(
+      {
+        amount,
+        cluster: await getClusterData(clusterHash),
+        publicKey: createValidatorFlow.extractedKeys.value.publicKey as Address,
+        operatorIds: sortOperators(operators).map(({ id }) => BigInt(id)),
+        sharesData: shares.sharesData as Address,
+      },
+      withTransactionModal({
+        onMined: (receipt) => {
+          console.log("receipt.events:", receipt.events);
+        },
+      }),
+    );
+  });
+
+  if (isLoading) {
+    return <Spinner />;
+  }
 
   return (
-    <div className={cn(className, "max-w-screen-sm mx-auto")} {...props}>
-      {createShares.isError && <div>Error: {createShares.error.message}</div>}
-      {isLoading || createShares.isPending ? (
-        <div>Loading...</div>
-      ) : (
-        <FundingForm onSubmit={handleSubmit} />
-      )}
-    </div>
+    <Container>
+      <Form {...form}>
+        <Card as="form" onSubmit={submit} {...props}>
+          <Text variant="headline4">Select your validator funding period</Text>
+          <Text>
+            The SSV amount you deposit will determine your validator operational
+            runway (You can always manage it later by withdrawing or depositing
+            more funds).
+          </Text>
+          {JSON.stringify(createValidatorFlow.extractedKeys.value.publicKey)}
+          <FormField
+            control={form.control}
+            name="days"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  Days {formatSSV(fundingCost.data ?? 0n)}SSV
+                </FormLabel>
+                <FormControl>
+                  <Input type="number" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Collapse isOpened={showLiquidationWarning}>
+            <Alert variant="warning">
+              <div className="flex items-center gap-4">
+                <TbAlertTriangleFilled className="text-orange-500 size-8" />
+                <div>
+                  This period is low and could put your validator at risk. To
+                  avoid liquidation please input a longer period.{" "}
+                  <Link
+                    to="https://docs.ssv.network/learn/protocol-overview/tokenomics/liquidations"
+                    target="_blank"
+                    className="underline text-primary-700"
+                  >
+                    Learn more on liquidations
+                  </Link>
+                </div>
+              </div>
+            </Alert>
+          </Collapse>
+          <Button
+            type="submit"
+            isLoading={isPending || registerValidator.isPending}
+          >
+            Next
+          </Button>
+        </Card>
+      </Form>
+    </Container>
   );
 };
 

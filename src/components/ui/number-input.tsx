@@ -20,7 +20,7 @@ type Props = Omit<InputProps, keyof NumberInputProps> & NumberInputProps;
 type NumberInputFC = FC<Props>;
 
 const ignoreKeys = ["ArrowUp", "ArrowDown"];
-const delta = "0.005";
+const step = "0.1";
 
 const format = (value: bigint, decimals: number) => {
   return formatSSV(value, decimals);
@@ -67,7 +67,7 @@ export const NumberInput: NumberInputFC = forwardRef<HTMLInputElement, Props>(
     useKey(
       "ArrowUp",
       () => {
-        const next = value + parseUnits(delta, decimals);
+        const next = value + parseUnits(step, decimals);
         if (max && next > max) return onChange(max);
         onChange(next);
       },
@@ -78,7 +78,7 @@ export const NumberInput: NumberInputFC = forwardRef<HTMLInputElement, Props>(
     useKey(
       "ArrowDown",
       () => {
-        const parsed = parseUnits(delta, decimals);
+        const parsed = parseUnits(step, decimals);
         const newValue = value - parsed;
         if (newValue < 0n) return onChange(0n);
         onChange(newValue);

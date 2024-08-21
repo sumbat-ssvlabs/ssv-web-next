@@ -67,6 +67,7 @@ export const GenerateKeySharesOnline: FCProps = () => {
   const { state } = useKeystoreValidation(
     createValidatorFlow.keystoreFile.value,
   );
+
   const extractKeystoreData = useExtractKeystoreData({
     onSuccess: (data) => {
       createValidatorFlow.extractedKeys.value = data;

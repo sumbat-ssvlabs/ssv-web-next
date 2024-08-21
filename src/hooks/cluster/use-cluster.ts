@@ -11,14 +11,9 @@ export const getClusterQueryOptions = (hash?: string) => {
   });
 };
 
-type UseClusterOptions = {
-  options?: QueryConfig<typeof getClusterQueryOptions>;
-};
+type UseClusterOptions = QueryConfig<typeof getClusterQueryOptions>;
 
-export const useCluster = (
-  hash: string,
-  { options }: UseClusterOptions = {},
-) => {
+export const useCluster = (hash: string, options?: UseClusterOptions) => {
   const queryOptions = getClusterQueryOptions(hash);
   return useQuery({
     ...queryOptions,

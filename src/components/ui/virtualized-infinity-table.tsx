@@ -42,7 +42,6 @@ export const VirtualizedInfinityTable = <T,>({
   query,
   ...props
 }: VirtualizedInfinityTableProps<T>) => {
-  console.log("items.length:", items.length);
   return (
     <Table className={cn("h-full", className)} {...props}>
       <TableHeader className="sticky top-0">

@@ -26,7 +26,7 @@ export const Clusters: FC<ComponentPropsWithoutRef<"div">> = () => {
           <Button size="lg" variant="secondary" as={Link} to="/fee-recipient">
             Fee Address <FiEdit3 />
           </Button>
-          <Button size="lg" as={Link} to="/join/operator">
+          <Button size="lg" as={Link} to="/create-cluster">
             Add Cluster
           </Button>
         </div>

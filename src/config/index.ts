@@ -8,7 +8,7 @@ export const globals = {
     SEPT_CLUSTER: 7,
     DECA_CLUSTER: 10,
     TRISKAIDEKA_CLUSTER: 13,
-  },
+  } as const,
   FIXED_VALIDATORS_COUNT_PER_CLUSTER_SIZE: {
     QUAD_CLUSTER: 80,
     SEPT_CLUSTER: 40,
