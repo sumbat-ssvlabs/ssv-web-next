@@ -6,7 +6,7 @@ import { Tooltip } from "@/components/ui/tooltip";
 import { useClusterRunway } from "@/hooks/cluster/use-cluster-runway";
 import { useClusterPageParams } from "@/hooks/cluster/use-cluster-page-params";
 import { EstimatedOperationalRunwayAlert } from "@/components/cluster/estimated-operational-runway-alert";
-import { useCalculateRunway } from "@/hooks/cluster/use-calculate-runway";
+import { useRunway } from "@/hooks/cluster/use-calculate-runway";
 import { bigintAbs } from "@/lib/utils/bigint";
 import { useClusterBalance } from "@/hooks/cluster/use-cluster-balance";
 import { useClusterBurnRate } from "@/hooks/cluster/use-cluster-burn-rate";
@@ -42,18 +42,18 @@ export const EstimatedOperationalRunway: EstimatedOperationalRunwayFC = ({
 
   const { data: clusterBalance = 0n } = useClusterBalance(hash!);
 
-  const clusterRunwaySnapshot = useCalculateRunway(
-    clusterBalance,
-    clusterBurnRate,
-  );
+  const clusterRunwaySnapshot = useRunway({
+    balance: clusterBalance,
+    burnRate: clusterBurnRate,
+  });
 
-  const newRunway = useCalculateRunway(
-    clusterBalance + deltaBalance,
-    clusterBurnRate,
-  );
+  const newRunway = useRunway({
+    balance: clusterBalance + deltaBalance,
+    burnRate: clusterBurnRate,
+  });
 
   const deltaRunway = bigintAbs(
-    clusterRunwaySnapshot.runway - newRunway.runway,
+    (clusterRunwaySnapshot.data?.runway ?? 0n) - (newRunway.data?.runway ?? 0n),
   );
 
   return (
@@ -70,10 +70,10 @@ export const EstimatedOperationalRunway: EstimatedOperationalRunwayFC = ({
         </Tooltip>
         <div
           className={cn("flex items-end gap-1", {
-            "text-error-500": clusterRunway.isAtRisk,
+            "text-error-500": clusterRunway.data?.isAtRisk,
           })}
         >
-          <Text variant="headline4">{clusterRunway.runway.toString()} </Text>
+          <Text variant="headline4">{clusterRunway.data?.runwayDisplay} </Text>
           <Text variant="body-2-bold">days</Text>
           {hasDeltaBalance && (
             <Span
@@ -89,8 +89,8 @@ export const EstimatedOperationalRunway: EstimatedOperationalRunwayFC = ({
         </div>
       </div>
       <EstimatedOperationalRunwayAlert
-        isAtRisk={clusterRunway.isAtRisk}
-        runway={clusterRunway.runway}
+        isAtRisk={clusterRunway.data?.isAtRisk ?? false}
+        runway={clusterRunway.data?.runway ?? 0n}
         isWithdrawing={isWithdrawing}
       />
     </div>

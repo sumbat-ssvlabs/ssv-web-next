@@ -40,10 +40,10 @@ export const withTransactionModal = <
       options?.onConfirmed?.(hash);
     },
     onMined: async (receipt) => {
-      await options?.onMined?.(receipt);
-
       useTransactionModal.state.close();
-      await wait(0); // skip a react lifecycle to ensure the navigation blocker is cleared
+      await wait(0); // skip a react lifecycle to ensure the navigation blocker is cleared so the user can navigate away
+
+      options?.onMined?.(receipt);
 
       toast({
         title: "Transaction confirmed",
@@ -52,10 +52,10 @@ export const withTransactionModal = <
       });
     },
     onError: async (error) => {
-      await options?.onError?.(error);
-
       useTransactionModal.state.close();
-      await wait(0); // skip a react lifecycle to ensure the navigation blocker is cleared
+      await wait(0); // skip a react lifecycle to ensure the navigation blocker is cleared so the user can navigate away
+
+      options?.onError?.(error);
 
       toast({
         title: "Transaction failed",

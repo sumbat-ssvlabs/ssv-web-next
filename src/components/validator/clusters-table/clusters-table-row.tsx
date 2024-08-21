@@ -22,14 +22,12 @@ type FCProps = FC<
 >;
 
 export const ClustersTableRow: FCProps = ({ cluster, className, ...props }) => {
-  const { runwayDisplay, isAtRisk, isLoading } = useClusterRunway(
-    cluster.clusterId,
-  );
+  const runway = useClusterRunway(cluster.clusterId);
   return (
     <TableRow
       key={cluster.id}
       className={cn("cursor-pointer max-h-7", className, {
-        "bg-warning-200": isAtRisk,
+        "bg-warning-200": runway.data?.isAtRisk,
       })}
       {...props}
     >
@@ -62,9 +60,11 @@ export const ClustersTableRow: FCProps = ({ cluster, className, ...props }) => {
         </div>
       </TableCell>
       <TableCell>{cluster.validatorCount}</TableCell>
-      <TableCell>{isLoading ? <Spinner size="sm" /> : runwayDisplay}</TableCell>
       <TableCell>
-        {isAtRisk && (
+        {runway.isLoading ? <Spinner size="sm" /> : runway.data?.runwayDisplay}
+      </TableCell>
+      <TableCell>
+        {runway.data?.isAtRisk && (
           <Badge size="sm" variant="error">
             Low runway
           </Badge>

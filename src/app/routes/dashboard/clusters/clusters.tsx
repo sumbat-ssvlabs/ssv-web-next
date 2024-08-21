@@ -12,6 +12,7 @@ import { usePaginatedAccountClusters } from "@/hooks/cluster/use-paginated-accou
 export const Clusters: FC<ComponentPropsWithoutRef<"div">> = () => {
   const { clusters, pagination } = usePaginatedAccountClusters();
   const navigate = useNavigate();
+
   return (
     <>
       <Helmet>

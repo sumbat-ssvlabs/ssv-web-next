@@ -1,8 +1,4 @@
-import {
-  getDefaultRunway,
-  useCalculateRunway,
-} from "@/hooks/cluster/use-calculate-runway";
-import { useCluster } from "@/hooks/cluster/use-cluster";
+import { useRunway } from "@/hooks/cluster/use-calculate-runway";
 import { useClusterBalance } from "@/hooks/cluster/use-cluster-balance";
 import { useClusterBurnRate } from "@/hooks/cluster/use-cluster-burn-rate";
 
@@ -14,18 +10,14 @@ export const useClusterRunway = (
   hash: string,
   opts: Options = { deltaBalance: 0n },
 ) => {
-  const cluster = useCluster(hash);
-  const { data: balance = 0n, isLoading: balanceIsLoading } =
-    useClusterBalance(hash);
-  const { data: burnRate = 0n, isLoading: burnRateIsLoading } =
-    useClusterBurnRate(hash);
+  const balance = useClusterBalance(hash);
+  const burnRate = useClusterBurnRate(hash);
 
-  const isLoading = balanceIsLoading || burnRateIsLoading;
-
-  const runway = useCalculateRunway(balance, burnRate, opts);
-
-  if (!cluster.data?.validatorCount || isLoading)
-    return getDefaultRunway({ isLoading });
+  const runway = useRunway({
+    balance: balance.data ?? 0n,
+    burnRate: burnRate.data ?? 0n,
+    deltaBalance: opts.deltaBalance,
+  });
 
   return runway;
 };

@@ -27,49 +27,55 @@ import { useWithdrawClusterBalance } from "@/hooks/cluster/use-withdraw-cluster-
 import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
 import { queryClient } from "@/lib/react-query";
 import { useNavigate } from "react-router-dom";
+import { useLiquidateCluster } from "@/hooks/cluster/use-liquidate-cluster";
 
 const schema = z.object({
-  value: z.bigint().positive(),
+  amount: z.bigint().positive(),
 });
 
 export const WithdrawClusterBalance: FC = () => {
-  const params = useClusterPageParams();
-  const withdraw = useWithdrawClusterBalance(params.clusterHash!);
-  const clusterBalance = useClusterBalance(params.clusterHash!);
   const navigate = useNavigate();
+  const params = useClusterPageParams();
+
+  const withdraw = useWithdrawClusterBalance(params.clusterHash!);
+  const liquidate = useLiquidateCluster(params.clusterHash!);
+  const isWriting = withdraw.isPending || liquidate.isPending;
+
+  const clusterBalance = useClusterBalance(params.clusterHash!);
 
   const [hasAgreed, setHasAgreed] = useState(false);
 
   const form = useForm({
-    defaultValues: { value: 0n },
+    defaultValues: { amount: 0n },
     resolver: zodResolver(schema),
   });
 
-  const value = form.watch("value");
+  const amount = form.watch("amount");
 
   const clusterRunway = useClusterRunway(params.clusterHash!, {
-    deltaBalance: -value,
+    deltaBalance: -amount,
   });
 
-  const isChanged = isBigIntChanged(0n, value);
-  const isLiquidating = clusterRunway.runway === 0n;
+  const isChanged = isBigIntChanged(0n, amount);
+  const isLiquidating = clusterRunway.data?.runway === 0n;
 
-  const showRiskCheckbox = isChanged && clusterRunway.isAtRisk;
+  const showRiskCheckbox = isChanged && clusterRunway.data?.isAtRisk;
   const disabled = showRiskCheckbox ? !hasAgreed : false;
 
   const submit = form.handleSubmit(async (params) => {
-    withdraw.write(
-      {
-        amount: params.value,
+    const options = withTransactionModal({
+      onMined: async () => {
+        queryClient.invalidateQueries({ queryKey: clusterBalance.queryKey });
+        await clusterBalance.refetch();
+        navigate("..");
       },
-      withTransactionModal({
-        onMined: async () => {
-          queryClient.invalidateQueries({ queryKey: clusterBalance.queryKey });
-          await clusterBalance.refetch();
-          navigate(".."); // Navigate back after the transaction is mined
-        },
-      }),
-    );
+    });
+
+    if (isLiquidating) {
+      liquidate.write(options);
+    } else {
+      withdraw.write(params, options);
+    }
   });
 
   return (
@@ -90,7 +96,7 @@ export const WithdrawClusterBalance: FC = () => {
           </Text>
           <FormField
             control={form.control}
-            name="value"
+            name="amount"
             render={({ field }) => (
               <FormItem>
                 <FormControl>
@@ -105,7 +111,7 @@ export const WithdrawClusterBalance: FC = () => {
                           className="px-5"
                           size="sm"
                           onClick={() => {
-                            form.setValue("value", clusterBalance.data ?? 0n, {
+                            form.setValue("amount", clusterBalance.data ?? 0n, {
                               shouldValidate: true,
                             });
                           }}
@@ -122,7 +128,7 @@ export const WithdrawClusterBalance: FC = () => {
             )}
           />
           <Divider />
-          <EstimatedOperationalRunway deltaBalance={-value} />
+          <EstimatedOperationalRunway deltaBalance={-amount} />
           <Divider />
 
           {showRiskCheckbox && (
@@ -144,7 +150,7 @@ export const WithdrawClusterBalance: FC = () => {
             type="submit"
             size="xl"
             disabled={!isChanged || disabled}
-            isLoading={withdraw.isPending}
+            isLoading={isWriting}
             variant={isLiquidating ? "destructive" : "default"}
           >
             {isLiquidating ? "Liquidate" : "Withdraw"}

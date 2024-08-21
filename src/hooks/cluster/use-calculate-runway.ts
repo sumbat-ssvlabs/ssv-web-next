@@ -2,10 +2,8 @@ import { globals } from "@/config";
 import { useSsvNetworkFee } from "@/hooks/use-ssv-network-fee";
 import { bigintMax } from "@/lib/utils/bigint";
 import { numberFormatter } from "@/lib/utils/number";
-
-type Options = {
-  deltaBalance: bigint;
-};
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { serialize } from "@wagmi/core";
 
 type Runway = {
   balance: bigint;
@@ -15,6 +13,7 @@ type Runway = {
   isLoading: boolean;
   burnRate: bigint;
 };
+
 export const getDefaultRunway = (runway: Partial<Runway> = {}) => ({
   balance: 0n,
   runway: 0n,
@@ -25,31 +24,53 @@ export const getDefaultRunway = (runway: Partial<Runway> = {}) => ({
   ...runway,
 });
 
-export const useCalculateRunway = (
-  balance: bigint,
-  burnRate: bigint,
-  opts: Options = { deltaBalance: 0n },
-) => {
+type Params = {
+  balance: bigint;
+  burnRate: bigint;
+  deltaBalance?: bigint;
+};
+
+export const useRunway = ({ balance, burnRate, deltaBalance = 0n }: Params) => {
   const {
     liquidationThresholdPeriod: { data: liquidationThresholdBlocks = 0n },
     minimumLiquidationCollateral: { data: minimumLiquidationCollateral = 0n },
     isLoading,
+    isSuccess,
   } = useSsvNetworkFee();
 
-  const collateral = bigintMax(
-    burnRate * liquidationThresholdBlocks,
-    minimumLiquidationCollateral,
-  );
+  const query = useQuery({
+    queryKey: [
+      "calculate-runway",
+      balance,
+      burnRate,
+      deltaBalance,
+      liquidationThresholdBlocks,
+      minimumLiquidationCollateral,
+    ].map((v) => serialize(v)),
+    queryFn: async () => {
+      const collateral = bigintMax(
+        burnRate * liquidationThresholdBlocks,
+        minimumLiquidationCollateral,
+      );
 
-  const runway = bigintMax(
-    0n,
-    (balance + opts.deltaBalance - collateral) /
-      (burnRate * globals.BLOCKS_PER_DAY || 1n),
-  );
+      const burnRatePerDay = burnRate * globals.BLOCKS_PER_DAY;
 
-  const isAtRisk = !isLoading && runway < 30n;
+      const runway = bigintMax(
+        0n,
+        (balance + deltaBalance - collateral) / burnRatePerDay,
+      );
 
-  const runwayDisplay = `${numberFormatter.format(runway)} days`;
-
-  return { balance, runway, runwayDisplay, isAtRisk, burnRate, isLoading };
+      return {
+        runway,
+        runwayDisplay: `${numberFormatter.format(runway)} days`,
+        isAtRisk: runway < 30n,
+      };
+    },
+    placeholderData: keepPreviousData,
+    enabled: Boolean(balance && burnRate && isSuccess),
+  });
+  return {
+    ...query,
+    isLoading: query.isLoading || isLoading,
+  };
 };
