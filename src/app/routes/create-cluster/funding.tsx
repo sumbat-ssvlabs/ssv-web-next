@@ -3,7 +3,6 @@ import { useComputeFundingCost } from "@/hooks/use-compute-funding-cost";
 import { useCreateShares } from "@/hooks/use-create-shares";
 import { getOperatorQueryOptions } from "@/hooks/operator/use-operator";
 import { prepareOperatorsForShares, sortOperators } from "@/lib/utils/operator";
-import { createValidatorFlow } from "@/signals/create-cluster-signals";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import type { ComponentPropsWithoutRef, FC } from "react";
 import { useAccount } from "wagmi";
@@ -37,6 +36,7 @@ import { createClusterHash } from "@/lib/utils/cluster";
 import { getClusterData } from "@/api/cluster";
 import type { Address } from "abitype";
 import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
+import { useRegisterValidatorContext } from "@/guard/register-validator-guard";
 
 export type FundingProps = {
   // TODO: Add props or remove this type
@@ -52,10 +52,10 @@ const schema = z.object({
 
 export const Funding: FCProps = ({ ...props }) => {
   const { address } = useAccount();
+  const { selectedOperatorsIds, extractedKeys } = useRegisterValidatorContext();
+
   const results = useQueries({
-    queries: createValidatorFlow.selectedOperatorIds.value.map((id) =>
-      getOperatorQueryOptions(id),
-    ),
+    queries: selectedOperatorsIds.map((id) => getOperatorQueryOptions(id)),
   });
 
   const isLoading = results.some((result) => result.isLoading);
@@ -108,26 +108,20 @@ export const Funding: FCProps = ({ ...props }) => {
       account: address!,
       nonce: nonce,
       operators,
-      privateKey: createValidatorFlow.extractedKeys.value.privateKey,
+      privateKey: extractedKeys.privateKey,
     });
 
     const clusterHash = createClusterHash(address!, operators);
     const args = {
       amount,
       cluster: await getClusterData(clusterHash),
-      publicKey: createValidatorFlow.extractedKeys.value.publicKey as Address,
       operatorIds: sortOperators(operators).map(({ id }) => BigInt(id)),
+      publicKey: extractedKeys.publicKey as Address,
       sharesData: shares.sharesData as Address,
     };
-    return console.log("args:", args);
+
     registerValidator.write(
-      {
-        amount,
-        cluster: await getClusterData(clusterHash),
-        publicKey: createValidatorFlow.extractedKeys.value.publicKey as Address,
-        operatorIds: sortOperators(operators).map(({ id }) => BigInt(id)),
-        sharesData: shares.sharesData as Address,
-      },
+      args,
       withTransactionModal({
         onMined: (receipt) => {
           console.log("receipt.events:", receipt.events);
@@ -150,7 +144,7 @@ export const Funding: FCProps = ({ ...props }) => {
             runway (You can always manage it later by withdrawing or depositing
             more funds).
           </Text>
-          {JSON.stringify(createValidatorFlow.extractedKeys.value.publicKey)}
+          {JSON.stringify(extractedKeys.publicKey)}
           <FormField
             control={form.control}
             name="days"

@@ -1,4 +1,4 @@
-import { useUpdateOperatorFeeContext } from "@/guard/operator-guards";
+import { useUpdateOperatorFeeContext } from "@/guard/register-operator-guards";
 import { useOperator } from "@/hooks/operator/use-operator";
 import { useGetOperatorDeclaredFee } from "@/lib/contract-interactions/read/use-get-operator-declared-fee";
 import { useGetOperatorFeePeriods } from "@/lib/contract-interactions/read/use-get-operator-fee-periods";

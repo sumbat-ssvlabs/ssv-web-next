@@ -29,7 +29,7 @@ import { OperatorStatusBadge } from "@/components/operator/operator-permission/o
 import { useNavigate } from "react-router";
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import { useFocus } from "@/hooks/use-focus";
-import { useRegisterOperatorState } from "@/guard/operator-guards";
+import { useRegisterOperatorContext } from "@/guard/register-operator-guards";
 
 export const RegisterOperator: FC<ComponentPropsWithoutRef<"div">> = ({
   className,
@@ -69,15 +69,15 @@ export const RegisterOperator: FC<ComponentPropsWithoutRef<"div">> = ({
   const form = useForm<z.infer<typeof schema>>({
     defaultValues: {
       owner: address,
-      publicKey: useRegisterOperatorState.state.publicKey,
-      isPrivate: useRegisterOperatorState.state.isPrivate,
+      publicKey: useRegisterOperatorContext.state.publicKey,
+      isPrivate: useRegisterOperatorContext.state.isPrivate,
     },
     resolver: zodResolver(schema),
   });
 
   const submit = form.handleSubmit((values) => {
-    useRegisterOperatorState.state.isPrivate = values.isPrivate;
-    useRegisterOperatorState.state.publicKey = values.publicKey;
+    useRegisterOperatorContext.state.isPrivate = values.isPrivate;
+    useRegisterOperatorContext.state.publicKey = values.publicKey;
     navigate("../fee");
   });
 
@@ -85,9 +85,7 @@ export const RegisterOperator: FC<ComponentPropsWithoutRef<"div">> = ({
 
   return (
     <Container variant="vertical" className="py-6">
-      <NavigateBackBtn by="history">
-        Join the SSV Network Operators
-      </NavigateBackBtn>
+      <NavigateBackBtn>Join the SSV Network Operators</NavigateBackBtn>
 
       <Form {...form}>
         <Card as="form" onSubmit={submit} className={cn(className)} {...props}>

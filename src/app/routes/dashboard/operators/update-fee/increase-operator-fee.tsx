@@ -7,7 +7,7 @@ import { FeeChange } from "@/components/ui/fee-change";
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import { Text } from "@/components/ui/text";
 import { globals } from "@/config";
-import { useUpdateOperatorFeeContext } from "@/guard/operator-guards";
+import { useUpdateOperatorFeeContext } from "@/guard/register-operator-guards";
 import { getOperatorQueryOptions } from "@/hooks/operator/use-operator";
 import {
   useOperatorDeclaredFee,

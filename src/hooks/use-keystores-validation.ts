@@ -1,6 +1,5 @@
 import { useIsValidatorRegistered } from "@/hooks/use-is-validator-registered";
 import { useKeystoreSchemaValidation } from "@/hooks/use-keystore-schema-validation";
-import { createValidatorFlow } from "@/signals/create-cluster-signals";
 import { useMemo } from "react";
 
 type Status =
@@ -14,14 +13,14 @@ type Status =
 
 export const useKeystoreValidation = (file: File | null) => {
   const validation = useKeystoreSchemaValidation(file, {
-    enabled: Boolean(createValidatorFlow.keystoreFile.value),
+    enabled: Boolean(file),
   });
 
   const isRegistered = useIsValidatorRegistered(validation.data?.pubkey || "", {
     enabled: validation.isSuccess,
   });
 
-  const state: Status = useMemo(() => {
+  const status: Status = useMemo(() => {
     if (!file) return "no-file";
     if (validation.isLoading) return "validating-schema";
     if (validation.isError) return "invalid-schema";
@@ -39,7 +38,7 @@ export const useKeystoreValidation = (file: File | null) => {
   ]);
 
   return {
-    state,
+    status,
     schemaValidation: validation,
     isValidatorRegistered: isRegistered,
   };

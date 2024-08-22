@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FeeChange } from "@/components/ui/fee-change";
 import { Text } from "@/components/ui/text";
-import { useUpdateOperatorFeeContext } from "@/guard/operator-guards";
+import { useUpdateOperatorFeeContext } from "@/guard/register-operator-guards";
 import { Link } from "react-router-dom";
 
 export const OperatorFeeUpdated: FC = () => {

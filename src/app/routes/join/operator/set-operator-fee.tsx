@@ -20,11 +20,11 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router";
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import { useFocus } from "@/hooks/use-focus";
-import { useRegisterOperatorState } from "@/guard/operator-guards";
+import { useRegisterOperatorContext } from "@/guard/register-operator-guards";
 
 export const SetOperatorFee: FC<ComponentPropsWithoutRef<"div">> = () => {
   const navigate = useNavigate();
-  const { isPrivate } = useRegisterOperatorState();
+  const { isPrivate } = useRegisterOperatorContext();
 
   const schema = z.object({
     yearlyFee: z
@@ -40,13 +40,13 @@ export const SetOperatorFee: FC<ComponentPropsWithoutRef<"div">> = () => {
   const form = useForm<z.infer<typeof schema>>({
     mode: "all",
     defaultValues: {
-      yearlyFee: useRegisterOperatorState.state.yearlyFee,
+      yearlyFee: useRegisterOperatorContext.state.yearlyFee,
     },
     resolver: zodResolver(schema),
   });
 
   const submit = form.handleSubmit((values) => {
-    useRegisterOperatorState.state.yearlyFee = values.yearlyFee;
+    useRegisterOperatorContext.state.yearlyFee = values.yearlyFee;
     navigate("../confirm-transaction");
   });
 

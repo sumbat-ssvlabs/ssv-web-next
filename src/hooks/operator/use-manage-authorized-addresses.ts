@@ -52,7 +52,9 @@ export const useManageAuthorizedAddresses = (_operatorId?: string) => {
             title: "Operator whitelist updated",
             description: new Date().toLocaleString(),
           });
+
           const queryKey = getOperatorQueryOptions(operatorId!).queryKey;
+
           queryClient.cancelQueries({ queryKey });
           queryClient.setQueryData(queryKey, (operator) => {
             return mergeOperatorWhitelistAddresses({

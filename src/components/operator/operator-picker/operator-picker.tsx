@@ -5,7 +5,7 @@ import type { VListProps } from "virtua";
 import { VList } from "virtua";
 
 export type OperatorPickerProps = {
-  selectedOperatorIds: number[];
+  selectedOperatorIds: readonly number[];
   onOperatorCheckedChange: (operatorId: number, checked: boolean) => void;
   maxSelection?: number;
   query: ReturnType<typeof useSearchOperators>;

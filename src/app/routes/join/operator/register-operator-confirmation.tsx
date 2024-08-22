@@ -20,13 +20,13 @@ import { type FC } from "react";
 import { useNavigate } from "react-router";
 import { encodeAbiParameters, parseAbiParameters } from "viem";
 import { useAccount } from "wagmi";
-import { useRegisterOperatorState } from "@/guard/operator-guards";
+import { useRegisterOperatorContext } from "@/guard/register-operator-guards";
 
 export const RegisterOperatorConfirmation: FC = () => {
   const navigate = useNavigate();
 
   const { address } = useAccount();
-  const { publicKey, yearlyFee, isPrivate } = useRegisterOperatorState();
+  const { publicKey, yearlyFee, isPrivate } = useRegisterOperatorContext();
 
   const register = useRegisterOperator();
 
@@ -47,9 +47,9 @@ export const RegisterOperatorConfirmation: FC = () => {
 
           if (!event)
             return toast({
-              title: "Operator Added But...",
+              title: "Operator Added But... 🤔",
               description:
-                "But you will see the operator in the list after the next block",
+                "You will see the operator in the list after the next block",
             });
 
           const operator = createOperatorFromEvent(event);

@@ -15,7 +15,9 @@ export const getCluster = (hash: string) =>
 
 export const getClusterData = (hash: string) =>
   getCluster(hash)
-    .then((cluster) => formatClusterData(cluster) ?? getDefaultClusterData())
+    .then((cluster) =>
+      cluster ? formatClusterData(cluster) : getDefaultClusterData(),
+    )
     .catch(() => getDefaultClusterData());
 
 export type GetPaginatedAccountClusters = {

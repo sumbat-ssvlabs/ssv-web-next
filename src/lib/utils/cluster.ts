@@ -5,7 +5,7 @@ import { encodePacked, keccak256 } from "viem";
 
 export const createClusterHash = (
   account: Address,
-  operators: (Pick<Operator, "id"> | number)[],
+  operators: readonly (Pick<Operator, "id"> | number)[],
 ) =>
   keccak256(
     encodePacked(
@@ -36,7 +36,7 @@ export const getDefaultClusterData = (
 export const formatClusterData = (
   cluster?: Partial<Cluster<{ operators: number[] }>> | null,
 ) => ({
-  active: Boolean(cluster?.active),
+  active: cluster?.active ?? true,
   balance: BigInt(cluster?.balance ?? 0),
   index: BigInt(cluster?.index ?? 0),
   networkFeeIndex: BigInt(cluster?.networkFeeIndex ?? 0),

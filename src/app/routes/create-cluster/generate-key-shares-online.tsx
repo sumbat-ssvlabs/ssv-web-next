@@ -7,14 +7,15 @@ import {
   FileUploaderItem,
 } from "@/components/ui/file-upload";
 import { Input } from "@/components/ui/input";
+import { useRegisterValidatorContext } from "@/guard/register-validator-guard";
 import { useExtractKeystoreData } from "@/hooks/use-extract-keystore-data";
 import { useKeystoreValidation } from "@/hooks/use-keystores-validation";
-import { createValidatorFlow } from "@/signals/create-cluster-signals";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Paperclip } from "lucide-react";
 import { type ComponentPropsWithoutRef, type FC } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { ref } from "valtio";
 import { z } from "zod";
 
 export type GenerateKeySharesOnlineProps = {
@@ -59,18 +60,16 @@ const schema = z.object({
 });
 
 export const GenerateKeySharesOnline: FCProps = () => {
-  const file = createValidatorFlow.keystoreFile.value;
-  const files = file ? [file] : null;
+  const { state } = useRegisterValidatorContext;
+  const { files, password } = useRegisterValidatorContext();
 
   const navigate = useNavigate();
 
-  const { state } = useKeystoreValidation(
-    createValidatorFlow.keystoreFile.value,
-  );
+  const { status } = useKeystoreValidation(files?.[0] as File);
 
   const extractKeystoreData = useExtractKeystoreData({
     onSuccess: (data) => {
-      createValidatorFlow.extractedKeys.value = data;
+      state.extractedKeys = data;
       navigate("/create-cluster/funding");
     },
   });
@@ -91,18 +90,17 @@ export const GenerateKeySharesOnline: FCProps = () => {
             "application/json": [".json"],
           },
         }}
-        value={file ? [file] : []}
+        value={files as File[]}
         onValueChange={(files) => {
-          return (createValidatorFlow.keystoreFile.value =
-            files?.at(-1) ?? null);
+          state.files = files ? ref(files) : null;
         }}
         className="relative bg-background rounded-lg p-2"
       >
         <FileInput className="outline-dashed outline-1 outline-white">
           <div className="flex items-center justify-center flex-col pt-3 pb-4 w-full ">
             <FileSvgDraw />{" "}
-            {state !== "no-file" && (
-              <div className="text-red-500 text-xl mt-2">{state}</div>
+            {status !== "no-file" && (
+              <div className="text-red-500 text-xl mt-2">{status}</div>
             )}
           </div>
         </FileInput>
@@ -120,7 +118,7 @@ export const GenerateKeySharesOnline: FCProps = () => {
       <form
         className="flex flex-col gap-4"
         onSubmit={form.handleSubmit(async (data) => {
-          createValidatorFlow.password.value = data.password;
+          state.password = data.password;
           await extractKeystoreData.mutateAsync({
             file: files![0],
             password: data.password,
@@ -128,8 +126,8 @@ export const GenerateKeySharesOnline: FCProps = () => {
         })}
       >
         <Input
-          defaultValue={createValidatorFlow.password.value}
-          disabled={state !== "validator-not-registered"}
+          defaultValue={password}
+          disabled={status !== "validator-not-registered"}
           type="password"
           className="mt-4"
           {...form.register("password")}
@@ -140,7 +138,7 @@ export const GenerateKeySharesOnline: FCProps = () => {
         <Button
           type="submit"
           disabled={
-            state !== "validator-not-registered" ||
+            status !== "validator-not-registered" ||
             !form.watch("password").length
           }
           isLoading={extractKeystoreData.isPending}

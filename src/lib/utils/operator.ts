@@ -113,7 +113,7 @@ export const sumOperatorsFee = (operators: Operator[]) => {
   return operators.reduce((acc, operator) => acc + BigInt(operator.fee), 0n);
 };
 
-export const getOperatorIds = (operators: Operator[]) => {
+export const getOperatorIds = <T extends { id: number }[]>(operators: T) => {
   return operators.map((operator) => operator.id);
 };
 

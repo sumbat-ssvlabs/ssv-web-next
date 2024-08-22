@@ -1,4 +1,3 @@
-import type { ClusterSize } from "@/components/operator/operator-picker/operator-cluster-size-picker";
 import { OperatorClusterSizePicker } from "@/components/operator/operator-picker/operator-cluster-size-picker";
 import { OperatorPicker } from "@/components/operator/operator-picker/operator-picker";
 import { Button } from "@/components/ui/button";
@@ -11,18 +10,14 @@ import { xor } from "lodash-es";
 import { type ComponentPropsWithoutRef, type FC } from "react";
 import { Link } from "react-router-dom";
 import { OperatorPickerFilter } from "@/components/operator/operator-picker/operator-picker-filter/operator-picker-filter";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { useCluster } from "@/hooks/cluster/use-cluster";
 import { createClusterHash } from "@/lib/utils/cluster";
 import { useAccount } from "wagmi";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { sortNumbers } from "@/lib/utils/number";
-import { FormField, FormItem } from "@/components/ui/form";
 import { SelectedOperators } from "@/components/operator/operator-picker/selected-operators";
 import { useSearchOperators } from "@/hooks/use-search-operators";
 import type { Operator } from "@/types/api";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useRegisterValidatorContext } from "@/guard/register-validator-guard";
 
 export type SelectOperatorsProps = {
   // TODO: Add props or remove this type
@@ -33,21 +28,11 @@ type FCProps = FC<
     SelectOperatorsProps
 >;
 
-const schema = z.object({
-  clusterSize: z.number(),
-  operators: z.array(z.number()),
-});
-
 export const SelectOperators: FCProps = ({ className, ...props }) => {
   const { address } = useAccount();
-
-  const form = useForm<z.infer<typeof schema>>({
-    defaultValues: {
-      clusterSize: 4,
-      operators: [],
-    },
-    resolver: zodResolver(schema),
-  });
+  const { state } = useRegisterValidatorContext;
+  const { clusterSize, selectedOperatorsIds } = useRegisterValidatorContext();
+  console.log("selectedOperatorsIds:", selectedOperatorsIds);
 
   const searchOperators = useSearchOperators();
   const operatorsMap =
@@ -61,24 +46,19 @@ export const SelectOperators: FCProps = ({ className, ...props }) => {
         {} as Record<number, Operator>,
       ) ?? {};
 
-  const clusterSize = form.watch("clusterSize");
-  const selectedOperatorIds = sortNumbers(form.watch("operators")).slice(
-    0,
-    clusterSize,
-  );
-  const selectedOperators = selectedOperatorIds.map((id) => operatorsMap[id]);
+  const selectedOperators = selectedOperatorsIds.map((id) => operatorsMap[id]);
 
   const hasUnverifiedOperators = selectedOperators.some(
     (operator) => operator.type !== "verified_operator",
   );
 
-  const hash = createClusterHash(address!, selectedOperatorIds);
+  const hash = createClusterHash(address!, selectedOperatorsIds);
   const cluster = useCluster(hash, {
-    enabled: selectedOperatorIds.length === clusterSize,
+    enabled: selectedOperatorsIds.length === clusterSize,
   });
 
   const isClusterExists =
-    selectedOperatorIds.length === clusterSize &&
+    selectedOperatorsIds.length === clusterSize &&
     cluster.isSuccess &&
     cluster.data !== null;
 
@@ -90,27 +70,17 @@ export const SelectOperators: FCProps = ({ className, ...props }) => {
           <Text variant="headline4">
             Pick the cluster of network operators to run your validator
           </Text>
-          <FormField
-            control={form.control}
-            name="clusterSize"
-            render={({ field }) => (
-              <FormItem>
-                <OperatorClusterSizePicker
-                  value={field.value as ClusterSize}
-                  onChange={field.onChange}
-                />
-              </FormItem>
-            )}
+          <OperatorClusterSizePicker
+            value={clusterSize}
+            onChange={(size) => (state.clusterSize = size)}
           />
           <OperatorPickerFilter />
           <OperatorPicker
             query={searchOperators}
             maxSelection={clusterSize}
-            selectedOperatorIds={selectedOperatorIds}
+            selectedOperatorIds={selectedOperatorsIds}
             onOperatorCheckedChange={(id) => {
-              form.setValue("operators", xor(selectedOperatorIds, [id]), {
-                shouldValidate: true,
-              });
+              state.selectedOperatorsIds = xor(selectedOperatorsIds, [id]);
             }}
           />
         </Card>
@@ -120,9 +90,7 @@ export const SelectOperators: FCProps = ({ className, ...props }) => {
             clusterSize={clusterSize}
             selectedOperators={selectedOperators}
             onRemoveOperator={({ id }) => {
-              form.setValue("operators", xor(selectedOperatorIds, [id]), {
-                shouldValidate: true,
-              });
+              state.selectedOperatorsIds = xor(selectedOperatorsIds, [id]);
             }}
           />
 

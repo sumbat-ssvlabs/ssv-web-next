@@ -56,7 +56,7 @@ export const withTransactionModal = <
       await wait(0); // skip a react lifecycle to ensure the navigation blocker is cleared so the user can navigate away
 
       options?.onError?.(error);
-
+      console.log("error?.message:", error?.message);
       toast({
         title: "Transaction failed",
         description:

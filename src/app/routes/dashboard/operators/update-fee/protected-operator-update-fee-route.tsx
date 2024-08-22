@@ -1,5 +1,5 @@
 import { ProtectedClusterRoute } from "@/app/routes/protected-cluster-route";
-import { useUpdateOperatorFeeContext } from "@/guard/operator-guards";
+import { useUpdateOperatorFeeContext } from "@/guard/register-operator-guards";
 import {
   useOperatorDeclaredFee,
   useOperatorDeclaredFeeStatus,
