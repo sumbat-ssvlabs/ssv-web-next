@@ -6,6 +6,7 @@ import type {
   DefaultOptions,
   Updater,
   UseMutationOptions,
+  UseQueryOptions as DefaultUseQueryOptions,
 } from "@tanstack/react-query";
 import { QueryClient } from "@tanstack/react-query";
 import { deserialize, serialize } from "wagmi";
@@ -43,6 +44,11 @@ export type ApiFnReturnType<FnType extends (...args: any) => Promise<any>> =
 export type QueryConfig<
   T extends (...args: any) => any = (...args: any) => any,
 > = Omit<ReturnType<T>, "queryKey" | "queryFn">;
+
+export type UseQueryOptions = Omit<
+  DefaultUseQueryOptions,
+  "queryKey" | "queryFn"
+>;
 
 export type MutationConfig<
   MutationFnType extends (...args: any) => Promise<any>,

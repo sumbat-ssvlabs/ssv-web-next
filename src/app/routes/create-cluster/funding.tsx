@@ -1,9 +1,5 @@
-import { getOwnerNonce } from "@/api/account";
 import { useComputeFundingCost } from "@/hooks/use-compute-funding-cost";
-import { useCreateShares } from "@/hooks/use-create-shares";
-import { getOperatorQueryOptions } from "@/hooks/operator/use-operator";
-import { prepareOperatorsForShares, sortOperators } from "@/lib/utils/operator";
-import { useQueries, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import type { ComponentPropsWithoutRef, FC } from "react";
 import { useAccount } from "wagmi";
 import { Alert } from "@/components/ui/alert";
@@ -30,13 +26,16 @@ import { Spinner } from "@/components/ui/spinner";
 import { Text } from "@/components/ui/text";
 import { Container } from "@/components/ui/container";
 import { formatSSV } from "@/lib/utils/number";
-import { serialize } from "@wagmi/core";
 import { useRegisterValidator } from "@/lib/contract-interactions/write/use-register-validator";
 import { createClusterHash } from "@/lib/utils/cluster";
 import { getClusterData } from "@/api/cluster";
 import type { Address } from "abitype";
 import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
 import { useRegisterValidatorContext } from "@/guard/register-validator-guard";
+import { bigintifyNumbers, stringifyBigints } from "@/lib/utils/bigint";
+import { useOperators } from "@/hooks/operator/use-operators";
+import { sumOperatorsFees } from "@/lib/utils/operator";
+import { useKeysharesSchemaValidation } from "@/hooks/keyshares/use-keyshares-schema-validation";
 
 export type FundingProps = {
   // TODO: Add props or remove this type
@@ -52,28 +51,32 @@ const schema = z.object({
 
 export const Funding: FCProps = ({ ...props }) => {
   const { address } = useAccount();
-  const { selectedOperatorsIds, extractedKeys } = useRegisterValidatorContext();
+  const {
+    selectedOperatorsIds,
+    hasSelectedOperators,
+    shares,
+    files,
+    publicKeys,
+  } = useRegisterValidatorContext();
 
-  const results = useQueries({
-    queries: selectedOperatorsIds.map((id) => getOperatorQueryOptions(id)),
-  });
-
-  const isLoading = results.some((result) => result.isLoading);
-  const operatorsFee = results.reduce(
-    (acc, { data }) => acc + BigInt(data?.fee || 0n),
-    0n,
+  const { data: keyshares } = useKeysharesSchemaValidation(
+    files?.at(0) ?? null,
   );
 
+  const operatorIds = hasSelectedOperators
+    ? selectedOperatorsIds
+    : keyshares?.at(0)?.data.operatorIds ?? [];
+
+  const operators = useOperators(operatorIds);
+  const operatorsFee = sumOperatorsFees(operators.data ?? []);
+
   const computeFundingCost = useComputeFundingCost();
-  const createShares = useCreateShares();
   const registerValidator = useRegisterValidator();
 
-  const isPending = createShares.isPending || computeFundingCost.isPending;
+  const isPending = computeFundingCost.isPending || operators.isPending;
 
   const form = useForm<z.infer<typeof schema>>({
-    defaultValues: {
-      days: 365,
-    },
+    defaultValues: { days: 365 },
     resolver: zodResolver(schema),
   });
 
@@ -82,7 +85,7 @@ export const Funding: FCProps = ({ ...props }) => {
     !isEmpty(days) && days < globals.CLUSTER_VALIDITY_PERIOD_MINIMUM;
 
   const fundingCost = useQuery({
-    queryKey: ["fundingCost", days, operatorsFee].map((v) => serialize(v)),
+    queryKey: stringifyBigints(["funding-cost", days, operatorsFee]),
     queryFn: () =>
       computeFundingCost.mutateAsync({
         fundingDays: days,
@@ -98,30 +101,16 @@ export const Funding: FCProps = ({ ...props }) => {
       validators: 1,
     });
 
-    const operators = prepareOperatorsForShares(
-      results.map((result) => result.data!),
-    );
-
-    const nonce = await getOwnerNonce(address!);
-
-    const shares = await createShares.mutateAsync({
-      account: address!,
-      nonce: nonce,
-      operators,
-      privateKey: extractedKeys.privateKey,
-    });
-
-    const clusterHash = createClusterHash(address!, operators);
-    const args = {
-      amount,
-      cluster: await getClusterData(clusterHash),
-      operatorIds: sortOperators(operators).map(({ id }) => BigInt(id)),
-      publicKey: extractedKeys.publicKey as Address,
-      sharesData: shares.sharesData as Address,
-    };
-
     registerValidator.write(
-      args,
+      {
+        amount,
+        operatorIds: bigintifyNumbers(operatorIds),
+        publicKey: publicKeys[0] as Address,
+        sharesData: shares[0] as Address,
+        cluster: await getClusterData(
+          createClusterHash(address!, operators.data!),
+        ),
+      },
       withTransactionModal({
         onMined: (receipt) => {
           console.log("receipt.events:", receipt.events);
@@ -130,7 +119,7 @@ export const Funding: FCProps = ({ ...props }) => {
     );
   });
 
-  if (isLoading) {
+  if (isPending) {
     return <Spinner />;
   }
 
@@ -144,7 +133,6 @@ export const Funding: FCProps = ({ ...props }) => {
             runway (You can always manage it later by withdrawing or depositing
             more funds).
           </Text>
-          {JSON.stringify(extractedKeys.publicKey)}
           <FormField
             control={form.control}
             name="days"

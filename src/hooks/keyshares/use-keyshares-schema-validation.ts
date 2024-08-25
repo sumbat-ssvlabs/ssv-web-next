@@ -6,8 +6,8 @@ import { KeyShares } from "ssv-keys";
 export const validateKeysharesFile = async (file: File) => {
   const text = await file!.text();
   const json = JSON.parse(text);
-  const parsed = keysharesSchema.parse(json);
-  return KeyShares.fromJson(parsed);
+  keysharesSchema.parse(json);
+  return (await KeyShares.fromJson(json)).list();
 };
 
 export const useKeysharesSchemaValidation = (

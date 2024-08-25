@@ -4,6 +4,7 @@ import { reset } from "@/lib/utils/valtio";
 import type { ReactNode } from "react";
 import React, { useMemo } from "react";
 import { useLocation, matchPath, Navigate } from "react-router";
+import { useUnmount } from "react-use";
 import { proxy, useSnapshot } from "valtio";
 
 export const createGuard = <T extends object>(
@@ -15,12 +16,14 @@ export const createGuard = <T extends object>(
   const state = proxy<T>(defaultState);
   const resetState = reset.bind(null, state, defaultState);
 
-  const hook = () => useSnapshot(state);
+  const hook = () => useSnapshot(state) as T;
   hook.state = state;
 
   const guardProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const location = useLocation();
     const guards = useMemo(() => Object.entries(guard), []);
+
+    useUnmount(resetState);
 
     for (const [pattern, guardFn] of guards) {
       const match = Boolean(matchPath(pattern, location.pathname));

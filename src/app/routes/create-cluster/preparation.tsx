@@ -59,16 +59,12 @@ export const Preparation: FCProps = ({ className, ...props }) => {
           </div>
         </div>
         <div className="flex flex-col w-full gap-2">
-          <Link to="select-operators" className="flex-1">
-            <Button size="xl" className="w-full">
-              Generate new key shares
-            </Button>
-          </Link>
-          <Link to="generate-online" className="flex-1">
-            <Button size="xl" variant="secondary" className="w-full">
-              I already have key shares
-            </Button>
-          </Link>
+          <Button as={Link} to="select-operators" size="xl">
+            Generate new key shares
+          </Button>
+          <Button as={Link} to="generate-offline" size="xl" variant="secondary">
+            I already have key shares
+          </Button>
         </div>
       </Card>
     </Container>

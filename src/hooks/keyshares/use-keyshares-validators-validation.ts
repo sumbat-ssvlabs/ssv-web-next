@@ -1,18 +1,18 @@
-import { type QueryConfig } from "@/lib/react-query";
-import { noDuplicatedValidatorKeys } from "@/lib/utils/keyshares";
+import type { UseQueryOptions } from "@/lib/react-query";
+import { ensureValidatorsUniqueness } from "@/lib/utils/keyshares";
 
 import { useQuery } from "@tanstack/react-query";
-import type { KeyShares } from "ssv-keys";
+import type { KeySharesItem } from "ssv-keys";
 
 export const useKeysharesValidatorsValidation = (
-  keyshares?: KeyShares,
-  options: QueryConfig = {},
+  keyshares?: KeySharesItem[],
+  options: UseQueryOptions = {},
 ) => {
   return useQuery({
     queryKey: ["keyshares-validators-validation", keyshares],
-    queryFn: () => noDuplicatedValidatorKeys(keyshares!.list()),
+    queryFn: () => ensureValidatorsUniqueness(keyshares!),
     retry: false,
     ...options,
-    enabled: Boolean(keyshares),
+    enabled: Boolean(keyshares && keyshares),
   });
 };

@@ -15,14 +15,15 @@ export const getSSVAccountQueryOptions = (account?: Address) => {
   });
 };
 
-type UseSsvAccountOptions = {
-  options?: QueryConfig<typeof getSSVAccountQueryOptions>;
-};
+type UseSsvAccountOptions = QueryConfig<typeof getSSVAccountQueryOptions>;
 
-export const useSSVAccount = ({ options }: UseSsvAccountOptions = {}) => {
+export const useSSVAccount = (options: UseSsvAccountOptions = {}) => {
   const { address } = useAccount();
+  const queryOptions = getSSVAccountQueryOptions(address);
+
   return useQuery({
-    ...getSSVAccountQueryOptions(address),
+    ...queryOptions,
     ...options,
+    enabled: queryOptions.enabled && options?.enabled,
   });
 };

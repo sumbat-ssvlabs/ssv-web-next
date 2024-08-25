@@ -5,7 +5,7 @@ import { ethFormatter } from "@/lib/utils/number";
 import type { Operator } from "@/types/api";
 import { difference } from "lodash-es";
 import type { IOperator } from "ssv-keys/dist/tsc/src/lib/KeyShares/KeySharesData/IOperator";
-import type { DecodeEventLogReturnType } from "viem";
+import type { Address, DecodeEventLogReturnType } from "viem";
 import { formatUnits } from "viem";
 
 type GetYearlyFeeOpts = {
@@ -190,4 +190,15 @@ export const createOperatorFromEvent = (
     public_key: event?.args.publicKey,
     fee: event?.args.fee.toString(),
   });
+};
+
+export const sumOperatorsFees = (operators: Operator[]) =>
+  operators.reduce((acc, operator) => acc + BigInt(operator.fee), 0n);
+
+export const canAccountUseOperator = (
+  account: Address,
+  operator: Operator,
+): boolean => {
+  if (!operator.is_private) return true;
+  return operator.whitelist_addresses?.includes(account) ?? true;
 };

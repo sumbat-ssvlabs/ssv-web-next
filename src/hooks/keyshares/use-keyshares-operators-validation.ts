@@ -8,19 +8,17 @@ import {
 } from "@/lib/utils/keyshares";
 import { sortNumbers } from "@/lib/utils/number";
 import { useQuery } from "@tanstack/react-query";
-import type { KeyShares } from "ssv-keys";
+import type { KeySharesItem } from "ssv-keys";
 
 type Params = {
-  keyshares?: KeyShares;
+  shares?: KeySharesItem[];
   operatorIds?: number[];
 };
 
 export const validateKeysharesOperators = async ({
-  keyshares,
+  shares,
   operatorIds: _operatorIds,
-}: Params & Required<Pick<Params, "keyshares">>) => {
-  const shares = keyshares.list();
-
+}: Params & Required<Pick<Params, "shares">>) => {
   const operatorIds = sortNumbers(
     _operatorIds ?? shares[0].payload.operatorIds,
   );
@@ -62,6 +60,6 @@ export const useKeysharesOperatorsValidation = (
     queryFn: () => validateKeysharesOperators(params as Required<Params>),
     retry: false,
     ...options,
-    enabled: Boolean(params.keyshares),
+    enabled: Boolean(params.shares),
   });
 };

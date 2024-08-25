@@ -70,3 +70,11 @@ export const stringifyBigints = <T>(anything: T): NoBigints<T> => {
     if (typeof value === "bigint") return value.toString();
   });
 };
+
+export const bigintifyNumbers = (
+  numbers: readonly number[] | number[],
+): bigint[] => {
+  return cloneDeepWith(numbers, (value) => {
+    if (typeof value === "number") return BigInt(value);
+  });
+};

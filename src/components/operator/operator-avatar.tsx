@@ -43,14 +43,17 @@ export const OperatorAvatar: FCProps = ({
   ...props
 }) => {
   return (
-    <div className={cn(className, "relative select-none")} {...props}>
+    <div
+      className={cn(className, "relative select-none overflow-hidden")}
+      {...props}
+    >
       {isPrivate && (
         <div className="absolute flex items-center justify-center left-0 top-0 -m-2 bg-gray-50 text-gray-800 rounded-full size-7 border">
           <MdOutlineLock className="size-4" />
         </div>
       )}
       <img
-        className={cn(variants({ size, variant }))}
+        className={cn(variants({ size, variant }), "w-full")}
         src={src || "/images/operator_default_background/light.svg"}
       />
     </div>

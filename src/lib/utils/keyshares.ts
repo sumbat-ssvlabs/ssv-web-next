@@ -65,13 +65,10 @@ export const validateConsistentOperatorPublicKeys = (
   return valid;
 };
 
-export const noDuplicatedValidatorKeys = (keyshares: KeySharesItem[]) => {
-  console.time("noDuplicatedValidatorKeys");
+export const ensureValidatorsUniqueness = (keyshares: KeySharesItem[]) => {
   const set = new Set(keyshares.map(({ data }) => data.publicKey));
   if (set.size !== keyshares.length) {
-    console.timeEnd("noDuplicatedValidatorKeys");
     throw new KeysharesError(KeysharesValidationErrors.DuplicatedValidatorKeys);
   }
-  console.timeEnd("noDuplicatedValidatorKeys");
   return true;
 };

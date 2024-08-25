@@ -1,3 +1,4 @@
+import { getOwnerNonce } from "@/api/account";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -8,14 +9,19 @@ import {
 } from "@/components/ui/file-upload";
 import { Input } from "@/components/ui/input";
 import { useRegisterValidatorContext } from "@/guard/register-validator-guard";
+import { useOperators } from "@/hooks/operator/use-operators";
+import { useCreateShares } from "@/hooks/use-create-shares";
 import { useExtractKeystoreData } from "@/hooks/use-extract-keystore-data";
 import { useKeystoreValidation } from "@/hooks/use-keystores-validation";
+import { prepareOperatorsForShares } from "@/lib/utils/operator";
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { Address } from "abitype";
 import { Paperclip } from "lucide-react";
 import { type ComponentPropsWithoutRef, type FC } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { ref } from "valtio";
+import { useAccount } from "wagmi";
 import { z } from "zod";
 
 export type GenerateKeySharesOnlineProps = {
@@ -60,16 +66,31 @@ const schema = z.object({
 });
 
 export const GenerateKeySharesOnline: FCProps = () => {
+  const { address } = useAccount();
   const { state } = useRegisterValidatorContext;
-  const { files, password } = useRegisterValidatorContext();
+  const { files, password, selectedOperatorsIds } =
+    useRegisterValidatorContext();
 
   const navigate = useNavigate();
 
   const { status } = useKeystoreValidation(files?.[0] as File);
+  const createShares = useCreateShares();
+
+  const operators = useOperators(selectedOperatorsIds);
 
   const extractKeystoreData = useExtractKeystoreData({
-    onSuccess: (data) => {
-      state.extractedKeys = data;
+    onSuccess: async (data) => {
+      const nonce = await getOwnerNonce(address!);
+
+      const shares = await createShares.mutateAsync({
+        account: address!,
+        nonce: nonce,
+        operators: prepareOperatorsForShares(operators.data!),
+        privateKey: data.privateKey,
+      });
+
+      state.publicKeys = [shares.publicKey] as Address[];
+      state.shares = [shares.sharesData] as Address[];
       navigate("/create-cluster/funding");
     },
   });
@@ -141,7 +162,7 @@ export const GenerateKeySharesOnline: FCProps = () => {
             status !== "validator-not-registered" ||
             !form.watch("password").length
           }
-          isLoading={extractKeystoreData.isPending}
+          isLoading={extractKeystoreData.isPending || operators.isPending}
         >
           Generate Key Shares
         </Button>
