@@ -32,7 +32,10 @@ const abiFunction = extractAbiFunction(
 export const useUpdateMinimumLiquidationCollateral = () => {
   const { setterContractAddress } = useSSVNetworkDetails();
 
-  const wait = useWaitForTransactionReceipt();
+  const wait = useWaitForTransactionReceipt([
+    "useUpdateMinimumLiquidationCollateral",
+    setterContractAddress,
+  ]);
   const mutation = useWriteContract();
 
   const write = (

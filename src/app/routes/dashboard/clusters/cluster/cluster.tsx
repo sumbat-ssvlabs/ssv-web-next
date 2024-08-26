@@ -89,7 +89,7 @@ export const Cluster: FC = () => {
               Validators
             </Text>
             <Spacer />
-            <Button>
+            <Button as={Link} to="add/distribution-method">
               <Text>Add Validator</Text> <PlusIcon className="size-4" />
             </Button>
           </div>

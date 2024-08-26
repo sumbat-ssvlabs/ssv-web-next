@@ -6,14 +6,13 @@ import { Tooltip } from "@/components/ui/tooltip";
 import { useClusterRunway } from "@/hooks/cluster/use-cluster-runway";
 import { useClusterPageParams } from "@/hooks/cluster/use-cluster-page-params";
 import { EstimatedOperationalRunwayAlert } from "@/components/cluster/estimated-operational-runway-alert";
-import { useRunway } from "@/hooks/cluster/use-calculate-runway";
 import { bigintAbs } from "@/lib/utils/bigint";
-import { useClusterBalance } from "@/hooks/cluster/use-cluster-balance";
-import { useClusterBurnRate } from "@/hooks/cluster/use-cluster-burn-rate";
 
 export type EstimatedOperationalRunwayProps = {
   clusterHash?: string;
   deltaBalance?: bigint;
+  deltaValidators?: bigint;
+  withAlerts?: boolean;
 };
 
 type EstimatedOperationalRunwayFC = FC<
@@ -24,41 +23,22 @@ type EstimatedOperationalRunwayFC = FC<
 export const EstimatedOperationalRunway: EstimatedOperationalRunwayFC = ({
   className,
   clusterHash,
+  deltaValidators = 0n,
   deltaBalance = 0n,
+  withAlerts = true,
   ...props
 }) => {
   const params = useClusterPageParams();
   const hash = clusterHash || params.clusterHash;
 
-  const clusterRunway = useClusterRunway(hash!, {
+  const { data: clusterRunway } = useClusterRunway(hash!, {
     deltaBalance,
+    deltaValidators,
   });
-
-  const { data: clusterBurnRate = 0n } = useClusterBurnRate(hash!);
-
-  const hasDeltaBalance = deltaBalance !== 0n;
-  const isWithdrawing = deltaBalance < 0n;
-  const isDepositing = deltaBalance > 0n;
-
-  const { data: clusterBalance = 0n } = useClusterBalance(hash!);
-
-  const clusterRunwaySnapshot = useRunway({
-    balance: clusterBalance,
-    burnRate: clusterBurnRate,
-  });
-
-  const newRunway = useRunway({
-    balance: clusterBalance + deltaBalance,
-    burnRate: clusterBurnRate,
-  });
-
-  const deltaRunway = bigintAbs(
-    (clusterRunwaySnapshot.data?.runway ?? 0n) - (newRunway.data?.runway ?? 0n),
-  );
 
   return (
     <div className={cn(className, "flex flex-col gap-4")} {...props}>
-      <div className="flex flex-col gap-1">
+      <div className={cn(className, "flex flex-col gap-1")}>
         <Tooltip
           asChild
           content="Estimated amount of days the cluster balance is sufficient to run all it's validators."
@@ -70,28 +50,31 @@ export const EstimatedOperationalRunway: EstimatedOperationalRunwayFC = ({
         </Tooltip>
         <div
           className={cn("flex items-end gap-1", {
-            "text-error-500": clusterRunway.data?.isAtRisk,
+            "text-error-500": clusterRunway?.isAtRisk,
           })}
         >
-          <Text variant="headline4">{clusterRunway.data?.runwayDisplay} </Text>
-          {hasDeltaBalance && (
+          <Text variant="headline4">{clusterRunway?.runwayDisplay} </Text>
+          {clusterRunway?.hasDelta && (
             <Span
               className={cn({
-                "text-error-500": isWithdrawing,
-                "text-success-500": isDepositing,
+                "text-error-500": clusterRunway.isDecreasing,
+                "text-success-500": clusterRunway.isIncreasing,
               })}
             >
-              ({isWithdrawing ? "-" : "+"}
-              {deltaRunway.toString()} days)
+              ({clusterRunway.isDecreasing ? "-" : "+"}
+              {bigintAbs(clusterRunway.deltaDays).toString()} days)
             </Span>
           )}
         </div>
       </div>
-      <EstimatedOperationalRunwayAlert
-        isAtRisk={clusterRunway.data?.isAtRisk ?? false}
-        runway={clusterRunway.data?.runway ?? 0n}
-        isWithdrawing={isWithdrawing}
-      />
+      {withAlerts && (
+        <EstimatedOperationalRunwayAlert
+          hasDeltaValidators={deltaValidators !== 0n}
+          isAtRisk={clusterRunway?.isAtRisk ?? false}
+          runway={clusterRunway?.runway ?? 0n}
+          isWithdrawing={clusterRunway?.isDecreasing && !deltaValidators}
+        />
+      )}
     </div>
   );
 };

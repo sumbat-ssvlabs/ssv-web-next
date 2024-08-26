@@ -5,32 +5,21 @@ import { numberFormatter } from "@/lib/utils/number";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { serialize } from "@wagmi/core";
 
-type Runway = {
-  balance: bigint;
-  runway: bigint;
-  runwayDisplay: string;
-  isAtRisk: boolean;
-  isLoading: boolean;
-  burnRate: bigint;
-};
-
-export const getDefaultRunway = (runway: Partial<Runway> = {}) => ({
-  balance: 0n,
-  runway: 0n,
-  runwayDisplay: "- -",
-  isAtRisk: false,
-  isLoading: false,
-  burnRate: 0n,
-  ...runway,
-});
-
 type Params = {
   balance: bigint;
   burnRate: bigint;
+  validators?: bigint;
   deltaBalance?: bigint;
+  deltaValidators?: bigint;
 };
 
-export const useRunway = ({ balance, burnRate, deltaBalance = 0n }: Params) => {
+export const useRunway = ({
+  balance,
+  burnRate: _burnRate,
+  validators = 1n,
+  deltaBalance = 0n,
+  deltaValidators = 0n,
+}: Params) => {
   const {
     liquidationThresholdPeriod: { data: liquidationThresholdBlocks = 0n },
     minimumLiquidationCollateral: { data: minimumLiquidationCollateral = 0n },
@@ -42,32 +31,56 @@ export const useRunway = ({ balance, burnRate, deltaBalance = 0n }: Params) => {
     queryKey: [
       "calculate-runway",
       balance,
-      burnRate,
+      _burnRate,
+      validators,
       deltaBalance,
+      deltaValidators,
       liquidationThresholdBlocks,
       minimumLiquidationCollateral,
     ].map((v) => serialize(v)),
     queryFn: async () => {
-      const collateral = bigintMax(
-        burnRate * liquidationThresholdBlocks,
+      const burnRateSnapshot = _burnRate * validators;
+      const burnRateWithDelta = _burnRate * (validators + deltaValidators);
+
+      const collateralSnapshot = bigintMax(
+        burnRateSnapshot * liquidationThresholdBlocks,
         minimumLiquidationCollateral,
       );
 
-      const burnRatePerDay = burnRate * globals.BLOCKS_PER_DAY;
-
-      const runway = bigintMax(
-        0n,
-        (balance + deltaBalance - collateral) / burnRatePerDay,
+      const collateralWithDelta = bigintMax(
+        burnRateWithDelta * liquidationThresholdBlocks,
+        minimumLiquidationCollateral,
       );
 
+      const burnRatePerDaySnapshot = burnRateSnapshot * globals.BLOCKS_PER_DAY;
+      const burnRatePerDayWithDelta =
+        burnRateWithDelta * globals.BLOCKS_PER_DAY;
+
+      const runwaySnapshot = bigintMax(
+        (balance - collateralSnapshot) / burnRatePerDaySnapshot,
+        0n,
+      );
+
+      const runwayWithDelta = bigintMax(
+        (balance + deltaBalance - collateralWithDelta) /
+          burnRatePerDayWithDelta,
+        0n,
+      );
+
+      const deltaDays = (runwaySnapshot - runwayWithDelta) * -1n;
+
       return {
-        runway,
-        runwayDisplay: `${numberFormatter.format(runway)} days`,
-        isAtRisk: runway < 30n,
+        runway: runwayWithDelta,
+        runwayDisplay: `${numberFormatter.format(runwayWithDelta)} days`,
+        isAtRisk: runwayWithDelta < 30n,
+        deltaDays: deltaDays,
+        isIncreasing: deltaDays > 0n,
+        isDecreasing: deltaDays < 0,
+        hasDelta: deltaDays !== 0n,
       };
     },
     placeholderData: keepPreviousData,
-    enabled: Boolean(balance && burnRate && isSuccess),
+    enabled: Boolean(balance && _burnRate && isSuccess),
   });
   return {
     ...query,

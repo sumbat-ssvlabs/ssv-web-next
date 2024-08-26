@@ -29,7 +29,10 @@ const abiFunction = extractAbiFunction(
 export const useBulkRemoveValidator = () => {
   const { setterContractAddress } = useSSVNetworkDetails();
 
-  const wait = useWaitForTransactionReceipt();
+  const wait = useWaitForTransactionReceipt([
+    "useBulkRemoveValidator",
+    setterContractAddress,
+  ]);
   const mutation = useWriteContract();
 
   const write = (

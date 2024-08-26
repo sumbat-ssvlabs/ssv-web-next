@@ -32,7 +32,10 @@ const abiFunction = extractAbiFunction(
 export const useRemoveOperatorsWhitelists = () => {
   const { setterContractAddress } = useSSVNetworkDetails();
 
-  const wait = useWaitForTransactionReceipt();
+  const wait = useWaitForTransactionReceipt([
+    "useRemoveOperatorsWhitelists",
+    setterContractAddress,
+  ]);
   const mutation = useWriteContract();
 
   const write = (

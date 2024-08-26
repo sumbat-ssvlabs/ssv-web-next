@@ -32,7 +32,10 @@ const abiFunction = extractAbiFunction(
 export const useWithdrawNetworkEarnings = () => {
   const { setterContractAddress } = useSSVNetworkDetails();
 
-  const wait = useWaitForTransactionReceipt();
+  const wait = useWaitForTransactionReceipt([
+    "useWithdrawNetworkEarnings",
+    setterContractAddress,
+  ]);
   const mutation = useWriteContract();
 
   const write = (

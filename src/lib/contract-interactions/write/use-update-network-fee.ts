@@ -26,7 +26,10 @@ const abiFunction = extractAbiFunction(MainnetV4SetterABI, "updateNetworkFee");
 export const useUpdateNetworkFee = () => {
   const { setterContractAddress } = useSSVNetworkDetails();
 
-  const wait = useWaitForTransactionReceipt();
+  const wait = useWaitForTransactionReceipt([
+    "useUpdateNetworkFee",
+    setterContractAddress,
+  ]);
   const mutation = useWriteContract();
 
   const write = (

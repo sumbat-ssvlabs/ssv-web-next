@@ -26,7 +26,10 @@ const abiFunction = extractAbiFunction(MainnetV4SetterABI, "reactivate");
 export const useReactivate = () => {
   const { setterContractAddress } = useSSVNetworkDetails();
 
-  const wait = useWaitForTransactionReceipt();
+  const wait = useWaitForTransactionReceipt([
+    "useReactivate",
+    setterContractAddress,
+  ]);
   const mutation = useWriteContract();
 
   const write = (

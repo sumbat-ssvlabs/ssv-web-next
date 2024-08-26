@@ -1,12 +1,13 @@
 import type { Option } from "@/components/ui/multi-select";
 import { globals } from "@/config";
 import type { MainnetV4SetterABI } from "@/lib/abi/mainnet/v4/setter";
+import { fetchIsAddressWhitelistedInWhitelistingContract } from "@/lib/contract-interactions/read/use-is-address-whitelisted-in-whitelisting-contract";
 import { ethFormatter } from "@/lib/utils/number";
 import type { Operator } from "@/types/api";
 import { difference } from "lodash-es";
 import type { IOperator } from "ssv-keys/dist/tsc/src/lib/KeyShares/KeySharesData/IOperator";
 import type { Address, DecodeEventLogReturnType } from "viem";
-import { formatUnits } from "viem";
+import { formatUnits, isAddressEqual } from "viem";
 
 type GetYearlyFeeOpts = {
   format?: boolean;
@@ -195,10 +196,27 @@ export const createOperatorFromEvent = (
 export const sumOperatorsFees = (operators: Operator[]) =>
   operators.reduce((acc, operator) => acc + BigInt(operator.fee), 0n);
 
-export const canAccountUseOperator = (
+export const canAccountUseOperator = async (
   account: Address,
   operator: Operator,
-): boolean => {
+): Promise<boolean> => {
   if (!operator.is_private) return true;
-  return operator.whitelist_addresses?.includes(account) ?? true;
+
+  const hasExternalContract = Boolean(
+    operator.whitelisting_contract &&
+      operator.whitelisting_contract !== globals.DEFAULT_ADDRESS_WHITELIST,
+  );
+
+  if (!hasExternalContract)
+    return (
+      operator.whitelist_addresses?.some((addr) =>
+        isAddressEqual(addr as Address, account),
+      ) ?? true
+    );
+
+  return fetchIsAddressWhitelistedInWhitelistingContract({
+    addressToCheck: account,
+    operatorId: BigInt(operator.id),
+    whitelistingContract: operator.whitelisting_contract as Address,
+  });
 };

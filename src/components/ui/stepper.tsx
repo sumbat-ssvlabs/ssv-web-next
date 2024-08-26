@@ -63,7 +63,7 @@ export const StepperDot: StepperDotFC = ({
 
 export type StepperStep = {
   variant?: StepperDotProps["variant"];
-  label: string;
+  label?: string;
   addon?: ReactNode;
 };
 

@@ -18,7 +18,10 @@ import type { WaitForTransactionReceiptErrorType } from "viem";
 export const useAcceptOwnership = () => {
   const { setterContractAddress } = useSSVNetworkDetails();
 
-  const wait = useWaitForTransactionReceipt();
+  const wait = useWaitForTransactionReceipt([
+    "useAcceptOwnership",
+    setterContractAddress,
+  ]);
   const mutation = useWriteContract();
 
   const write = (options: MutationOptions<MainnetEvent> = {}) => {

@@ -32,7 +32,10 @@ const abiFunction = extractAbiFunction(
 export const useUpdateExecuteOperatorFeePeriod = () => {
   const { setterContractAddress } = useSSVNetworkDetails();
 
-  const wait = useWaitForTransactionReceipt();
+  const wait = useWaitForTransactionReceipt([
+    "useUpdateExecuteOperatorFeePeriod",
+    setterContractAddress,
+  ]);
   const mutation = useWriteContract();
 
   const write = (

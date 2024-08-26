@@ -1,8 +1,10 @@
 import { DashboardLayout } from "@/app/layouts/dashboard/dashboard";
 import { ConnectWallet } from "@/app/routes/connect-wallet/connect-wallet";
-import { Funding } from "@/app/routes/create-cluster/funding";
+import { AdditionalFunding } from "@/app/routes/create-cluster/additional-funding";
+import { DistributionMethod } from "@/app/routes/create-cluster/distribution-method";
 import { GenerateKeySharesOffline } from "@/app/routes/create-cluster/generate-key-shares-offline";
 import { GenerateKeySharesOnline } from "@/app/routes/create-cluster/generate-key-shares-online";
+import { InitialFunding } from "@/app/routes/create-cluster/initial-funding";
 import { Preparation } from "@/app/routes/create-cluster/preparation";
 import { SelectOperators } from "@/app/routes/create-cluster/select-operators";
 import { Cluster } from "@/app/routes/dashboard/clusters/cluster/cluster";
@@ -111,6 +113,7 @@ const routes = [
             path: "select-operators",
             element: <SelectOperators />,
           },
+
           {
             path: "generate-online",
             element: <GenerateKeySharesOnline />,
@@ -121,7 +124,7 @@ const routes = [
           },
           {
             path: "funding",
-            element: <Funding />,
+            element: <InitialFunding />,
           },
         ],
       },
@@ -145,6 +148,20 @@ const routes = [
               {
                 index: true,
                 element: <Cluster />,
+              },
+              {
+                path: "add",
+                element: <Outlet />,
+                children: [
+                  {
+                    path: "distribution-method",
+                    element: <DistributionMethod />,
+                  },
+                  {
+                    path: "additional-funding",
+                    element: <AdditionalFunding />,
+                  },
+                ],
               },
               {
                 path: "withdraw",
@@ -280,6 +297,28 @@ type ExtractPaths<T extends RouteObject | RouteObject[]> =
               : never)
       : never;
 
+type ExtractParts<P> = P extends `${infer Start}:${string}/${infer Rest}`
+  ? `${Start}${string}/${Rest}`
+  : P extends `${infer Start}:${string}`
+    ? `${Start}${string}/`
+    : P;
+
+type ExtractPaths2<T extends RouteObject | RouteObject[]> =
+  T extends RouteObject[]
+    ? ExtractPaths2<T[number]> // Recursively apply to each element in the array
+    : T extends { path: infer P; children?: infer C }
+      ? ExtractParts<
+          | P
+          | (C extends RouteObject[]
+              ? P extends string
+                ? `${P extends `:${string}` ? string : P}/${ExtractPaths<C> extends string ? ExtractPaths<C> : never}`
+                : never
+              : never)
+        >
+      : never;
+
 export type RoutePaths = ExtractPaths<typeof routes>;
+export type WritableRoutePaths = ExtractPaths2<typeof routes>;
+
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter(routes);

@@ -5,6 +5,7 @@ import { Text } from "@/components/ui/text";
 import { Button } from "@/components/ui/button";
 
 export type EstimatedOperationalRunwayAlertProps = {
+  hasDeltaValidators?: boolean;
   isWithdrawing?: boolean;
   isAtRisk: boolean;
   runway: bigint;
@@ -19,12 +20,28 @@ type EstimatedOperationalRunwayAlertFC = FC<
 >;
 
 export const EstimatedOperationalRunwayAlert: EstimatedOperationalRunwayAlertFC =
-  ({ className, isWithdrawing, isAtRisk, runway, ...props }) => {
+  ({
+    className,
+    isWithdrawing,
+    isAtRisk,
+    hasDeltaValidators,
+    runway,
+    ...props
+  }) => {
     const isWithdrawingAll = isWithdrawing && runway <= 0n;
 
     if (!isAtRisk) return null;
 
     const renderMessage = () => {
+      if (hasDeltaValidators) {
+        return (
+          <Text>
+            Your updated operational puts your cluster validators at risk. To
+            avoid liquidation please top up your cluster balance with greater
+            funds.
+          </Text>
+        );
+      }
       if (isWithdrawingAll)
         return (
           <Text>

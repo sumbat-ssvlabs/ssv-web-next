@@ -32,7 +32,10 @@ const abiFunction = extractAbiFunction(
 export const useSetOperatorsPrivateUnchecked = () => {
   const { setterContractAddress } = useSSVNetworkDetails();
 
-  const wait = useWaitForTransactionReceipt();
+  const wait = useWaitForTransactionReceipt([
+    "useSetOperatorsPrivateUnchecked",
+    setterContractAddress,
+  ]);
   const mutation = useWriteContract();
 
   const write = (

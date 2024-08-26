@@ -32,7 +32,10 @@ const abiFunction = extractAbiFunction(
 export const useUpdateLiquidationThresholdPeriod = () => {
   const { setterContractAddress } = useSSVNetworkDetails();
 
-  const wait = useWaitForTransactionReceipt();
+  const wait = useWaitForTransactionReceipt([
+    "useUpdateLiquidationThresholdPeriod",
+    setterContractAddress,
+  ]);
   const mutation = useWriteContract();
 
   const write = (

@@ -66,8 +66,10 @@ export interface ButtonProps
   icon?: React.ReactNode;
 }
 
+export type ButtonFC = ComponentWithAs<"button", ButtonProps>;
+
 // @ts-expect-error - I don't know how to fix this
-export const Button: ComponentWithAs<"button", ButtonProps> = React.forwardRef<
+export const Button: ButtonFC = React.forwardRef<
   HTMLButtonElement,
   ButtonProps
 >(
@@ -117,7 +119,7 @@ export const Button: ComponentWithAs<"button", ButtonProps> = React.forwardRef<
         }
       >
         <>
-          {isLoading ? <CgSpinner className="animate-spin size-5" /> : icon}
+          {isLoading ? <CgSpinner className="animate-spin size-6" /> : icon}
           {isLoading ? (isActionBtn ? _loadingText : children) : children}
         </>
       </Comp>

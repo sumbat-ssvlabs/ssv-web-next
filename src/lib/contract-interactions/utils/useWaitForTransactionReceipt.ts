@@ -1,5 +1,6 @@
 import { HoleskyV4SetterABI } from "@/lib/abi/holesky/v4/setter";
 import { MainnetV4SetterABI } from "@/lib/abi/mainnet/v4/setter";
+import type { MutationKey } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import type {
   Address,
@@ -69,10 +70,10 @@ export const withTransactionModal = <
   } satisfies MutationOptions<MainnetEvent | TestnetEvent>;
 };
 
-export const useWaitForTransactionReceipt = () => {
+export const useWaitForTransactionReceipt = (key: MutationKey = []) => {
   const client = usePublicClient();
   return useMutation({
-    mutationKey: ["waitForTransactionReceipt"],
+    mutationKey: ["waitForTransactionReceipt", ...key],
     mutationFn: (hash: `0x${string}`) => {
       if (!client) {
         throw new Error("Public client not found");

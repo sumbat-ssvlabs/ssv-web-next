@@ -254,7 +254,7 @@ export const GenerateKeySharesOffline: FCProps = ({ ...props }) => {
               <TableCell>Status</TableCell>
             </TableHeader>
             {validators.data?.sharesWithStatuses?.map((validator) => (
-              <TableRow>
+              <TableRow key={validator.share.data.publicKey}>
                 <TableCell className="flex gap-1 items-center">
                   <Text>
                     {shortenAddress(validator.share.payload.publicKey)}

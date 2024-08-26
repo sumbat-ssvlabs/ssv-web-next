@@ -36,20 +36,22 @@ import { bigintifyNumbers, stringifyBigints } from "@/lib/utils/bigint";
 import { useOperators } from "@/hooks/operator/use-operators";
 import { sumOperatorsFees } from "@/lib/utils/operator";
 import { useKeysharesSchemaValidation } from "@/hooks/keyshares/use-keyshares-schema-validation";
+import { WithAllowance } from "@/components/with-allowance/with-allowance";
 
-export type FundingProps = {
+export type InitialFundingProps = {
   // TODO: Add props or remove this type
 };
 
 type FCProps = FC<
-  Omit<ComponentPropsWithoutRef<"div">, keyof FundingProps> & FundingProps
+  Omit<ComponentPropsWithoutRef<"div">, keyof InitialFundingProps> &
+    InitialFundingProps
 >;
 
 const schema = z.object({
   days: z.coerce.number().positive(),
 });
 
-export const Funding: FCProps = ({ ...props }) => {
+export const InitialFunding: FCProps = ({ ...props }) => {
   const { address } = useAccount();
   const {
     selectedOperatorsIds,
@@ -166,16 +168,19 @@ export const Funding: FCProps = ({ ...props }) => {
               </div>
             </Alert>
           </Collapse>
-          <Button
-            type="submit"
-            isLoading={isPending || registerValidator.isPending}
-          >
-            Next
-          </Button>
+          <WithAllowance size="xl" amount={fundingCost.data ?? 0n}>
+            <Button
+              size="xl"
+              type="submit"
+              isLoading={isPending || registerValidator.isPending}
+            >
+              Next
+            </Button>
+          </WithAllowance>
         </Card>
       </Form>
     </Container>
   );
 };
 
-Funding.displayName = "Funding";
+InitialFunding.displayName = "Funding";

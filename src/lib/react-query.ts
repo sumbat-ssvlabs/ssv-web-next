@@ -7,6 +7,7 @@ import type {
   Updater,
   UseMutationOptions,
   UseQueryOptions as DefaultUseQueryOptions,
+  UseQueryResult,
 } from "@tanstack/react-query";
 import { QueryClient } from "@tanstack/react-query";
 import { deserialize, serialize } from "wagmi";
@@ -78,4 +79,29 @@ export const setOptimisticData = <
   queryClient.cancelQueries({ queryKey });
   // @ts-expect-error don't know how to fix this
   queryClient.setQueryData(queryKey, updater);
+};
+
+type MinimalQueryStatus = Pick<
+  UseQueryResult,
+  | "isFetched"
+  | "isLoading"
+  | "isPending"
+  | "isSuccess"
+  | "isFetching"
+  | "error"
+  | "isError"
+>;
+
+export const combineQueryStatus = (
+  ...queries: MinimalQueryStatus[]
+): MinimalQueryStatus => {
+  return {
+    isPending: queries.some((query) => query.isPending),
+    isLoading: queries.some((query) => query.isLoading),
+    isFetched: queries.every((query) => query.isFetched),
+    isFetching: queries.some((query) => query.isFetching),
+    isError: queries.some((query) => query.isError),
+    isSuccess: queries.every((query) => query.isSuccess),
+    error: queries.find((query) => query.isError)?.error ?? null,
+  };
 };

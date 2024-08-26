@@ -21,7 +21,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         className={cn(
           inputVariants(),
           {
-            "pr-1": rightSlot,
+            "pr-4": rightSlot,
           },
           className,
         )}
