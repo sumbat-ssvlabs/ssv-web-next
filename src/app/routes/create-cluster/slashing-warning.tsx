@@ -1,20 +1,12 @@
-import type { FC, ComponentPropsWithoutRef } from "react";
-import { cn } from "@/lib/utils/tw";
+import type { FC } from "react";
+import { Container } from "@/components/ui/container";
+import { Card } from "@/components/ui/card";
 
-export type SlashingWarningProps = {
-  // TODO: Add props or remove this type
-};
-
-type FCProps = FC<
-  Omit<ComponentPropsWithoutRef<"div">, keyof SlashingWarningProps> &
-    SlashingWarningProps
->;
-
-export const SlashingWarning: FCProps = ({ className, ...props }) => {
+export const SlashingWarning: FC = () => {
   return (
-    <div className={cn(className)} {...props}>
-      SlashingWarning
-    </div>
+    <Container variant="vertical">
+      <Card>SlashingWarning</Card>
+    </Container>
   );
 };
 

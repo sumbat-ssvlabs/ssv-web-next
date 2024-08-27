@@ -6,12 +6,12 @@ import type { ComponentWithAs, PropsWithAs } from "@/types/component";
 import { CgSpinner } from "react-icons/cg";
 
 export const buttonVariants = cva(
-  "inline-flex gap-2 items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex gap-2 items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ",
   {
     variants: {
       variant: {
         default:
-          "bg-primary-500 text-white hover:bg-primary-600 active:bg-primary-700 disabled:bg-gray-300 disabled:text-gray-500 disabled:opacity-100",
+          "bg-primary-500 text-white hover:bg-primary-600 active:bg-primary-700 ",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
@@ -22,6 +22,7 @@ export const buttonVariants = cva(
         subtle:
           "bg-slate-400/5 hover:bg-slate-400/20 hover:text-accent-foreground ",
         link: "inline-flex text-primary-500 underline-offset-4 hover:underline",
+        disabled: "pointer-events-none opacity-50 bg-gray-300 text-gray-500",
       },
       colorScheme: {
         wallet:
@@ -98,7 +99,7 @@ export const Button: ButtonFC = React.forwardRef<
       <Comp
         className={cn(
           buttonVariants({
-            variant,
+            variant: disabled ? "disabled" : variant,
             size,
             colorScheme,
             className,
@@ -108,6 +109,7 @@ export const Button: ButtonFC = React.forwardRef<
             "opacity-50": isLoading,
           },
         )}
+        aria-disabled={disabled}
         disabled={disabled}
         type={type}
         ref={ref}

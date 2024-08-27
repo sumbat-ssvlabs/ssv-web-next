@@ -8,6 +8,7 @@ import type {
   UseMutationOptions,
   UseQueryOptions as DefaultUseQueryOptions,
   UseQueryResult,
+  QueryKey,
 } from "@tanstack/react-query";
 import { QueryClient } from "@tanstack/react-query";
 import { deserialize, serialize } from "wagmi";
@@ -46,8 +47,13 @@ export type QueryConfig<
   T extends (...args: any) => any = (...args: any) => any,
 > = Omit<ReturnType<T>, "queryKey" | "queryFn">;
 
-export type UseQueryOptions = Omit<
-  DefaultUseQueryOptions,
+export type UseQueryOptions<
+  TQueryFnData = unknown,
+  TError = Error,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> = Omit<
+  DefaultUseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   "queryKey" | "queryFn"
 >;
 

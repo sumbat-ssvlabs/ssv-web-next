@@ -1,5 +1,6 @@
 import { useOperators } from "@/hooks/operator/use-operators";
 import { useGetValidatorsPerOperatorLimit } from "@/lib/contract-interactions/read/use-get-validators-per-operator-limit";
+import type { UseQueryOptions } from "@/lib/react-query";
 import { combineQueryStatus } from "@/lib/react-query";
 import { canAccountUseOperator } from "@/lib/utils/operator";
 import type { Operator } from "@/types/api";
@@ -24,15 +25,18 @@ type Result = {
   maxAddableValidators: number;
 };
 
-export const useOperatorsUsability = ({ account, operatorIds }: Props) => {
+export const useOperatorsUsability = (
+  { account, operatorIds }: Props,
+  options: UseQueryOptions<Record<number, boolean>> = {},
+) => {
   const { data: maxValidators = 0 } = useGetValidatorsPerOperatorLimit();
-  const query = useOperators(operatorIds);
+  const operators = useOperators(operatorIds);
 
   const canUse = useQuery({
     queryKey: ["canAccountUseOperator", operatorIds, account, maxValidators],
     queryFn: async () => {
       const result = await Promise.all(
-        query.data!.map(
+        operators.data!.map(
           async (operator) =>
             [operator, await canAccountUseOperator(account, operator)] as const,
         ),
@@ -46,14 +50,15 @@ export const useOperatorsUsability = ({ account, operatorIds }: Props) => {
         {} as Record<number, boolean>,
       );
     },
-    enabled: !!query.data,
+    ...options,
+    enabled: Boolean(operators.data && options.enabled),
   });
 
-  const queryStatus = combineQueryStatus(canUse, query);
+  const queryStatus = combineQueryStatus(canUse, operators);
   return {
     ...queryStatus,
     data: queryStatus.isSuccess
-      ? query.data?.reduce(
+      ? operators.data?.reduce(
           (acc, operator) => {
             const hasExceededValidatorsLimit =
               operator?.validators_count >= maxValidators;

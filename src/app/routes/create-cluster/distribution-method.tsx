@@ -3,8 +3,13 @@ import { Container } from "@/components/ui/container";
 import { Card } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
-export const DistributionMethod: FC = () => {
+type Props = {
+  variant?: "create" | "add";
+};
+
+export const DistributionMethod: FC<Props> = ({ variant = "create" }) => {
   return (
     <Container variant="vertical">
       <Card className="font-medium">
@@ -16,18 +21,46 @@ export const DistributionMethod: FC = () => {
         </Text>
         <img src="/images/generateValidatorKeyShare/image.svg" />
         <Text>Select your preferred method to split your key:</Text>
-        <div className="space-y-2">
-          <div className="flex [&>*]:flex-1 gap-2">
-            <Button variant="secondary" size="xl">
-              Online
-            </Button>
-            <Button variant="secondary" size="xl">
-              Offline
-            </Button>
+        <div className="space-y-3">
+          <div className="flex [&>*]:flex-1 gap-3">
+            <div className="flex flex-col gap-2">
+              <Button as={Link} to="../online" variant="secondary" size="xl">
+                Online
+              </Button>
+              {variant === "create" && (
+                <Text
+                  variant="body-3-medium"
+                  className="text-center text-gray-500"
+                >
+                  Split key via the webapp
+                </Text>
+              )}
+            </div>
+            <div className="flex flex-col gap-2">
+              <Button as={Link} to="../offline" variant="secondary" size="xl">
+                Offline
+              </Button>
+              {variant === "create" && (
+                <Text
+                  variant="body-3-medium"
+                  className="text-center text-gray-500"
+                >
+                  Split key on your computer
+                </Text>
+              )}
+            </div>
           </div>
-          <Button variant="secondary" size="xl" className="w-full ">
-            Offline
-          </Button>
+          {variant === "add" && (
+            <Button
+              as={Link}
+              to="../keyshares"
+              variant="secondary"
+              size="xl"
+              className="w-full"
+            >
+              I already have key shares
+            </Button>
+          )}
         </div>
       </Card>
     </Container>

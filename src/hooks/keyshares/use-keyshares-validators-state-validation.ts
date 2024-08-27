@@ -18,11 +18,11 @@ export type ValidatorShareWithStatus = {
   status: KeysharesValidatorStatus;
 };
 
-export const useKeysharesValidatorsStateValidation = (
+export const useKeysharesValidatorsList = (
   shares?: KeySharesItem[],
-  options: Omit<UseQueryOptions, "queryKey" | "queryFn"> = {},
+  options: Omit<UseQueryOptions, "queryKey" | "queryFn"> = { enabled: true },
 ) => {
-  const ssvAccount = useSSVAccount({ staleTime: 0 });
+  const ssvAccount = useSSVAccount({ staleTime: 0, gcTime: 0 });
   const sortedShares = sortBy(shares, (share) => share.data.ownerNonce);
 
   return useQuery({

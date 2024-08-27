@@ -1,17 +1,14 @@
 import { useComputeFundingCost } from "@/hooks/use-compute-funding-cost";
 import { useQuery } from "@tanstack/react-query";
 import type { ComponentPropsWithoutRef, FC } from "react";
-import { useAccount } from "wagmi";
-import { Alert } from "@/components/ui/alert";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { globals } from "@/config";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isEmpty } from "lodash-es";
-import { Link } from "lucide-react";
 import { Collapse } from "react-collapse";
 import { useForm } from "react-hook-form";
-import { TbAlertTriangleFilled } from "react-icons/tb";
 import { z } from "zod";
 import { Card } from "@/components/ui/card";
 import {
@@ -26,17 +23,14 @@ import { Spinner } from "@/components/ui/spinner";
 import { Text } from "@/components/ui/text";
 import { Container } from "@/components/ui/container";
 import { formatSSV } from "@/lib/utils/number";
-import { useRegisterValidator } from "@/lib/contract-interactions/write/use-register-validator";
-import { createClusterHash } from "@/lib/utils/cluster";
-import { getClusterData } from "@/api/cluster";
-import type { Address } from "abitype";
-import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
-import { useRegisterValidatorContext } from "@/guard/register-validator-guard";
-import { bigintifyNumbers, stringifyBigints } from "@/lib/utils/bigint";
+import {
+  useRegisterValidatorContext,
+  useSelectedOperators,
+} from "@/guard/register-validator-guard";
+import { stringifyBigints } from "@/lib/utils/bigint";
 import { useOperators } from "@/hooks/operator/use-operators";
 import { sumOperatorsFees } from "@/lib/utils/operator";
-import { useKeysharesSchemaValidation } from "@/hooks/keyshares/use-keyshares-schema-validation";
-import { WithAllowance } from "@/components/with-allowance/with-allowance";
+import { Link } from "react-router-dom";
 
 export type InitialFundingProps = {
   // TODO: Add props or remove this type
@@ -48,34 +42,18 @@ type FCProps = FC<
 >;
 
 const schema = z.object({
-  days: z.coerce.number().positive(),
+  days: z.coerce.number().positive().min(1),
 });
 
 export const InitialFunding: FCProps = ({ ...props }) => {
-  const { address } = useAccount();
-  const {
-    selectedOperatorsIds,
-    hasSelectedOperators,
-    shares,
-    files,
-    publicKeys,
-  } = useRegisterValidatorContext();
-
-  const { data: keyshares } = useKeysharesSchemaValidation(
-    files?.at(0) ?? null,
-  );
-
-  const operatorIds = hasSelectedOperators
-    ? selectedOperatorsIds
-    : keyshares?.at(0)?.data.operatorIds ?? [];
+  const { state } = useRegisterValidatorContext;
+  const operatorIds = useSelectedOperators();
 
   const operators = useOperators(operatorIds);
+  console.log("operators:", operators);
   const operatorsFee = sumOperatorsFees(operators.data ?? []);
 
   const computeFundingCost = useComputeFundingCost();
-  const registerValidator = useRegisterValidator();
-
-  const isPending = computeFundingCost.isPending || operators.isPending;
 
   const form = useForm<z.infer<typeof schema>>({
     defaultValues: { days: 365 },
@@ -102,26 +80,10 @@ export const InitialFunding: FCProps = ({ ...props }) => {
       operatorsFee,
       validators: 1,
     });
-
-    registerValidator.write(
-      {
-        amount,
-        operatorIds: bigintifyNumbers(operatorIds),
-        publicKey: publicKeys[0] as Address,
-        sharesData: shares[0] as Address,
-        cluster: await getClusterData(
-          createClusterHash(address!, operators.data!),
-        ),
-      },
-      withTransactionModal({
-        onMined: (receipt) => {
-          console.log("receipt.events:", receipt.events);
-        },
-      }),
-    );
+    state.depositAmount = amount;
   });
 
-  if (isPending) {
+  if (operators.isPending) {
     return <Spinner />;
   }
 
@@ -152,31 +114,25 @@ export const InitialFunding: FCProps = ({ ...props }) => {
           />
           <Collapse isOpened={showLiquidationWarning}>
             <Alert variant="warning">
+              <AlertDescription>
+                This period is low and could put your validator at risk. To
+                avoid liquidation please input a longer period.{" "}
+                <Button
+                  as="a"
+                  href="https://docs.ssv.network/learn/protocol-overview/tokenomics/liquidations"
+                  target="_blank"
+                >
+                  Learn more on liquidations
+                </Button>
+              </AlertDescription>
               <div className="flex items-center gap-4">
-                <TbAlertTriangleFilled className="text-orange-500 size-8" />
-                <div>
-                  This period is low and could put your validator at risk. To
-                  avoid liquidation please input a longer period.{" "}
-                  <Link
-                    to="https://docs.ssv.network/learn/protocol-overview/tokenomics/liquidations"
-                    target="_blank"
-                    className="underline text-primary-700"
-                  >
-                    Learn more on liquidations
-                  </Link>
-                </div>
+                <div></div>
               </div>
             </Alert>
           </Collapse>
-          <WithAllowance size="xl" amount={fundingCost.data ?? 0n}>
-            <Button
-              size="xl"
-              type="submit"
-              isLoading={isPending || registerValidator.isPending}
-            >
-              Next
-            </Button>
-          </WithAllowance>
+          <Button as={Link} to="../balance-warning" size="xl" type="submit">
+            Next
+          </Button>
         </Card>
       </Form>
     </Container>

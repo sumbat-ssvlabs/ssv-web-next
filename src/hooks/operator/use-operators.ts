@@ -1,8 +1,16 @@
 import { getOperatorQueryOptions } from "@/hooks/operator/use-operator";
-import { combineQueryStatus } from "@/lib/react-query";
+import { combineQueryStatus, queryClient } from "@/lib/react-query";
 import type { Operator } from "@/types/api";
 import type { OperatorID } from "@/types/types";
 import { useQueries } from "@tanstack/react-query";
+
+export const queryFetchOperators = async (operatorIds: OperatorID[]) => {
+  return Promise.all(
+    operatorIds.map((id) =>
+      queryClient.fetchQuery(getOperatorQueryOptions(id)),
+    ),
+  );
+};
 
 export const useOperators = (operatorIds: OperatorID[]) => {
   return useQueries({

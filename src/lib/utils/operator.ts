@@ -2,7 +2,7 @@ import type { Option } from "@/components/ui/multi-select";
 import { globals } from "@/config";
 import type { MainnetV4SetterABI } from "@/lib/abi/mainnet/v4/setter";
 import { fetchIsAddressWhitelistedInWhitelistingContract } from "@/lib/contract-interactions/read/use-is-address-whitelisted-in-whitelisting-contract";
-import { ethFormatter } from "@/lib/utils/number";
+import { ethFormatter, sortNumbers } from "@/lib/utils/number";
 import type { Operator } from "@/types/api";
 import { difference } from "lodash-es";
 import type { IOperator } from "ssv-keys/dist/tsc/src/lib/KeyShares/KeySharesData/IOperator";
@@ -115,7 +115,7 @@ export const sumOperatorsFee = (operators: Operator[]) => {
 };
 
 export const getOperatorIds = <T extends { id: number }[]>(operators: T) => {
-  return operators.map((operator) => operator.id);
+  return sortNumbers(operators.map((operator) => operator.id));
 };
 
 type MergeOperatorWhitelistAddressesOpts = {

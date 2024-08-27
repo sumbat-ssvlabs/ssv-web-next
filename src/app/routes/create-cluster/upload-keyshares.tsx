@@ -1,38 +1,42 @@
-import { type FC, type ComponentPropsWithoutRef, useEffect } from "react";
+import { KeysharesErrorAlert } from "@/components/keyshares/keyshares-error-alert";
+import { OperatorAvatar } from "@/components/operator/operator-avatar";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Container } from "@/components/ui/container";
+import { CopyBtn } from "@/components/ui/copy-btn";
 import {
   FileInput,
   FileUploader,
   FileUploaderContent,
   FileUploaderItem,
 } from "@/components/ui/file-upload";
-import { Paperclip } from "lucide-react";
-import { useKeysharesSchemaValidation } from "@/hooks/keyshares/use-keyshares-schema-validation";
-import { useKeysharesValidatorsValidation } from "@/hooks/keyshares/use-keyshares-validators-validation";
-import { useKeysharesOperatorsValidation } from "@/hooks/keyshares/use-keyshares-operators-validation";
-import { useRegisterValidatorContext } from "@/guard/register-validator-guard";
-import { useKeysharesValidatorsStateValidation } from "@/hooks/keyshares/use-keyshares-validators-state-validation";
-import { Container } from "@/components/ui/container";
-import { Card } from "@/components/ui/card";
-import { Text } from "@/components/ui/text";
 import {
   Table,
   TableCell,
   TableHeader,
   TableRow,
 } from "@/components/ui/grid-table";
-import { shortenAddress } from "@/lib/utils/strings";
-import { ref } from "valtio";
-import { CopyBtn } from "@/components/ui/copy-btn";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { useAccount } from "wagmi";
-import { useOperatorsUsability } from "@/hooks/keyshares/use-operators-usability";
-import { OperatorAvatar } from "@/components/operator/operator-avatar";
-import { cn } from "@/lib/utils/tw";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Spacer } from "@/components/ui/spacer";
+import { Text } from "@/components/ui/text";
+import {
+  useRegisterValidatorContext,
+  useSelectedOperators,
+} from "@/guard/register-validator-guard";
+import { useCluster } from "@/hooks/cluster/use-cluster";
+import { useKeysharesValidation } from "@/hooks/keyshares/use-keyshares-validation";
+import { useKeysharesValidatorsList } from "@/hooks/keyshares/use-keyshares-validators-state-validation";
+import { useOperatorsUsability } from "@/hooks/keyshares/use-operators-usability";
+import { createClusterHash } from "@/lib/utils/cluster";
+import { shortenAddress } from "@/lib/utils/strings";
+import { cn } from "@/lib/utils/tw";
 import type { Address } from "abitype";
+import { Paperclip } from "lucide-react";
+import { type ComponentPropsWithoutRef, type FC } from "react";
 import { useNavigate } from "react-router";
+import { ref } from "valtio";
+import { useAccount } from "wagmi";
 
 export type GenerateKeySharesOfflineProps = {
   // TODO: Add props or remove this type
@@ -72,57 +76,29 @@ type FCProps = FC<
     GenerateKeySharesOfflineProps
 >;
 
-export const GenerateKeySharesOffline: FCProps = ({ ...props }) => {
+export const UploadKeyshares: FCProps = ({ ...props }) => {
   const account = useAccount();
   const navigate = useNavigate();
 
   const { state } = useRegisterValidatorContext;
   const context = useRegisterValidatorContext();
 
-  const { data: shares } = useKeysharesSchemaValidation(
-    context.files?.at(0) || null,
-  );
+  const validatedShares = useKeysharesValidation(context.files?.at(0) || null);
+  const operatorIds = useSelectedOperators();
 
-  const operatorIds =
-    (context.hasSelectedOperators
-      ? context.selectedOperatorsIds
-      : shares?.[0].payload.operatorIds) ?? [];
-
-  const operatorValidation = useKeysharesOperatorsValidation({
-    shares: shares,
-    operatorIds,
+  const validators = useKeysharesValidatorsList(validatedShares.data, {
+    enabled: validatedShares.isSuccess,
   });
 
-  const validatorValidation = useKeysharesValidatorsValidation(shares, {
-    enabled: operatorValidation.isSuccess,
-  });
+  const cluster = useCluster(createClusterHash(account.address!, operatorIds));
 
-  const validators = useKeysharesValidatorsStateValidation(shares, {
-    enabled: validatorValidation.isSuccess,
-  });
-
-  useEffect(() => {
-    state.selectedValidatorsCount = validators.data?.tags?.valid.length ?? 0;
-  }, [validators.data?.tags?.valid.length]);
-
-  const operatorsUsability = useOperatorsUsability({
-    account: account.address!,
-    operatorIds,
-    additionalValidators: validators.data?.tags?.valid.length,
-  });
-
-  const isDisabled = !(
-    context.files?.length &&
-    shares &&
-    operatorValidation.isSuccess &&
-    validatorValidation.isSuccess &&
-    validators.data &&
-    validators.data.tags.valid.length > 0 &&
-    operatorsUsability.data &&
-    !operatorsUsability.data.hasPermissionedOperators &&
-    !operatorsUsability.data.hasExceededValidatorsLimit &&
-    operatorsUsability.data.maxAddableValidators >=
-      validators.data.tags.valid.length
+  const operatorsUsability = useOperatorsUsability(
+    {
+      account: account.address!,
+      operatorIds,
+      additionalValidators: validators.data?.tags?.valid.length,
+    },
+    { enabled: validatedShares.isSuccess },
   );
 
   const submit = () => {
@@ -133,6 +109,8 @@ export const GenerateKeySharesOffline: FCProps = ({ ...props }) => {
       (share) => share.payload.sharesData,
     ) as Address[];
 
+    if (cluster.data)
+      return navigate(`/clusters/${cluster.data.clusterId}/add/funding`);
     navigate("../funding");
   };
 
@@ -161,7 +139,7 @@ export const GenerateKeySharesOffline: FCProps = ({ ...props }) => {
         >
           <FileInput className="outline-dashed outline-1 outline-white">
             <FileSvgDraw />
-            <div className="flex items-center justify-center flex-col pt-3 pb-4 w-full "></div>
+            <div className="flex items-center justify-center flex-col pt-3 pb-4 w-full px-3 "></div>
           </FileInput>
           <FileUploaderContent>
             {context.files &&
@@ -174,6 +152,8 @@ export const GenerateKeySharesOffline: FCProps = ({ ...props }) => {
               ))}
           </FileUploaderContent>
         </FileUploader>
+        <KeysharesErrorAlert error={validatedShares.error} />
+
         {validators.data?.sharesWithStatuses && (
           <div className="space-y-2">
             <Text variant="body-3-medium" className="text-gray-500">
@@ -276,7 +256,7 @@ export const GenerateKeySharesOffline: FCProps = ({ ...props }) => {
               </TableRow>
             ))}
           </Table>
-          <Button size="xl" disabled={isDisabled} onClick={submit}>
+          <Button isLoading={cluster.isLoading} size="xl" onClick={submit}>
             Next
           </Button>
         </Card>
@@ -285,4 +265,4 @@ export const GenerateKeySharesOffline: FCProps = ({ ...props }) => {
   );
 };
 
-GenerateKeySharesOffline.displayName = "GenerateKeySharesOffline";
+UploadKeyshares.displayName = "GenerateKeySharesOffline";

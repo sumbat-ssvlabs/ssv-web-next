@@ -6,8 +6,10 @@ export const ProtectedRoute: FC<ComponentPropsWithoutRef<"div">> = ({
   ...props
 }) => {
   const location = useLocation();
-  const { isConnected } = useAccount();
-  if (!isConnected) return <Navigate to="/connect" state={location} replace />;
+  const account = useAccount();
+  console.log("account:", account);
+  if (!account.isConnected)
+    return <Navigate to="/connect" state={location} replace />;
 
   return props.children;
 };

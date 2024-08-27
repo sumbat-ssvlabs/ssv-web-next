@@ -6,18 +6,20 @@ import { cn } from "@/lib/utils/tw";
 import { useIsRestoring } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import type { ComponentPropsWithRef, FC } from "react";
+import { useAccount } from "wagmi";
 
 export const DashboardLayout: FC<ComponentPropsWithRef<"div">> = ({
   children,
   className,
 }) => {
   const isRestoring = useIsRestoring();
+  const account = useAccount();
   useBlockNavigationOnPendingTx();
 
   return (
     <>
       <AnimatePresence>
-        {isRestoring ? (
+        {isRestoring || account.isReconnecting || account.isConnecting ? (
           <motion.div
             className={cn(
               "fixed bg-gray-50 inset-0 flex h-screen items-center justify-center",

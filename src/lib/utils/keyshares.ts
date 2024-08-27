@@ -1,48 +1,61 @@
 import { sortNumbers } from "@/lib/utils/number";
 import { getOperatorIds } from "@/lib/utils/operator";
+import { keysharesSchema } from "@/lib/zod/keyshares";
 import type { Operator } from "@/types/api";
-import type { KeySharesItem } from "ssv-keys";
+import { KeyShares, type KeySharesItem } from "ssv-keys";
 
 export enum KeysharesValidationErrors {
   OPERATOR_NOT_EXIST_ID,
   OPERATOR_NOT_MATCHING_ID,
   VALIDATOR_EXIST_ID,
   ERROR_RESPONSE_ID,
+  DifferentCluster,
   DuplicatedValidatorKeys,
   InconsistentOperatorPublicKeys,
   InconsistentOperators,
 }
 
-export class KeysharesError extends Error {
+export class KeysharesValidationError extends Error {
   constructor(public code: KeysharesValidationErrors) {
     super();
   }
 }
 
-export const isKeysharesError = (error: unknown): error is KeysharesError => {
-  return error instanceof KeysharesError;
+export const isKeysharesError = (
+  error: unknown,
+): error is KeysharesValidationError => {
+  return error instanceof KeysharesValidationError;
 };
 
-export const validateConsistentOperatorIds = (
-  keyshares: KeySharesItem[],
-  operatorIds: number[],
-) => {
-  return keyshares.every(({ payload, data }) => {
-    const payloadOperatorIds = sortNumbers(payload.operatorIds).toString();
+export const validateKeysharesSchema = async (
+  file: File,
+): Promise<KeySharesItem[]> => {
+  const text = await file.text();
+  const json = JSON.parse(text);
+  keysharesSchema.parse(json);
+  return (await KeyShares.fromJson(json)).list();
+};
 
-    const dataOperatorIds = sortNumbers(
-      getOperatorIds(data.operators ?? []),
-    ).toString();
+export const validateConsistentOperatorIds = (keyshares: KeySharesItem[]) => {
+  const operatorIds = sortNumbers(keyshares[0].payload.operatorIds);
+
+  keyshares.every(({ payload, data }) => {
+    const payloadOperatorIds = sortNumbers(payload.operatorIds).toString();
+    const dataOperatorIds = getOperatorIds(data.operators ?? []).toString();
 
     const valid =
       payloadOperatorIds === dataOperatorIds &&
-      dataOperatorIds === sortNumbers(operatorIds).toString();
+      dataOperatorIds === operatorIds.toString();
 
     if (!valid) {
-      throw new KeysharesError(KeysharesValidationErrors.InconsistentOperators);
+      throw new KeysharesValidationError(
+        KeysharesValidationErrors.InconsistentOperators,
+      );
     }
-    return valid;
+    return true;
   });
+
+  return operatorIds;
 };
 
 export const validateConsistentOperatorPublicKeys = (
@@ -57,7 +70,7 @@ export const validateConsistentOperatorPublicKeys = (
   );
 
   if (!valid) {
-    throw new KeysharesError(
+    throw new KeysharesValidationError(
       KeysharesValidationErrors.InconsistentOperatorPublicKeys,
     );
   }
@@ -68,7 +81,9 @@ export const validateConsistentOperatorPublicKeys = (
 export const ensureValidatorsUniqueness = (keyshares: KeySharesItem[]) => {
   const set = new Set(keyshares.map(({ data }) => data.publicKey));
   if (set.size !== keyshares.length) {
-    throw new KeysharesError(KeysharesValidationErrors.DuplicatedValidatorKeys);
+    throw new KeysharesValidationError(
+      KeysharesValidationErrors.DuplicatedValidatorKeys,
+    );
   }
   return true;
 };

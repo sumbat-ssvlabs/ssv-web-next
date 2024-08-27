@@ -2,6 +2,11 @@ import type { ClusterSize } from "@/components/operator/operator-picker/operator
 import { createGuard } from "@/guard/create-guard";
 import { ref } from "valtio";
 import type { Address } from "abitype";
+import { useCluster } from "@/hooks/cluster/use-cluster";
+import { useMemo } from "react";
+import { useClusterPageParams } from "@/hooks/cluster/use-cluster-page-params";
+import { sortNumbers } from "@/lib/utils/number";
+import { useKeysharesSchemaValidation } from "@/hooks/keyshares/use-keyshares-schema-validation";
 
 export const [RegisterValidatorGuard, useRegisterValidatorContext] =
   createGuard({
@@ -12,6 +17,7 @@ export const [RegisterValidatorGuard, useRegisterValidatorContext] =
     shares: [] as Address[],
 
     selectedValidatorsCount: 0,
+    depositAmount: 0n,
 
     _files: [] as File[],
     set files(files: File[] | null) {
@@ -33,3 +39,25 @@ export const [RegisterValidatorGuard, useRegisterValidatorContext] =
       return this.selectedOperatorsIds.length > 0;
     },
   });
+
+export const useSelectedOperators = () => {
+  const inCluster = Boolean(useClusterPageParams().clusterHash);
+  const cluster = useCluster();
+
+  const { hasSelectedOperators, selectedOperatorsIds, files } =
+    useRegisterValidatorContext();
+
+  const { data: shares } = useKeysharesSchemaValidation(files?.at(0) || null);
+
+  return useMemo(() => {
+    if (inCluster) return sortNumbers(cluster.data?.operators ?? []);
+    if (hasSelectedOperators) return selectedOperatorsIds;
+    return shares?.[0].payload.operatorIds ?? [];
+  }, [
+    inCluster,
+    cluster.data?.operators,
+    hasSelectedOperators,
+    selectedOperatorsIds,
+    shares,
+  ]);
+};

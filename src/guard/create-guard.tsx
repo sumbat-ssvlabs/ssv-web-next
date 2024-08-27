@@ -12,6 +12,7 @@ export const createGuard = <T extends object>(
   guard: Partial<
     Record<RoutePaths, (state: T, reset: () => void) => string | void>
   > = {},
+  resetStateOnUnmount = true,
 ) => {
   const state = proxy<T>(defaultState);
   const resetState = reset.bind(null, state, defaultState);
@@ -23,7 +24,7 @@ export const createGuard = <T extends object>(
     const location = useLocation();
     const guards = useMemo(() => Object.entries(guard), []);
 
-    useUnmount(resetState);
+    resetStateOnUnmount && useUnmount(resetState);
 
     for (const [pattern, guardFn] of guards) {
       const match = Boolean(matchPath(pattern, location.pathname));

@@ -1,7 +1,7 @@
 import { getOperatorQueryOptions } from "@/hooks/operator/use-operator";
 import { queryClient, type QueryConfig } from "@/lib/react-query";
 import {
-  KeysharesError,
+  KeysharesValidationError,
   KeysharesValidationErrors,
   validateConsistentOperatorIds,
   validateConsistentOperatorPublicKeys,
@@ -29,7 +29,9 @@ export const validateKeysharesOperators = async ({
   );
 
   if (!hasConsistentOperatorIds) {
-    throw new KeysharesError(KeysharesValidationErrors.InconsistentOperators);
+    throw new KeysharesValidationError(
+      KeysharesValidationErrors.InconsistentOperators,
+    );
   }
 
   const operators = await Promise.all(
@@ -44,7 +46,7 @@ export const validateKeysharesOperators = async ({
   );
 
   if (!hasConsistentOperatorPublicKeys) {
-    throw new KeysharesError(
+    throw new KeysharesValidationError(
       KeysharesValidationErrors.InconsistentOperatorPublicKeys,
     );
   }

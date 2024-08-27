@@ -2,6 +2,7 @@ import react from "@vitejs/plugin-react";
 import { defineConfig, loadEnv } from "vite";
 import path from "path";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
+import svgr from "vite-plugin-svgr";
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd());
@@ -37,6 +38,7 @@ export default defineConfig(({ mode }) => {
           Buffer: mode === "production",
         },
       }),
+      svgr(),
     ],
     define: {
       APP_VERSION: JSON.stringify(process.env.npm_package_version),

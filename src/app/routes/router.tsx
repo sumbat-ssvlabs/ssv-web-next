@@ -1,12 +1,15 @@
 import { DashboardLayout } from "@/app/layouts/dashboard/dashboard";
 import { ConnectWallet } from "@/app/routes/connect-wallet/connect-wallet";
 import { AdditionalFunding } from "@/app/routes/create-cluster/additional-funding";
+import { BalanceWarning } from "@/app/routes/create-cluster/balance-warning";
+import { DistributeOffline } from "@/app/routes/create-cluster/distribute-offline";
 import { DistributionMethod } from "@/app/routes/create-cluster/distribution-method";
-import { GenerateKeySharesOffline } from "@/app/routes/create-cluster/generate-key-shares-offline";
 import { GenerateKeySharesOnline } from "@/app/routes/create-cluster/generate-key-shares-online";
 import { InitialFunding } from "@/app/routes/create-cluster/initial-funding";
 import { Preparation } from "@/app/routes/create-cluster/preparation";
 import { SelectOperators } from "@/app/routes/create-cluster/select-operators";
+import { SlashingWarning } from "@/app/routes/create-cluster/slashing-warning";
+import { UploadKeyshares } from "@/app/routes/create-cluster/upload-keyshares";
 import { Cluster } from "@/app/routes/dashboard/clusters/cluster/cluster";
 import { DepositClusterBalance } from "@/app/routes/dashboard/clusters/cluster/deposit-cluster-balance";
 import { WithdrawClusterBalance } from "@/app/routes/dashboard/clusters/cluster/withdraw-cluster-balance";
@@ -38,7 +41,6 @@ import { ProtectedClusterRoute } from "@/app/routes/protected-cluster-route";
 import { ProtectedOperatorRoute } from "@/app/routes/protected-operator-route";
 import { ProtectedRoute } from "@/app/routes/protected-route";
 import { RegisterOperatorGuard } from "@/guard/register-operator-guards";
-import { RegisterValidatorGuard } from "@/guard/register-validator-guard";
 import type { RouteObject } from "react-router-dom";
 import { createBrowserRouter, Link, Outlet } from "react-router-dom";
 
@@ -99,11 +101,7 @@ const routes = [
 
       {
         path: "create-cluster",
-        element: (
-          <RegisterValidatorGuard>
-            <Outlet />
-          </RegisterValidatorGuard>
-        ),
+        element: <Outlet />,
         children: [
           {
             index: true,
@@ -120,11 +118,19 @@ const routes = [
           },
           {
             path: "generate-offline",
-            element: <GenerateKeySharesOffline />,
+            element: <UploadKeyshares />,
           },
           {
             path: "funding",
             element: <InitialFunding />,
+          },
+          {
+            path: "balance-warning",
+            element: <BalanceWarning />,
+          },
+          {
+            path: "slashing-warning",
+            element: <SlashingWarning />,
           },
         ],
       },
@@ -155,10 +161,22 @@ const routes = [
                 children: [
                   {
                     path: "distribution-method",
-                    element: <DistributionMethod />,
+                    element: <DistributionMethod variant="add" />,
                   },
                   {
-                    path: "additional-funding",
+                    path: "online",
+                    element: <GenerateKeySharesOnline />,
+                  },
+                  {
+                    path: "offline",
+                    element: <DistributeOffline />,
+                  },
+                  {
+                    path: "keyshares",
+                    element: <UploadKeyshares />,
+                  },
+                  {
+                    path: "funding",
                     element: <AdditionalFunding />,
                   },
                 ],
