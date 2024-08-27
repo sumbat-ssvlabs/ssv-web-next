@@ -15,7 +15,6 @@ import { useExtractKeystoreData } from "@/hooks/use-extract-keystore-data";
 import { useKeystoreValidation } from "@/hooks/use-keystores-validation";
 import { prepareOperatorsForShares } from "@/lib/utils/operator";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { Address } from "abitype";
 import { Paperclip } from "lucide-react";
 import { type ComponentPropsWithoutRef, type FC } from "react";
 import { useForm } from "react-hook-form";
@@ -89,8 +88,7 @@ export const GenerateKeySharesOnline: FCProps = () => {
         privateKey: data.privateKey,
       });
 
-      state.publicKeys = [shares.publicKey] as Address[];
-      state.shares = [shares.sharesData] as Address[];
+      state.shares = [shares];
       navigate("/create-cluster/funding");
     },
   });

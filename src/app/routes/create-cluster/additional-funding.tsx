@@ -11,6 +11,7 @@ import { useClusterRunway } from "@/hooks/cluster/use-cluster-runway";
 import { useClusterPageParams } from "@/hooks/cluster/use-cluster-page-params";
 import { EstimatedOperationalRunwayAlert } from "@/components/cluster/estimated-operational-runway-alert";
 import { UnmountClosed } from "react-collapse";
+import { Link } from "react-router-dom";
 
 export const AdditionalFunding: FC = () => {
   const params = useClusterPageParams();
@@ -69,7 +70,12 @@ export const AdditionalFunding: FC = () => {
             runway={clusterRunway?.runway || 0n}
           />
         </UnmountClosed>
-        <Button size="xl" disabled={clusterRunway?.isAtRisk}>
+        <Button
+          as={Link}
+          to="../confirmation"
+          size="xl"
+          disabled={clusterRunway?.isAtRisk}
+        >
           Next
         </Button>
       </Card>

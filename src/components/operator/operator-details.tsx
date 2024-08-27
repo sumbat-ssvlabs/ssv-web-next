@@ -32,7 +32,7 @@ export const OperatorDetails: FCProps = ({ operator, className, ...props }) => {
           <Text variant="body-3-medium" className="text-gray-500">
             ID: {operator.id}
           </Text>
-          <CopyBtn className="text-gray-500" text={operator.id_str} />
+          <CopyBtn text={operator.id_str} />
         </div>
       </div>
     </div>

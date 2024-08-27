@@ -31,7 +31,6 @@ import { useOperatorsUsability } from "@/hooks/keyshares/use-operators-usability
 import { createClusterHash } from "@/lib/utils/cluster";
 import { shortenAddress } from "@/lib/utils/strings";
 import { cn } from "@/lib/utils/tw";
-import type { Address } from "abitype";
 import { Paperclip } from "lucide-react";
 import { type ComponentPropsWithoutRef, type FC } from "react";
 import { useNavigate } from "react-router";
@@ -102,12 +101,8 @@ export const UploadKeyshares: FCProps = ({ ...props }) => {
   );
 
   const submit = () => {
-    state.publicKeys = validators.data?.tags.valid.map(
-      (share) => share.payload.publicKey,
-    ) as Address[];
-    state.shares = validators.data?.tags.valid.map(
-      (share) => share.payload.sharesData,
-    ) as Address[];
+    state.shares =
+      validators.data?.tags.valid.map((share) => share.payload) ?? [];
 
     if (cluster.data)
       return navigate(`/clusters/${cluster.data.clusterId}/add/funding`);

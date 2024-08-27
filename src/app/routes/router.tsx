@@ -7,6 +7,7 @@ import { DistributionMethod } from "@/app/routes/create-cluster/distribution-met
 import { GenerateKeySharesOnline } from "@/app/routes/create-cluster/generate-key-shares-online";
 import { InitialFunding } from "@/app/routes/create-cluster/initial-funding";
 import { Preparation } from "@/app/routes/create-cluster/preparation";
+import { RegisterValidatorConfirmation } from "@/app/routes/create-cluster/register-validator-confirmation";
 import { SelectOperators } from "@/app/routes/create-cluster/select-operators";
 import { SlashingWarning } from "@/app/routes/create-cluster/slashing-warning";
 import { UploadKeyshares } from "@/app/routes/create-cluster/upload-keyshares";
@@ -132,6 +133,10 @@ const routes = [
             path: "slashing-warning",
             element: <SlashingWarning />,
           },
+          {
+            path: "confirmation",
+            element: <RegisterValidatorConfirmation />,
+          },
         ],
       },
 
@@ -178,6 +183,10 @@ const routes = [
                   {
                     path: "funding",
                     element: <AdditionalFunding />,
+                  },
+                  {
+                    path: "confirmation",
+                    element: <RegisterValidatorConfirmation />,
                   },
                 ],
               },
