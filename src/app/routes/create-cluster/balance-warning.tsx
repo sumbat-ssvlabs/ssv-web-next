@@ -9,9 +9,7 @@ import { Link } from "react-router-dom";
 
 export const BalanceWarning: FC = () => {
   const [agree1, setAgree1] = useState(false);
-  console.log("agree1:", agree1);
   const [agree2, setAgree2] = useState(false);
-  console.log("agree2:", agree2);
 
   return (
     <Container variant="vertical">
