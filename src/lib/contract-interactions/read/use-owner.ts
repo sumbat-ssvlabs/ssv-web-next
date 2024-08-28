@@ -3,7 +3,7 @@
 // ------------------------------------------------
 
 import type { UseReadContractParameters } from "wagmi";
-import { useReadContract } from "wagmi";
+import { useReadContract, useBlockNumber } from "wagmi";
 
 
 import {
@@ -32,14 +32,19 @@ type QueryOptions = UseReadContractParameters<
 
 export const fetchOwner = () => queryClient.fetchQuery(getOwnerQueryOptions());
 
-export const useOwner = (options?: QueryOptions) => {
+export const useOwner = (
+  options: QueryOptions & { watch?: boolean } = { enabled: true },
+) => {
   const { getterContractAddress } = useSSVNetworkDetails();
+
+  const blockNumber = useBlockNumber({ watch: options.watch });
 
   return useReadContract({
     abi: MainnetV4GetterABI,
     address: getterContractAddress,
     functionName: "owner",
 
+    blockNumber: options.watch ? blockNumber.data : undefined,
     query: options,
   });
 };

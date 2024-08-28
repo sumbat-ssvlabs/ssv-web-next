@@ -67,5 +67,6 @@ export const useWithdraw = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

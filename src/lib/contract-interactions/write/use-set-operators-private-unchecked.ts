@@ -73,5 +73,6 @@ export const useSetOperatorsPrivateUnchecked = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

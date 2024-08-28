@@ -67,5 +67,6 @@ export const useRegisterValidator = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

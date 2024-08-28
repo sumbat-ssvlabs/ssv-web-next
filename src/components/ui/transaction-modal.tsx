@@ -36,7 +36,7 @@ export const TransactionModal: FCProps = () => {
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
             <Text variant="body-3-medium" className="text-gray-500">
-              Transaction Hash
+              Transaction Hash {meta.step}
             </Text>
             <div className="flex items-center h-[50px] px-5 pr-4 py-3 border rounded-xl">
               <Text

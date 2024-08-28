@@ -70,5 +70,6 @@ export const useBulkRemoveValidator = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

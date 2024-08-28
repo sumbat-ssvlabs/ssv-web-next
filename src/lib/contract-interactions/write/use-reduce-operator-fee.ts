@@ -67,5 +67,6 @@ export const useReduceOperatorFee = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

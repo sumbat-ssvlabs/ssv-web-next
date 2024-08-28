@@ -55,5 +55,6 @@ export const useAcceptOwnership = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

@@ -55,5 +55,6 @@ export const useRenounceOwnership = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

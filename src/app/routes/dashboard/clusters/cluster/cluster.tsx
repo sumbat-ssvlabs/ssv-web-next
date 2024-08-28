@@ -27,6 +27,8 @@ export const Cluster: FC = () => {
   const { clusterHash } = useClusterPageParams();
   const cluster = useCluster(clusterHash!);
   const balance = useClusterBalance(clusterHash!);
+  console.log("balance:", balance.data);
+  console.log("balanceq:", balance.queryKey[1]);
 
   const isLiquidated = useIsLiquidated(
     {
@@ -71,8 +73,12 @@ export const Cluster: FC = () => {
               {formatSSV(balance.data || 0n)}
             </Text>
           </div>
-          <Divider />
-          <EstimatedOperationalRunway />
+          {Boolean(cluster.data?.validatorCount) && (
+            <>
+              <Divider />
+              <EstimatedOperationalRunway />
+            </>
+          )}
           <Divider />
           <div className="flex gap-4 [&>*]:flex-1">
             <Button as={Link} to="deposit" size="xl">
@@ -89,7 +95,10 @@ export const Cluster: FC = () => {
               Validators
             </Text>
             <Spacer />
-            <Button as={Link} to="add/distribution-method">
+            <Button
+              as={Link}
+              to={`/join/validator/${clusterHash}/distribution-method`}
+            >
               <Text>Add Validator</Text> <PlusIcon className="size-4" />
             </Button>
           </div>

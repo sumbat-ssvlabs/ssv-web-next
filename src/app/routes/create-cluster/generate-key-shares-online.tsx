@@ -1,6 +1,7 @@
 import { getOwnerNonce } from "@/api/account";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Container } from "@/components/ui/container";
 import {
   FileInput,
   FileUploader,
@@ -8,7 +9,11 @@ import {
   FileUploaderItem,
 } from "@/components/ui/file-upload";
 import { Input } from "@/components/ui/input";
-import { useRegisterValidatorContext } from "@/guard/register-validator-guard";
+import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
+import {
+  useRegisterValidatorContext,
+  useSelectedOperators,
+} from "@/guard/register-validator-guard";
 import { useOperators } from "@/hooks/operator/use-operators";
 import { useCreateShares } from "@/hooks/use-create-shares";
 import { useExtractKeystoreData } from "@/hooks/use-extract-keystore-data";
@@ -67,15 +72,15 @@ const schema = z.object({
 export const GenerateKeySharesOnline: FCProps = () => {
   const { address } = useAccount();
   const { state } = useRegisterValidatorContext;
-  const { files, password, selectedOperatorsIds } =
-    useRegisterValidatorContext();
+  const { files, password } = useRegisterValidatorContext();
 
   const navigate = useNavigate();
 
   const { status } = useKeystoreValidation(files?.[0] as File);
   const createShares = useCreateShares();
 
-  const operators = useOperators(selectedOperatorsIds);
+  const operatorsIds = useSelectedOperators();
+  const operators = useOperators(operatorsIds);
 
   const extractKeystoreData = useExtractKeystoreData({
     onSuccess: async (data) => {
@@ -89,83 +94,88 @@ export const GenerateKeySharesOnline: FCProps = () => {
       });
 
       state.shares = [shares];
-      navigate("/create-cluster/funding");
+      navigate("../funding");
     },
   });
 
   const form = useForm({
-    defaultValues: { password: "" },
+    defaultValues: { password },
     resolver: zodResolver(schema),
   });
 
   return (
-    <Card className="flex flex-col">
-      <FileUploader
-        dropzoneOptions={{
-          maxFiles: 1,
-          maxSize: 1024 * 1024 * 4,
-          multiple: false,
-          accept: {
-            "application/json": [".json"],
-          },
-        }}
-        value={files as File[]}
-        onValueChange={(files) => {
-          state.files = files ? ref(files) : null;
-        }}
-        className="relative bg-background rounded-lg p-2"
-      >
-        <FileInput className="outline-dashed outline-1 outline-white">
-          <div className="flex items-center justify-center flex-col pt-3 pb-4 w-full ">
-            <FileSvgDraw />{" "}
-            {status !== "no-file" && (
-              <div className="text-red-500 text-xl mt-2">{status}</div>
-            )}
-          </div>
-        </FileInput>
-        <FileUploaderContent>
-          {files &&
-            files.length > 0 &&
-            files.map((file, i) => (
-              <FileUploaderItem key={i} index={i}>
-                <Paperclip className="h-4 w-4 stroke-current" />
-                <span>{file.name}</span>
-              </FileUploaderItem>
-            ))}
-        </FileUploaderContent>
-      </FileUploader>
-      <form
-        className="flex flex-col gap-4"
-        onSubmit={form.handleSubmit(async (data) => {
-          state.password = data.password;
-          await extractKeystoreData.mutateAsync({
-            file: files![0],
-            password: data.password,
-          });
-        })}
-      >
-        <Input
-          defaultValue={password}
-          disabled={status !== "validator-not-registered"}
-          type="password"
-          className="mt-4"
-          {...form.register("password")}
-        />
-        <div className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-          {extractKeystoreData.error?.message}
-        </div>
-        <Button
-          type="submit"
-          disabled={
-            status !== "validator-not-registered" ||
-            !form.watch("password").length
-          }
-          isLoading={extractKeystoreData.isPending || operators.isPending}
+    <Container variant="vertical">
+      <NavigateBackBtn by="history" />
+      <Card className="flex flex-col w-full">
+        <FileUploader
+          dropzoneOptions={{
+            maxFiles: 1,
+            maxSize: 1024 * 1024 * 4,
+            multiple: false,
+            accept: {
+              "application/json": [".json"],
+            },
+          }}
+          value={files as File[]}
+          onValueChange={(files) => {
+            state.files = files ? ref(files) : null;
+          }}
+          className="relative bg-background rounded-lg p-2"
         >
-          Generate Key Shares
-        </Button>
-      </form>
-    </Card>
+          <FileInput className="outline-dashed outline-1 outline-white">
+            <div className="flex items-center justify-center flex-col pt-3 pb-4 w-full ">
+              <FileSvgDraw />{" "}
+              {status !== "no-file" && (
+                <div className="text-red-500 text-xl mt-2">{status}</div>
+              )}
+            </div>
+          </FileInput>
+          <FileUploaderContent>
+            {files &&
+              files.length > 0 &&
+              files.map((file, i) => (
+                <FileUploaderItem key={i} index={i}>
+                  <Paperclip className="h-4 w-4 stroke-current" />
+                  <span>{file.name}</span>
+                </FileUploaderItem>
+              ))}
+          </FileUploaderContent>
+        </FileUploader>
+        <form
+          className="flex flex-col gap-4"
+          onSubmit={form.handleSubmit(async (data) => {
+            state.password = data.password;
+            console.log("state.password:", state.password);
+            await extractKeystoreData.mutateAsync({
+              file: files![0],
+              password: data.password,
+            });
+          })}
+        >
+          <Input
+            defaultValue={password}
+            disabled={status !== "validator-not-registered"}
+            type="password"
+            className="mt-4"
+            {...form.register("password")}
+          />
+          <div className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+            {extractKeystoreData.error?.message}
+          </div>
+          <Button
+            size="xl"
+            type="submit"
+            disabled={
+              status !== "validator-not-registered" ||
+              !form.watch("password").length
+            }
+            isLoading={extractKeystoreData.isPending || operators.isPending}
+          >
+            Generate Key Shares
+          </Button>
+        </form>
+      </Card>
+    </Container>
   );
 };
 

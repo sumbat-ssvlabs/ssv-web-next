@@ -67,5 +67,6 @@ export const useRegisterOperator = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

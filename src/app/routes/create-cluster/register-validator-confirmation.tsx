@@ -18,17 +18,51 @@ import { sumOperatorsFee } from "@/lib/utils/operator";
 import { Divider } from "@/components/ui/divider";
 import { useGetNetworkFee } from "@/lib/contract-interactions/read/use-get-network-fee";
 import { useSsvNetworkFee } from "@/hooks/use-ssv-network-fee";
+import { Button } from "@/components/ui/button";
+import { useRegisterValidator } from "@/lib/contract-interactions/write/use-register-validator";
+import { useBulkRegisterValidator } from "@/lib/contract-interactions/write/use-bulk-register-validator";
+import {
+  createClusterHash,
+  formatClusterData,
+  getDefaultClusterData,
+} from "@/lib/utils/cluster";
+import { useAccount } from "wagmi";
+import {
+  getClusterQueryOptions,
+  useCluster,
+} from "@/hooks/cluster/use-cluster";
+import { bigintifyNumbers } from "@/lib/utils/bigint";
+import type { Address } from "abitype";
+import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
+import { retryPromiseUntilSuccess } from "@/lib/utils/promise";
+import { getCluster } from "@/api/cluster";
+import { useTransactionModal } from "@/signals/modal";
+import { queryClient } from "@/lib/react-query";
+import { useNavigate } from "react-router";
+import { Badge } from "@/components/ui/badge";
+import { WithAllowance } from "@/components/with-allowance/with-allowance";
+import { useClusterBalance } from "@/hooks/cluster/use-cluster-balance";
 
 export const RegisterValidatorConfirmation: FC = () => {
-  const { shares } = useRegisterValidatorContext();
+  const navigate = useNavigate();
+
+  const account = useAccount();
+  const { shares, depositAmount } = useRegisterValidatorContext();
+  const isBulk = shares.length > 1;
+
   const operatorIds = useSelectedOperators();
-
-  const networkFee = useGetNetworkFee();
-  const networkDailyFee = computeDailyAmount(networkFee.data ?? 0n, 1);
-
   const operators = useOperators(operatorIds);
   const operatorsFee = sumOperatorsFee(operators.data ?? []);
   const operatorsDailyFee = computeDailyAmount(operatorsFee, 1);
+
+  const clusterHash = createClusterHash(account.address!, operatorIds);
+  const clusterBalance = useClusterBalance(clusterHash);
+  const clusterQuery = useCluster(clusterHash, {
+    retry: false,
+  });
+
+  const networkFee = useGetNetworkFee();
+  const networkDailyFee = computeDailyAmount(networkFee.data ?? 0n, 1);
 
   const { liquidationThresholdPeriod, minimumLiquidationCollateral } =
     useSsvNetworkFee();
@@ -40,10 +74,67 @@ export const RegisterValidatorConfirmation: FC = () => {
     operatorsFee,
   });
 
+  const registerValidator = useRegisterValidator();
+  const bulkRegisterValidator = useBulkRegisterValidator();
+
+  const isWriting =
+    registerValidator.isPending || bulkRegisterValidator.isPending;
+
+  const handleRegisterValidator = () => {
+    const clusterData = clusterQuery.data
+      ? formatClusterData(clusterQuery.data)
+      : getDefaultClusterData();
+    const [share] = shares;
+
+    const options = withTransactionModal({
+      onMined: async () => {
+        useTransactionModal.state.meta.step = "indexing";
+        await retryPromiseUntilSuccess(async () => {
+          const cluster = await getCluster(clusterHash);
+          return clusterData.validatorCount !== cluster?.validatorCount;
+        });
+
+        await queryClient.refetchQueries({
+          queryKey: getClusterQueryOptions(clusterHash).queryKey,
+        });
+
+        return () => navigate("../success");
+      },
+    });
+
+    if (shares.length === 1)
+      return registerValidator.write(
+        {
+          amount: depositAmount,
+          cluster: clusterData,
+          operatorIds: bigintifyNumbers(operatorIds),
+          publicKey: share.publicKey as Address,
+          sharesData: share.sharesData as Address,
+        },
+        options,
+      );
+
+    return bulkRegisterValidator.write(
+      {
+        amount: depositAmount,
+        cluster: clusterData,
+        operatorIds: bigintifyNumbers(operatorIds),
+        publicKeys: shares.map((share) => share.publicKey as Address),
+        sharesData: shares.map((share) => share.sharesData as Address),
+      },
+      options,
+    );
+  };
+
   return (
     <Container variant="vertical">
       <Card className="w-full">
-        <Text variant="headline4">Transaction Details</Text>
+        <div className="flex justify-between w-full">
+          <Text variant="headline4">Transaction Details</Text>
+          {isBulk && (
+            <Badge variant="success">{shares.length} Validators</Badge>
+          )}
+        </div>
         {shares.length === 1 && (
           <div className="space-y-2">
             <Text variant="body-3-semibold" className="text-gray-500">
@@ -104,6 +195,20 @@ export const RegisterValidatorConfirmation: FC = () => {
             SSV
           </Text>
         </div>
+        <WithAllowance
+          size="xl"
+          amount={(clusterBalance.data ?? 0n) + depositAmount}
+        >
+          <Button
+            size="xl"
+            isLoading={isWriting}
+            isActionBtn
+            disabled={isWriting}
+            onClick={handleRegisterValidator}
+          >
+            Register Validator
+          </Button>
+        </WithAllowance>
       </Card>
     </Container>
   );

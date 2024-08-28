@@ -105,7 +105,7 @@ export const UploadKeyshares: FCProps = ({ ...props }) => {
       validators.data?.tags.valid.map((share) => share.payload) ?? [];
 
     if (cluster.data)
-      return navigate(`/clusters/${cluster.data.clusterId}/add/funding`);
+      return navigate(`/join/${cluster.data.clusterId}/validator/funding`);
     navigate("../funding");
   };
 

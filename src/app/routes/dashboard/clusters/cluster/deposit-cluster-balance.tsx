@@ -26,6 +26,8 @@ import { useDepositClusterBalance } from "@/hooks/cluster/use-deposit-cluster-ba
 import { useNavigate } from "react-router-dom";
 import { useSSVBalance } from "@/hooks/use-ssv-balance";
 import { formatSSV } from "@/lib/utils/number";
+import { getClusterQueryOptions } from "@/hooks/cluster/use-cluster";
+import { WithAllowance } from "@/components/with-allowance/with-allowance";
 
 const schema = z.object({
   value: z.bigint().positive(),
@@ -44,17 +46,19 @@ export const DepositClusterBalance: FC = () => {
     resolver: zodResolver(schema),
   });
 
-  const value = form.watch("value");
+  const value = form.watch("value") ?? 0n;
   const isChanged = isBigIntChanged(0n, value);
 
-  const submit = form.handleSubmit(async (params) => {
+  const submit = form.handleSubmit(async (args) => {
     deposit.write(
-      { amount: params.value },
+      { amount: args.value },
       withTransactionModal({
         onMined: async () => {
-          queryClient.invalidateQueries({ queryKey: clusterBalance.queryKey });
+          await queryClient.refetchQueries(
+            getClusterQueryOptions(params.clusterHash!),
+          );
           await clusterBalance.refetch();
-          navigate(".."); // Navigate back after the transaction is mined
+          return () => navigate("..");
         },
       }),
     );
@@ -110,14 +114,19 @@ export const DepositClusterBalance: FC = () => {
           <Divider />
           <EstimatedOperationalRunway deltaBalance={value} />
           <Divider />
-          <Button
-            type="submit"
+          <WithAllowance
             size="xl"
-            disabled={!isChanged}
-            isLoading={deposit.isPending}
+            amount={isChanged ? clusterBalance.data ?? 0n + value : 0n}
           >
-            Deposit
-          </Button>
+            <Button
+              type="submit"
+              size="xl"
+              disabled={!isChanged}
+              isLoading={deposit.isPending}
+            >
+              Deposit
+            </Button>
+          </WithAllowance>
         </Card>
       </Form>
     </Container>

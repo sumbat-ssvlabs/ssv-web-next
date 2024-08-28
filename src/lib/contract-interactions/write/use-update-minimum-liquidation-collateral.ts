@@ -73,5 +73,6 @@ export const useUpdateMinimumLiquidationCollateral = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

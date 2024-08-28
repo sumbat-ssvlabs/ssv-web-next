@@ -67,5 +67,6 @@ export const useBulkExitValidator = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

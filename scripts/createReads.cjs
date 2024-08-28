@@ -14,12 +14,12 @@
     (item) => {
       const mainnetItem = mainnetAbi.find((f) => f?.name === item?.name);
       return !isEqual(mainnetItem, item);
-    }
+    },
   );
 
   const folder = path.join(
     path.dirname(__dirname),
-    "src/lib/contract-interactions/read"
+    "src/lib/contract-interactions/read",
   );
 
   if (!fs.existsSync(folder)) {
@@ -34,13 +34,13 @@
   const readFns = holeskyAbi.filter(
     (item) =>
       item.type === "function" &&
-      (item.stateMutability == "view" || item.stateMutability == "pure")
+      (item.stateMutability == "view" || item.stateMutability == "pure"),
   );
 
   const readFnsMainnet = mainnetAbi.filter(
     (item) =>
       item.type === "function" &&
-      (item.stateMutability == "view" || item.stateMutability == "pure")
+      (item.stateMutability == "view" || item.stateMutability == "pure"),
   );
 
   const createWriteFn = (isTestnet, item) => {
@@ -60,7 +60,8 @@
 // ------------------------------------------------
 
 import type { UseReadContractParameters } from "wagmi";
-import { useReadContract } from "wagmi";
+import { useReadContract, useBlockNumber } from "wagmi";
+
 
 import { isUndefined } from "lodash-es";
 
@@ -77,7 +78,7 @@ import {
         : ""
     }
 ${hasInputs ? 'import type { ExtractAbiFunction } from "abitype";' : ""}
-import { readContractQueryOptions } from "wagmi/query";
+import { readContractQueryOptions, } from "wagmi/query";
 import { getChainId } from "@wagmi/core";
 import { config } from "@/wagmi/config";
 import { queryClient } from "@/lib/react-query";
@@ -105,14 +106,17 @@ export const fetch${capitalizeFirstLetter(functionName)} =  (${hasInputs ? 'para
 queryClient.fetchQuery(get${capitalizeFirstLetter(functionName)}QueryOptions(${hasInputs ? "params" : ""}));
 
 
-export const ${hookName} = (${hasInputs ? 'params: AbiInputsToParams<Fn["inputs"]>,' : ""}options?: QueryOptions) => {
+export const ${hookName} = (${hasInputs ? 'params: AbiInputsToParams<Fn["inputs"]>,' : ""}options: QueryOptions & {watch?: boolean} = {enabled: true}) => {
   const { getterContractAddress } = useSSVNetworkDetails()
   ${hasInputs ? "const args = paramsToArray({ params, abiFunction })" : ""}
+  const blockNumber = useBlockNumber({ watch: options.watch })
+
   return useReadContract({
       abi: ${abiName},
       address: getterContractAddress,
       functionName: "${functionName}",
       ${hasInputs ? "args," : ""}
+    blockNumber: options.watch ? blockNumber.data : undefined,
        ${
          hasInputs
            ? `query: {

@@ -121,7 +121,7 @@ const Pagination: React.FC<React.ComponentProps<"nav"> & PaginationProps> = ({
         {Array.from({ length: pagination.pages }, (_, i) => (
           <PaginationItem key={i}>
             <PaginationLink
-              disabled={i + 1 === pagination.page}
+              // disabled={i + 1 === pagination.page}
               to={{
                 search: `?page=${i + 1}`,
               }}

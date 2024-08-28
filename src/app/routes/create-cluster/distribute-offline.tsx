@@ -34,6 +34,14 @@ export const DistributeOffline: FC = () => {
             onClick={() => setSelectedOption("new")}
           />
         </div>
+        <Text>Instructions</Text>
+        <ul>
+          <li>
+            <Text>
+              Download the <b>Windows</b> executable from SSV-Keys Github
+            </Text>
+          </li>
+        </ul>
       </Card>
     </Container>
   );

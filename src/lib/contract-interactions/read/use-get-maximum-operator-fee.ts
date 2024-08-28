@@ -3,7 +3,7 @@
 // ------------------------------------------------
 
 import type { UseReadContractParameters } from "wagmi";
-import { useReadContract } from "wagmi";
+import { useReadContract, useBlockNumber } from "wagmi";
 
 
 import {
@@ -33,14 +33,19 @@ type QueryOptions = UseReadContractParameters<
 export const fetchGetMaximumOperatorFee = () =>
   queryClient.fetchQuery(getGetMaximumOperatorFeeQueryOptions());
 
-export const useGetMaximumOperatorFee = (options?: QueryOptions) => {
+export const useGetMaximumOperatorFee = (
+  options: QueryOptions & { watch?: boolean } = { enabled: true },
+) => {
   const { getterContractAddress } = useSSVNetworkDetails();
+
+  const blockNumber = useBlockNumber({ watch: options.watch });
 
   return useReadContract({
     abi: MainnetV4GetterABI,
     address: getterContractAddress,
     functionName: "getMaximumOperatorFee",
 
+    blockNumber: options.watch ? blockNumber.data : undefined,
     query: options,
   });
 };

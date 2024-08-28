@@ -52,5 +52,6 @@ export const useInitialize = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

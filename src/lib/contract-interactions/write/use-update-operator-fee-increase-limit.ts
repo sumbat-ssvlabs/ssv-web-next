@@ -73,5 +73,6 @@ export const useUpdateOperatorFeeIncreaseLimit = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

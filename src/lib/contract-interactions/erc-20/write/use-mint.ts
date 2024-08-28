@@ -64,5 +64,6 @@ export const useMint = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

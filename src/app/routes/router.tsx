@@ -8,6 +8,7 @@ import { GenerateKeySharesOnline } from "@/app/routes/create-cluster/generate-ke
 import { InitialFunding } from "@/app/routes/create-cluster/initial-funding";
 import { Preparation } from "@/app/routes/create-cluster/preparation";
 import { RegisterValidatorConfirmation } from "@/app/routes/create-cluster/register-validator-confirmation";
+import { RegisterValidatorSuccess } from "@/app/routes/create-cluster/register-validator-success";
 import { SelectOperators } from "@/app/routes/create-cluster/select-operators";
 import { SlashingWarning } from "@/app/routes/create-cluster/slashing-warning";
 import { UploadKeyshares } from "@/app/routes/create-cluster/upload-keyshares";
@@ -32,7 +33,6 @@ import { OperatorFeeUpdated } from "@/app/routes/dashboard/operators/update-fee/
 import { ProtectedOperatorUpdateFeeRoute } from "@/app/routes/dashboard/operators/update-fee/protected-operator-update-fee-route";
 import { UpdateOperatorFee } from "@/app/routes/dashboard/operators/update-fee/update-operator-fee";
 import { WithdrawOperatorBalance } from "@/app/routes/dashboard/operators/withdraw-operator-balance";
-import { Join } from "@/app/routes/join/join";
 import { JoinOperatorPreparation } from "@/app/routes/join/operator/join-operator-preparation";
 import { RegisterOperator } from "@/app/routes/join/operator/register-operator";
 import { RegisterOperatorConfirmation } from "@/app/routes/join/operator/register-operator-confirmation";
@@ -67,101 +67,45 @@ const routes = [
       },
       {
         path: "join",
-        element: <Join />,
-      },
-      {
-        path: "join/operator",
-        element: (
-          <RegisterOperatorGuard>
-            <Outlet />
-          </RegisterOperatorGuard>
-        ),
-        children: [
-          {
-            index: true,
-            element: <JoinOperatorPreparation />,
-          },
-          {
-            path: "register",
-            element: <RegisterOperator />,
-          },
-          {
-            path: "fee",
-            element: <SetOperatorFee />,
-          },
-          {
-            path: "confirm-transaction",
-            element: <RegisterOperatorConfirmation />,
-          },
-          {
-            path: "success",
-            element: <RegisterOperatorSuccess />,
-          },
-        ],
-      },
-
-      {
-        path: "create-cluster",
         element: <Outlet />,
         children: [
           {
-            index: true,
-            element: <Preparation />,
-          },
-          {
-            path: "select-operators",
-            element: <SelectOperators />,
-          },
-
-          {
-            path: "generate-online",
-            element: <GenerateKeySharesOnline />,
-          },
-          {
-            path: "generate-offline",
-            element: <UploadKeyshares />,
-          },
-          {
-            path: "funding",
-            element: <InitialFunding />,
-          },
-          {
-            path: "balance-warning",
-            element: <BalanceWarning />,
-          },
-          {
-            path: "slashing-warning",
-            element: <SlashingWarning />,
-          },
-          {
-            path: "confirmation",
-            element: <RegisterValidatorConfirmation />,
-          },
-        ],
-      },
-
-      {
-        path: "clusters",
-        element: <Outlet />,
-        children: [
-          {
-            index: true,
-            element: <Clusters />,
-          },
-          {
-            path: ":clusterHash",
+            path: "operator",
             element: (
-              <ProtectedClusterRoute>
+              <RegisterOperatorGuard>
                 <Outlet />
-              </ProtectedClusterRoute>
+              </RegisterOperatorGuard>
             ),
             children: [
               {
                 index: true,
-                element: <Cluster />,
+                element: <JoinOperatorPreparation />,
               },
               {
-                path: "add",
+                path: "register",
+                element: <RegisterOperator />,
+              },
+              {
+                path: "fee",
+                element: <SetOperatorFee />,
+              },
+              {
+                path: "confirm-transaction",
+                element: <RegisterOperatorConfirmation />,
+              },
+              {
+                path: "success",
+                element: <RegisterOperatorSuccess />,
+              },
+            ],
+          },
+
+          {
+            path: "validator",
+            element: <Outlet />,
+            children: [
+              {
+                path: ":clusterHash",
                 element: <Outlet />,
                 children: [
                   {
@@ -188,7 +132,69 @@ const routes = [
                     path: "confirmation",
                     element: <RegisterValidatorConfirmation />,
                   },
+                  {
+                    path: "success",
+                    element: <RegisterValidatorSuccess />,
+                  },
                 ],
+              },
+              {
+                index: true,
+                element: <Preparation />,
+              },
+              {
+                path: "select-operators",
+                element: <SelectOperators />,
+              },
+
+              {
+                path: "generate-online",
+                element: <GenerateKeySharesOnline />,
+              },
+              {
+                path: "generate-offline",
+                element: <UploadKeyshares />,
+              },
+              {
+                path: "funding",
+                element: <InitialFunding />,
+              },
+              {
+                path: "balance-warning",
+                element: <BalanceWarning />,
+              },
+              {
+                path: "slashing-warning",
+                element: <SlashingWarning />,
+              },
+              {
+                path: "confirmation",
+                element: <RegisterValidatorConfirmation />,
+              },
+            ],
+          },
+        ],
+      },
+
+      {
+        path: "clusters",
+        element: <Outlet />,
+        children: [
+          {
+            index: true,
+            element: <Clusters />,
+          },
+          {
+            path: ":clusterHash",
+            element: (
+              <ProtectedClusterRoute>
+                <Outlet />
+              </ProtectedClusterRoute>
+            ),
+            children: [
+              {
+                index: true,
+                element: <Cluster />,
               },
               {
                 path: "withdraw",

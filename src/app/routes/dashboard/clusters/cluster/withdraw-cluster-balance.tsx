@@ -25,7 +25,6 @@ import { formatSSV } from "@/lib/utils/number";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useWithdrawClusterBalance } from "@/hooks/cluster/use-withdraw-cluster-balance";
 import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
-import { queryClient } from "@/lib/react-query";
 import { useNavigate } from "react-router-dom";
 import { useLiquidateCluster } from "@/hooks/cluster/use-liquidate-cluster";
 
@@ -62,19 +61,17 @@ export const WithdrawClusterBalance: FC = () => {
   const showRiskCheckbox = isChanged && clusterRunway.data?.isAtRisk;
   const disabled = showRiskCheckbox ? !hasAgreed : false;
 
-  const submit = form.handleSubmit(async (params) => {
+  const submit = form.handleSubmit(async (values) => {
     const options = withTransactionModal({
       onMined: async () => {
-        queryClient.invalidateQueries({ queryKey: clusterBalance.queryKey });
-        await clusterBalance.refetch();
-        navigate("..");
+        return () => navigate("..");
       },
     });
 
     if (isLiquidating) {
       liquidate.write(options);
     } else {
-      withdraw.write(params, options);
+      withdraw.write(values, options);
     }
   });
 

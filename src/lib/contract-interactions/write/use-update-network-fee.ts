@@ -67,5 +67,6 @@ export const useUpdateNetworkFee = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

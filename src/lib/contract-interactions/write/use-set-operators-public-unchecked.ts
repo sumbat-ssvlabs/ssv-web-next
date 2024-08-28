@@ -73,5 +73,6 @@ export const useSetOperatorsPublicUnchecked = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

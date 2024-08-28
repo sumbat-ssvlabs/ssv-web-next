@@ -41,4 +41,6 @@ const createModalSignal = <T extends Record<string, unknown>>(
 
 export const useTransactionModal = createModalSignal<{
   hash: string;
+  variant?: "default" | "2-step";
+  step: "pending" | "indexing";
 }>();

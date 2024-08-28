@@ -73,5 +73,6 @@ export const useSetFeeRecipientAddress = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

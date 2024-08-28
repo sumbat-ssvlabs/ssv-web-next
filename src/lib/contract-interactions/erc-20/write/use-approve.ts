@@ -64,5 +64,6 @@ export const useApprove = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

@@ -73,5 +73,6 @@ export const useSetOperatorsWhitelistingContract = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

@@ -67,5 +67,6 @@ export const useUpgradeTo = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

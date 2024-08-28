@@ -1,3 +1,4 @@
+import { sortNumbers } from "@/lib/utils/number";
 import type { SolidityCluster, Operator, Cluster } from "@/types/api";
 import type { Address } from "abitype";
 import { isNumber, merge } from "lodash-es";
@@ -12,9 +13,11 @@ export const createClusterHash = (
       ["address", "uint256[]"],
       [
         account,
-        operators.map((o) => {
-          return BigInt(isNumber(o) ? o : o.id);
-        }),
+        sortNumbers(
+          operators.map((o) => {
+            return BigInt(isNumber(o) ? o : o.id);
+          }),
+        ),
       ],
     ),
   );

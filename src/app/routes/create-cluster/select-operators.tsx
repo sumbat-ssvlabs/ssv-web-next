@@ -32,7 +32,6 @@ export const SelectOperators: FCProps = ({ className, ...props }) => {
   const { address } = useAccount();
   const { state } = useRegisterValidatorContext;
   const { clusterSize, selectedOperatorsIds } = useRegisterValidatorContext();
-  console.log("selectedOperatorsIds:", selectedOperatorsIds);
 
   const searchOperators = useSearchOperators();
   const operatorsMap =

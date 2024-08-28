@@ -16,35 +16,47 @@ import { useTransactionModal } from "@/signals/modal";
 import type { Toast } from "@/components/ui/use-toast";
 import { toast } from "@/components/ui/use-toast";
 import { wait } from "@/lib/utils/promise";
+import type { MaybePromise } from "@tanstack/react-query-persist-client";
+import { isFunction } from "lodash-es";
 
 export type MainnetEvent = DecodeEventLogReturnType<typeof MainnetV4SetterABI>;
 export type TestnetEvent = DecodeEventLogReturnType<typeof HoleskyV4SetterABI>;
 
 export type MutationOptions<T extends MainnetEvent | TestnetEvent> = {
-  onConfirmed?: (hash: Address) => void;
-  onMined?: (receipt: TransactionReceipt & { events: T[] }) => void;
+  onConfirmed?: (hash: Address) => MaybePromise<unknown | (() => unknown)>;
+  onMined?: (
+    receipt: TransactionReceipt & { events: T[] },
+  ) => MaybePromise<unknown | (() => unknown)>;
   onError?: (
     error: WriteContractErrorType | WaitForTransactionReceiptErrorType,
-  ) => void;
+  ) => MaybePromise<unknown | (() => unknown)>;
 };
 
 export const withTransactionModal = <
   T extends MutationOptions<MainnetEvent | TestnetEvent> & {
     successToast?: Toast;
+    variant?: "default" | "2-step";
   },
 >(
   options?: T,
 ) => {
   return {
-    onConfirmed: (hash) => {
-      useTransactionModal.state.open({ hash });
-      options?.onConfirmed?.(hash);
+    onConfirmed: async (hash) => {
+      useTransactionModal.state.open({
+        hash,
+        variant: options?.variant,
+        step: "pending",
+      });
+      const fn = await options?.onConfirmed?.(hash);
+      isFunction(fn) && fn();
     },
     onMined: async (receipt) => {
+      const fn = await options?.onMined?.(receipt);
+
       useTransactionModal.state.close();
       await wait(0); // skip a react lifecycle to ensure the navigation blocker is cleared so the user can navigate away
 
-      options?.onMined?.(receipt);
+      isFunction(fn) && fn();
 
       toast({
         title: "Transaction confirmed",
@@ -53,11 +65,13 @@ export const withTransactionModal = <
       });
     },
     onError: async (error) => {
+      const fn = await options?.onError?.(error);
+
       useTransactionModal.state.close();
       await wait(0); // skip a react lifecycle to ensure the navigation blocker is cleared so the user can navigate away
 
-      options?.onError?.(error);
-      console.log("error?.message:", error?.message);
+      isFunction(fn) && fn();
+
       toast({
         title: "Transaction failed",
         description:

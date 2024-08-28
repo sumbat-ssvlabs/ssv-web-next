@@ -73,5 +73,6 @@ export const useCancelDeclaredOperatorFee = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

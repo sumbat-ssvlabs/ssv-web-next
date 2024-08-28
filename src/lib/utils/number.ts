@@ -30,6 +30,6 @@ export const ms = (value: number, unit: keyof typeof units): number => {
   return value * units[unit];
 };
 
-export const sortNumbers = (numbers: number[]) => {
-  return [...numbers].sort((a, b) => a - b);
+export const sortNumbers = <T extends bigint | number>(numbers: T[]): T[] => {
+  return [...numbers].sort((a, b) => Number(a) - Number(b));
 };

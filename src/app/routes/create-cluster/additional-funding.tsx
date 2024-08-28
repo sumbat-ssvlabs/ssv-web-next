@@ -1,4 +1,4 @@
-import { useState, type FC } from "react";
+import { type FC } from "react";
 import { Container } from "@/components/ui/container";
 import { Card } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
@@ -12,14 +12,15 @@ import { useClusterPageParams } from "@/hooks/cluster/use-cluster-page-params";
 import { EstimatedOperationalRunwayAlert } from "@/components/cluster/estimated-operational-runway-alert";
 import { UnmountClosed } from "react-collapse";
 import { Link } from "react-router-dom";
+import { useRegisterValidatorContext } from "@/guard/register-validator-guard";
 
 export const AdditionalFunding: FC = () => {
   const params = useClusterPageParams();
 
-  const [amount, setAmount] = useState(0n);
+  const { depositAmount } = useRegisterValidatorContext();
 
   const { data: clusterRunway } = useClusterRunway(params.clusterHash!, {
-    deltaBalance: amount,
+    deltaBalance: depositAmount,
     deltaValidators: 1n,
   });
 
@@ -35,12 +36,12 @@ export const AdditionalFunding: FC = () => {
           Would you like to top - up your balance?
         </Text>
         <Card className="rounded-xl bg-gray-200 w-full border border-gray-300">
-          <ClusterBalance deltaBalance={amount} />
+          <ClusterBalance deltaBalance={depositAmount} />
           <Divider />
           <EstimatedOperationalRunway
             withAlerts={false}
             deltaValidators={1n}
-            deltaBalance={amount}
+            deltaBalance={depositAmount}
           />
         </Card>
         <div className="space-y-4">
@@ -56,8 +57,10 @@ export const AdditionalFunding: FC = () => {
               <Text variant="body-1-medium">Top up balance</Text>
             </div>
             <NumberInput
-              value={amount}
-              onChange={setAmount}
+              value={depositAmount}
+              onChange={(value) => {
+                useRegisterValidatorContext.state.depositAmount = value;
+              }}
               rightSlot={<>SSV</>}
             />
           </Card>

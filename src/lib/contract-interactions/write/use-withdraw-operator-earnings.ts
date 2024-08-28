@@ -73,5 +73,6 @@ export const useWithdrawOperatorEarnings = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

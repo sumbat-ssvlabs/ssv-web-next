@@ -73,5 +73,6 @@ export const useRemoveOperatorsWhitelists = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

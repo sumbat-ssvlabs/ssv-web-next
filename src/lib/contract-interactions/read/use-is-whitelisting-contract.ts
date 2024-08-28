@@ -3,7 +3,7 @@
 // ------------------------------------------------
 
 import type { UseReadContractParameters } from "wagmi";
-import { useReadContract } from "wagmi";
+import { useReadContract, useBlockNumber } from "wagmi";
 
 import { isUndefined } from "lodash-es";
 
@@ -54,15 +54,18 @@ export const fetchIsWhitelistingContract = (
 
 export const useIsWhitelistingContract = (
   params: AbiInputsToParams<Fn["inputs"]>,
-  options?: QueryOptions,
+  options: QueryOptions & { watch?: boolean } = { enabled: true },
 ) => {
   const { getterContractAddress } = useSSVNetworkDetails();
   const args = paramsToArray({ params, abiFunction });
+  const blockNumber = useBlockNumber({ watch: options.watch });
+
   return useReadContract({
     abi: MainnetV4GetterABI,
     address: getterContractAddress,
     functionName: "isWhitelistingContract",
     args,
+    blockNumber: options.watch ? blockNumber.data : undefined,
     query: {
       ...options,
       enabled: options?.enabled && args.every((arg) => !isUndefined(arg)),

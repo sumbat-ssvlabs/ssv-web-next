@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils/tw";
 import type { ButtonProps } from "@/components/ui/button";
 import { Button } from "@/components/ui/button";
 import { useSSVNetworkDetails } from "@/hooks/use-ssv-network-details";
-import { useAccount, useReadContract } from "wagmi";
+import { useAccount, useBlockNumber, useReadContract } from "wagmi";
 import { TokenABI } from "@/lib/abi/token";
 import { useApprove } from "@/lib/contract-interactions/erc-20/write/use-approve";
 import React, { useMemo } from "react";
@@ -11,6 +11,7 @@ import { Stepper } from "@/components/ui/stepper";
 import { toast } from "@/components/ui/use-toast";
 import { globals } from "@/config";
 import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
+import { keepPreviousData } from "@tanstack/react-query";
 
 export type WithAllowanceProps = {
   size?: ButtonProps["size"];
@@ -30,14 +31,17 @@ export const WithAllowance: WithAllowanceFC = ({
 }) => {
   const account = useAccount();
   const ssvNetworkDetails = useSSVNetworkDetails();
+  const block = useBlockNumber({ watch: true });
 
   const allowance = useReadContract({
     abi: TokenABI,
     address: ssvNetworkDetails?.tokenAddress,
     functionName: "allowance",
     args: [account.address!, ssvNetworkDetails?.setterContractAddress],
+    blockNumber: block.data,
     query: {
-      enabled: Boolean(account.address),
+      placeholderData: keepPreviousData,
+      enabled: Boolean(account.address && block.data),
     },
   });
 
@@ -58,23 +62,28 @@ export const WithAllowance: WithAllowanceFC = ({
     );
   };
 
+  const hasAllowance = allowance.isSuccess ? allowance.data >= amount : true;
+  const canProceed =
+    allowance.isSuccess && hasAllowance && approver.wait.isSuccess;
+
   const childrenWithProps = useMemo(
     () =>
       React.Children.map(props.children, (child) => {
         if (React.isValidElement(child)) {
           return React.cloneElement(child, {
             // @ts-expect-error - disabled prop
-            disabled: !approver.isSuccess,
+            disabled: !canProceed,
             size,
           });
         }
         return child;
       }),
-    [approver.isSuccess, props.children, size],
+    [canProceed, props.children, size],
   );
 
   if (allowance.isLoading) return props.children;
-  if (allowance.isSuccess && allowance.data >= amount) return props.children;
+  if (allowance.isSuccess && hasAllowance && approver.wait.status === "idle")
+    return props.children;
 
   return (
     <div className={cn("space-y-4", className)} {...props}>
@@ -83,7 +92,7 @@ export const WithAllowance: WithAllowanceFC = ({
           size={size}
           onClick={approve}
           isLoading={approver.isPending}
-          disabled={approver.isSuccess}
+          disabled={canProceed}
           isActionBtn
           loadingText="Approving..."
         >
@@ -95,10 +104,10 @@ export const WithAllowance: WithAllowanceFC = ({
         className="w-[56%] mx-auto"
         steps={[
           {
-            variant: !approver.isSuccess ? "active" : "done",
+            variant: !canProceed ? "active" : "done",
           },
           {
-            variant: approver.isSuccess ? "active" : "default",
+            variant: canProceed ? "active" : "default",
           },
         ]}
       />

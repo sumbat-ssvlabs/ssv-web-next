@@ -67,5 +67,6 @@ export const useUpdateModule = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

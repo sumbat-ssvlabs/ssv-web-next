@@ -73,5 +73,6 @@ export const useSetOperatorsWhitelists = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

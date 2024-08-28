@@ -67,5 +67,6 @@ export const useRemoveValidator = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

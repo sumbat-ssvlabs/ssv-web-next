@@ -45,12 +45,14 @@ export const RegisterOperatorConfirmation: FC = () => {
             (event) => event.eventName === "OperatorAdded",
           );
 
-          if (!event)
-            return toast({
+          if (!event) {
+            toast({
               title: "Operator Added But... 🤔",
               description:
                 "You will see the operator in the list after the next block",
             });
+            return () => navigate("/operators");
+          }
 
           const operator = createOperatorFromEvent(event);
 
@@ -67,7 +69,7 @@ export const RegisterOperatorConfirmation: FC = () => {
             },
           );
 
-          navigate(`../success?operatorId=${operator.id}`);
+          return () => navigate(`../success?operatorId=${operator.id}`);
         },
       }),
     );

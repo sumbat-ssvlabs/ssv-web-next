@@ -6,7 +6,7 @@ import { useClusterPageParams } from "@/hooks/cluster/use-cluster-page-params";
 
 export const getClusterQueryOptions = (hash?: string) => {
   return queryOptions({
-    queryKey: ["cluster", hash],
+    queryKey: ["cluster", hash?.toLowerCase()],
     queryFn: () => getCluster(hash!),
     enabled: Boolean(hash),
   });

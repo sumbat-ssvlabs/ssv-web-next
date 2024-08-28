@@ -73,5 +73,6 @@ export const useUpdateDeclareOperatorFeePeriod = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

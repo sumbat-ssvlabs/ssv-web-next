@@ -73,5 +73,6 @@ export const useBulkRegisterValidator = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

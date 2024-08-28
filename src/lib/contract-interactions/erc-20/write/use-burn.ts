@@ -64,5 +64,6 @@ export const useBurn = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

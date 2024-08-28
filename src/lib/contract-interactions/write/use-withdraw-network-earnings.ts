@@ -73,5 +73,6 @@ export const useWithdrawNetworkEarnings = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

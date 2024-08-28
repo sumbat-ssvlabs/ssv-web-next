@@ -64,5 +64,6 @@ export const useTransfer = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

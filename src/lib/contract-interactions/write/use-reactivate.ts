@@ -67,5 +67,6 @@ export const useReactivate = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

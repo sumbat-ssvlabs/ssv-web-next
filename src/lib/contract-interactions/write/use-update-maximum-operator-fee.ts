@@ -73,5 +73,6 @@ export const useUpdateMaximumOperatorFee = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

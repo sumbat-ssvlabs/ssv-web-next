@@ -113,6 +113,7 @@ export const ${hookName} = () => {
     isPending,
     mutation,
     write,
+    wait
   };
 };
 `;

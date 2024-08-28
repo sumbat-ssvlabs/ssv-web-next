@@ -67,5 +67,6 @@ export const useExitValidator = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

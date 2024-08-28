@@ -67,5 +67,6 @@ export const useDecreaseAllowance = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };

@@ -4,7 +4,7 @@ import { cva } from "class-variance-authority";
 import type { ComponentPropsWithoutRef, FC } from "react";
 import { MdOutlineLock } from "react-icons/md";
 
-export const variants = cva("object-cover aspect-square", {
+export const variants = cva("object-cover", {
   variants: {
     variant: {
       circle:
@@ -43,14 +43,20 @@ export const OperatorAvatar: FCProps = ({
   ...props
 }) => {
   return (
-    <div className={cn(className, "relative select-none")} {...props}>
+    <div
+      className={cn(
+        variants({ size, variant, className }),
+        "relative select-none aspect-square",
+      )}
+      {...props}
+    >
       {isPrivate && (
         <div className="absolute flex items-center justify-center left-0 top-0 -m-2 bg-gray-50 text-gray-800 rounded-full size-7 border">
           <MdOutlineLock className="size-4" />
         </div>
       )}
       <img
-        className={cn(variants({ size, variant }), "w-full")}
+        className={cn(variants({ size, variant }), "w-full h-full")}
         src={src || "/images/operator_default_background/light.svg"}
       />
     </div>

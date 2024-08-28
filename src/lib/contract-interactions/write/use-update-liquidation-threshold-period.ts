@@ -73,5 +73,6 @@ export const useUpdateLiquidationThresholdPeriod = () => {
     isPending,
     mutation,
     write,
+    wait,
   };
 };
