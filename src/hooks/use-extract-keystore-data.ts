@@ -6,18 +6,17 @@ import { useMutation } from "@tanstack/react-query";
 // console.log("ExtractKeystoreDataWorker:", ExtractKeystoreDataWorker);
 import { SSVKeys } from "ssv-keys";
 import { type ExtractedKeys } from "ssv-keys/dist/tsc/src/lib/SSVKeys";
-console.log("SSVKeys:", SSVKeys);
+
 type Params = {
   file: File;
   password: string;
 };
 
-const ssvKeys = new SSVKeys();
-
 export const extractKeys = async ({
   file,
   password,
 }: Params): Promise<ExtractedKeys> => {
+  const ssvKeys = new SSVKeys();
   const text = await file.text();
   console.log("text:", text);
   console.log("ssvKeys:", ssvKeys);
