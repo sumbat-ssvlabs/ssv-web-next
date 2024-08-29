@@ -1,25 +1,50 @@
 import type { MutationConfig } from "@/lib/react-query";
 import { useMutation } from "@tanstack/react-query";
 
-import type {
-  CreateSharesMessage,
-  CreateSharesResponseMessage,
-} from "@/workers/create-keystore-payload";
-
-import CreateKeystorePayloadWorker from "@/workers/create-keystore-payload?worker";
+import type { CreateSharesMessage } from "@/workers/create-keystore-payload";
+import type { IOperator } from "ssv-keys/dist/tsc/src/lib/KeyShares/KeySharesData/IOperator";
 import type { KeySharesPayload } from "ssv-keys/dist/tsc/src/lib/KeyShares/KeySharesData/KeySharesPayload";
-const worker = new CreateKeystorePayloadWorker();
+
+import { KeySharesItem, SSVKeys } from "ssv-keys";
+const ssvKeys = new SSVKeys();
+
+const createAndEncryptShares = async (
+  privateKey: string,
+  operators: IOperator[],
+) => {
+  const threshold = await ssvKeys.createThreshold(privateKey, operators);
+  const encryptedShares = await ssvKeys.encryptShares(
+    operators,
+    threshold.shares,
+  );
+  return {
+    threshold,
+    encryptedShares,
+  };
+};
 
 export const createKeystorePayload = async (
-  args: CreateSharesMessage["data"],
-): Promise<KeySharesPayload> => {
-  return new Promise((resolve, reject) => {
-    worker.onmessage = (e: CreateSharesResponseMessage) => {
-      const { data, error } = e.data;
-      return data ? resolve(data) : reject(error);
-    };
-    worker.postMessage(args);
-  });
+  data: CreateSharesMessage["data"],
+) => {
+  const { threshold, encryptedShares } = await createAndEncryptShares(
+    data.privateKey,
+    data.operators,
+  );
+
+  const shares = (await new KeySharesItem().buildPayload(
+    {
+      publicKey: threshold.publicKey,
+      operators: data.operators,
+      encryptedShares,
+    },
+    {
+      ownerAddress: data.account,
+      ownerNonce: data.nonce,
+      privateKey: data.privateKey,
+    },
+  )) as KeySharesPayload;
+
+  return shares;
 };
 
 export const useCreateShares = (

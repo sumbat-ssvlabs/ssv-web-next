@@ -1,11 +1,8 @@
 import type { MutationConfig } from "@/lib/react-query";
 import { useMutation } from "@tanstack/react-query";
 
-// import ExtractKeystoreDataWorker from "@/workers/extract-keystore-data?worker&url";
-// const worker = new Worker(ExtractKeystoreDataWorker);
-// console.log("ExtractKeystoreDataWorker:", ExtractKeystoreDataWorker);
-
-const { SSVKeys } = await import("ssv-keys");
+import type { ExtractedKeys } from "ssv-keys/dist/tsc/src/lib/SSVKeys";
+import { SSVKeys } from "ssv-keys";
 const ssvKeys = new SSVKeys();
 
 type Params = {
@@ -13,19 +10,22 @@ type Params = {
   password: string;
 };
 
-export const extractKeys = async ({ file, password }: Params) => {
+export const extractKeys = async ({
+  file,
+  password,
+}: Params): Promise<ExtractedKeys> => {
   const text = await file.text();
-  console.log("text:", text);
-  console.log("ssvKeys:", ssvKeys);
-
-  return ssvKeys.extractKeys(text, password);
+  return await ssvKeys.extractKeys(text, password);
   // return new Promise((resolve, reject) => {
-  //   worker.onmessage = (e: KeystoreResponseMessage) => {
-  //     const { data, error } = e.data;
-  //     console.log("data:", data);
-  //     return error ? reject(error) : resolve(data);
-  //   };
-  //   worker.postMessage({ file, password });
+  //   try {
+  //     worker.onmessage = (e: KeystoreResponseMessage) => {
+  //       const { data, error } = e.data;
+  //       return error ? reject(error) : resolve(data);
+  //     };
+  //     worker.postMessage({ file, password });
+  //   } catch (error) {
+  //     reject(error);
+  //   }
   // });
 };
 

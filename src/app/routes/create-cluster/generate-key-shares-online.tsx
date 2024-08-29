@@ -84,6 +84,7 @@ export const GenerateKeySharesOnline: FCProps = () => {
 
   const extractKeystoreData = useExtractKeystoreData({
     onSuccess: async (data) => {
+      console.log("useExtractKeystoreData:", data);
       const nonce = await getOwnerNonce(address!);
 
       const shares = await createShares.mutateAsync({

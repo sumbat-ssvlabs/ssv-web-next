@@ -28,6 +28,9 @@ import "@fontsource/manrope/800.css";
 //   };
 // }
 
+// import "@/workers/create-keystore-payload";
+// import "@/workers/extract-keystore-data";
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <WagmiProvider config={config}>
     <PersistQueryClientProvider
