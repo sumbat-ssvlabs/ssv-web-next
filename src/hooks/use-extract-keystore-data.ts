@@ -4,7 +4,8 @@ import { useMutation } from "@tanstack/react-query";
 // import ExtractKeystoreDataWorker from "@/workers/extract-keystore-data?worker&url";
 // const worker = new Worker(ExtractKeystoreDataWorker);
 // console.log("ExtractKeystoreDataWorker:", ExtractKeystoreDataWorker);
-import { SSVKeys, type ExtractedKeys } from "ssv-keys/dist/tsc/src/lib/SSVKeys";
+import { SSVKeys } from "ssv-keys";
+import { type ExtractedKeys } from "ssv-keys/dist/tsc/src/lib/SSVKeys";
 
 type Params = {
   file: File;
