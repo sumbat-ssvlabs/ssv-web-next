@@ -3,21 +3,28 @@ import { Container } from "@/components/ui/container";
 import { Card } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
 import { useAccount } from "wagmi";
-import { useSelectedOperators } from "@/guard/register-validator-guard";
-import { createClusterHash } from "@/lib/utils/cluster";
 import { shortenAddress } from "@/lib/utils/strings";
 import { FaCircleInfo } from "react-icons/fa6";
 import { useOperators } from "@/hooks/operator/use-operators";
 import { OperatorAvatar } from "@/components/operator/operator-avatar";
 import { Tooltip } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
+import { useSearchParam } from "react-use";
+import { createClusterHash } from "@/lib/utils/cluster";
 
 export const RegisterValidatorSuccess: FC = () => {
   const { address } = useAccount();
-  const operatorsIds = useSelectedOperators();
-  const hash = createClusterHash(address!, operatorsIds);
-  const operators = useOperators(operatorsIds);
+
+  const operatorIds =
+    useSearchParam("operatorIds")
+      ?.split(",")
+      .map((id) => Number(id)) ?? [];
+
+  const clusterHash = createClusterHash(address!, operatorIds);
+  const operators = useOperators(operatorIds);
+
+  if (!operatorIds.length) return <Navigate to="/clusters" />;
 
   return (
     <Container variant="vertical">
@@ -37,7 +44,7 @@ export const RegisterValidatorSuccess: FC = () => {
         >
           <div className="flex items-center gap-2 w-fit">
             <Text variant="body-3-bold">
-              Validator Cluster {shortenAddress(hash)}
+              Validator Cluster {shortenAddress(clusterHash)}
             </Text>
             <FaCircleInfo className="size-3 text-gray-500" />
           </div>
@@ -61,7 +68,7 @@ export const RegisterValidatorSuccess: FC = () => {
           Your cluster operators have been notified and will start your
           validator operation instantly.
         </Text>
-        <Button as={Link} to={`/clusters/${hash}`} size="xl">
+        <Button as={Link} to={`/clusters/${clusterHash}`} size="xl">
           Manage Cluster
         </Button>
       </Card>

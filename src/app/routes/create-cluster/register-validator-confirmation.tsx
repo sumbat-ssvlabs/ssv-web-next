@@ -36,7 +36,6 @@ import type { Address } from "abitype";
 import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
 import { retryPromiseUntilSuccess } from "@/lib/utils/promise";
 import { getCluster } from "@/api/cluster";
-import { useTransactionModal } from "@/signals/modal";
 import { queryClient } from "@/lib/react-query";
 import { useNavigate } from "react-router";
 import { Badge } from "@/components/ui/badge";
@@ -88,7 +87,6 @@ export const RegisterValidatorConfirmation: FC = () => {
 
     const options = withTransactionModal({
       onMined: async () => {
-        useTransactionModal.state.meta.step = "indexing";
         await retryPromiseUntilSuccess(async () => {
           const cluster = await getCluster(clusterHash);
 
@@ -101,7 +99,8 @@ export const RegisterValidatorConfirmation: FC = () => {
           queryKey: getClusterQueryOptions(clusterHash).queryKey,
         });
 
-        return () => navigate("../success");
+        return () =>
+          navigate(`../success?operatorIds=${operatorIds.join(",")}`);
       },
     });
 

@@ -151,13 +151,16 @@ const routes = [
                 path: "select-operators",
                 element: <SelectOperators />,
               },
-
               {
-                path: "generate-online",
+                path: "distribution-method",
+                element: <DistributionMethod variant="create" />,
+              },
+              {
+                path: "online",
                 element: <GenerateKeySharesOnline />,
               },
               {
-                path: "generate-offline",
+                path: "offline",
                 element: <UploadKeyshares />,
               },
               {

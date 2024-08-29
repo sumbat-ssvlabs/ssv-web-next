@@ -51,6 +51,7 @@ export const withTransactionModal = <
       isFunction(fn) && fn();
     },
     onMined: async (receipt) => {
+      useTransactionModal.state.meta.step = "indexing";
       const fn = await options?.onMined?.(receipt);
 
       useTransactionModal.state.close();

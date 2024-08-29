@@ -32,7 +32,7 @@ export const [RegisterValidatorGuard, useRegisterValidatorContext] =
       this._selectedOperatorsIds = ids;
     },
     get selectedOperatorsIds() {
-      return sortNumbers(this._selectedOperatorsIds);
+      return sortNumbers(this._selectedOperatorsIds.slice(0, this.clusterSize));
     },
     get hasSelectedOperators() {
       return this.selectedOperatorsIds.length > 0;
@@ -49,9 +49,13 @@ export const useSelectedOperators = () => {
   const { data: shares } = useKeysharesSchemaValidation(files?.at(0) || null);
 
   return useMemo(() => {
-    if (inCluster) return sortNumbers(cluster.data?.operators ?? []);
-    if (hasSelectedOperators) return selectedOperatorsIds;
-    return shares?.[0].payload.operatorIds ?? [];
+    return sortNumbers(
+      inCluster
+        ? cluster.data?.operators ?? []
+        : hasSelectedOperators
+          ? selectedOperatorsIds
+          : shares?.[0].payload.operatorIds ?? [],
+    );
   }, [
     inCluster,
     cluster.data?.operators,

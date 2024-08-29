@@ -133,7 +133,7 @@ export const SelectOperators: FCProps = ({ className, ...props }) => {
               </AlertDescription>
             </Alert>
           )}
-          <Button size="xl" as={Link} to="../generate-online">
+          <Button size="xl" as={Link} to="../distribution-method">
             Next
           </Button>
         </Card>
