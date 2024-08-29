@@ -62,7 +62,7 @@ export const Preparation: FCProps = ({ className, ...props }) => {
           <Button as={Link} to="select-operators" size="xl">
             Generate new key shares
           </Button>
-          <Button as={Link} to="generate-offline" size="xl" variant="secondary">
+          <Button as={Link} to="offline" size="xl" variant="secondary">
             I already have key shares
           </Button>
         </div>

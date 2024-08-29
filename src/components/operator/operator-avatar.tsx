@@ -7,10 +7,10 @@ import { MdOutlineLock } from "react-icons/md";
 export const variants = cva("object-cover", {
   variants: {
     variant: {
-      circle:
-        "rounded-full outline outline-1 outline-offset-[3px] outline-gray-300",
+      circle: "rounded-full",
       square: "rounded-lg",
     },
+
     size: {
       sm: "size-6",
       md: "size-8",
@@ -39,6 +39,7 @@ export const OperatorAvatar: FCProps = ({
   className,
   isPrivate,
   size,
+
   variant,
   ...props
 }) => {

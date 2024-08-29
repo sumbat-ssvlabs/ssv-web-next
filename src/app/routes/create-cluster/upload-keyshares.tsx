@@ -19,6 +19,7 @@ import {
   TableRow,
 } from "@/components/ui/grid-table";
 import { Spacer } from "@/components/ui/spacer";
+import { Spinner } from "@/components/ui/spinner";
 import { Text } from "@/components/ui/text";
 import {
   useRegisterValidatorContext,
@@ -41,9 +42,10 @@ export type GenerateKeySharesOfflineProps = {
   // TODO: Add props or remove this type
 };
 
-const FileSvgDraw = () => {
+const FileSvgDraw = ({ isLoading }: { isLoading?: boolean }) => {
   return (
     <div className="flex flex-col items-center pt-8">
+      {isLoading && <Spinner />}
       <svg
         className="w-8 h-8 mb-3 text-gray-500 dark:text-gray-400"
         aria-hidden="true"
@@ -109,6 +111,11 @@ export const UploadKeyshares: FCProps = ({ ...props }) => {
     navigate("../funding");
   };
 
+  const canProceed =
+    Boolean(validators.data?.tags?.valid.length) &&
+    !operatorsUsability.data?.hasExceededValidatorsLimit &&
+    !operatorsUsability.data?.hasPermissionedOperators;
+
   return (
     <Container
       variant="horizontal"
@@ -133,7 +140,9 @@ export const UploadKeyshares: FCProps = ({ ...props }) => {
           className="relative bg-background rounded-lg p-2"
         >
           <FileInput className="outline-dashed outline-1 outline-white">
-            <FileSvgDraw />
+            <FileSvgDraw
+              isLoading={validatedShares.isLoading || validators.isLoading}
+            />
             <div className="flex items-center justify-center flex-col pt-3 pb-4 w-full px-3 "></div>
           </FileInput>
           <FileUploaderContent>
@@ -169,14 +178,12 @@ export const UploadKeyshares: FCProps = ({ ...props }) => {
                 ({ operator, isUsable }) => (
                   <div className="flex flex-1 max-w-8 flex-col items-center">
                     <OperatorAvatar
+                      variant="circle"
                       src={operator.logo}
-                      className={cn(
-                        "aspect-square w-full rounded-full border",
-                        {
-                          "border-error-500": !isUsable,
-                          "border-transparent": isUsable,
-                        },
-                      )}
+                      className={cn("border", {
+                        "border-error-500": !isUsable,
+                        "border-transparent": isUsable,
+                      })}
                     />
                     <Text
                       className={cn("text-[10px] text-gray-500 font-medium", {
@@ -251,7 +258,12 @@ export const UploadKeyshares: FCProps = ({ ...props }) => {
               </TableRow>
             ))}
           </Table>
-          <Button isLoading={cluster.isLoading} size="xl" onClick={submit}>
+          <Button
+            isLoading={cluster.isLoading}
+            size="xl"
+            onClick={submit}
+            disabled={!canProceed}
+          >
             Next
           </Button>
         </Card>
