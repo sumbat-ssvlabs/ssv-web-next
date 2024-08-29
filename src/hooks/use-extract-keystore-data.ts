@@ -6,7 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 // console.log("ExtractKeystoreDataWorker:", ExtractKeystoreDataWorker);
 import { SSVKeys } from "ssv-keys";
 import { type ExtractedKeys } from "ssv-keys/dist/tsc/src/lib/SSVKeys";
-
+console.log("SSVKeys:", SSVKeys);
 type Params = {
   file: File;
   password: string;
@@ -19,6 +19,9 @@ export const extractKeys = async ({
   password,
 }: Params): Promise<ExtractedKeys> => {
   const text = await file.text();
+  console.log("text:", text);
+  console.log("ssvKeys:", ssvKeys);
+
   return await ssvKeys.extractKeys(text, password);
   // return new Promise((resolve, reject) => {
   //   worker.onmessage = (e: KeystoreResponseMessage) => {
