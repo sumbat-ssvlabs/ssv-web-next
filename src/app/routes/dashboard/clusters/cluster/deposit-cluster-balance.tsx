@@ -18,10 +18,10 @@ import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import { useClusterPageParams } from "@/hooks/cluster/use-cluster-page-params";
 import { Divider } from "@/components/ui/divider";
-import { isBigIntChanged } from "@/lib/utils/bigint";
+import { isBigIntChanged, stringifyBigints } from "@/lib/utils/bigint";
 import { useClusterBalance } from "@/hooks/cluster/use-cluster-balance";
 import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
-import { queryClient } from "@/lib/react-query";
+import { setOptimisticData } from "@/lib/react-query";
 import { useDepositClusterBalance } from "@/hooks/cluster/use-deposit-cluster-balance";
 import { useNavigate } from "react-router-dom";
 import { useSSVBalance } from "@/hooks/use-ssv-balance";
@@ -53,11 +53,21 @@ export const DepositClusterBalance: FC = () => {
     deposit.write(
       { amount: args.value },
       withTransactionModal({
-        onMined: async () => {
-          await queryClient.refetchQueries(
-            getClusterQueryOptions(params.clusterHash!),
-          );
-          await clusterBalance.refetch();
+        onMined: async ({ events }) => {
+          const event = events.find((e) => e.eventName === "ClusterDeposited");
+
+          event &&
+            setOptimisticData(
+              getClusterQueryOptions(params.clusterHash!).queryKey,
+              (cluster) => {
+                if (!cluster) return cluster;
+                return {
+                  ...cluster,
+                  ...stringifyBigints(event.args.cluster),
+                };
+              },
+            );
+
           return () => navigate("..");
         },
       }),

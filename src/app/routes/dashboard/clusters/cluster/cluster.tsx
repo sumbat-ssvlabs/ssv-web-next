@@ -9,10 +9,12 @@ import { Divider } from "@/components/ui/divider";
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import { Spacer } from "@/components/ui/spacer";
 import { Text } from "@/components/ui/text";
+import { Tooltip } from "@/components/ui/tooltip";
 import { useCluster } from "@/hooks/cluster/use-cluster";
 import { useClusterBalance } from "@/hooks/cluster/use-cluster-balance";
 import { useClusterPageParams } from "@/hooks/cluster/use-cluster-page-params";
 import { useClusterRunway } from "@/hooks/cluster/use-cluster-runway";
+import { useOperatorsUsability } from "@/hooks/keyshares/use-operators-usability";
 import { useIsLiquidated } from "@/lib/contract-interactions/read/use-is-liquidated";
 import { formatClusterData } from "@/lib/utils/cluster";
 import { formatSSV } from "@/lib/utils/number";
@@ -24,11 +26,10 @@ import { useAccount } from "wagmi";
 
 export const Cluster: FC = () => {
   const account = useAccount();
+
   const { clusterHash } = useClusterPageParams();
   const cluster = useCluster(clusterHash!);
-  const balance = useClusterBalance(clusterHash!);
-  console.log("balance:", balance.data);
-  console.log("balanceq:", balance.queryKey[1]);
+  const balance = useClusterBalance(clusterHash!, { watch: true });
 
   const isLiquidated = useIsLiquidated(
     {
@@ -40,6 +41,11 @@ export const Cluster: FC = () => {
       enabled: Boolean(cluster.data && account.address),
     },
   );
+
+  const operatorsUsability = useOperatorsUsability({
+    account: account.address!,
+    operatorIds: cluster.data?.operators ?? [],
+  });
 
   const { data: runway } = useClusterRunway(clusterHash!);
 
@@ -95,12 +101,27 @@ export const Cluster: FC = () => {
               Validators
             </Text>
             <Spacer />
-            <Button
-              as={Link}
-              to={`/join/validator/${clusterHash}/distribution-method`}
+            <Tooltip
+              content={
+                operatorsUsability.data?.hasPermissionedOperators
+                  ? "One of your chosen operators has shifted to a permissioned status. To onboard validators, you'll need to select a new cluster."
+                  : operatorsUsability.data?.hasExceededValidatorsLimit
+                    ? "One of your operators has reached their maximum number of validators"
+                    : undefined
+              }
             >
-              <Text>Add Validator</Text> <PlusIcon className="size-4" />
-            </Button>
+              <Button
+                disabled={
+                  operatorsUsability.data?.hasExceededValidatorsLimit ||
+                  operatorsUsability.data?.hasPermissionedOperators
+                }
+                isLoading={operatorsUsability.isLoading}
+                as={Link}
+                to={`/join/validator/${clusterHash}/distribution-method`}
+              >
+                <Text>Add Validator</Text> <PlusIcon className="size-4" />
+              </Button>
+            </Tooltip>
           </div>
           <ClusterValidatorsList className="min-h-96" />
         </Card>

@@ -32,7 +32,7 @@ export const [RegisterValidatorGuard, useRegisterValidatorContext] =
       this._selectedOperatorsIds = ids;
     },
     get selectedOperatorsIds() {
-      return this._selectedOperatorsIds;
+      return sortNumbers(this._selectedOperatorsIds);
     },
     get hasSelectedOperators() {
       return this.selectedOperatorsIds.length > 0;

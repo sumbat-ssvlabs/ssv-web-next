@@ -27,7 +27,7 @@ type Result = {
 
 export const useOperatorsUsability = (
   { account, operatorIds }: Props,
-  options: UseQueryOptions<Record<number, boolean>> = {},
+  options: UseQueryOptions<Record<number, boolean>> = { enabled: true },
 ) => {
   const { data: maxValidators = 0 } = useGetValidatorsPerOperatorLimit();
   const operators = useOperators(operatorIds);
@@ -41,6 +41,7 @@ export const useOperatorsUsability = (
             [operator, await canAccountUseOperator(account, operator)] as const,
         ),
       );
+      console.log("result:", result);
 
       return result.reduce(
         (acc, [operator, canUse]) => {
@@ -54,6 +55,7 @@ export const useOperatorsUsability = (
     enabled: Boolean(operators.data && options.enabled),
   });
 
+  console.log("canUse:", canUse);
   const queryStatus = combineQueryStatus(canUse, operators);
   return {
     ...queryStatus,

@@ -42,6 +42,7 @@ import { ProtectedClusterRoute } from "@/app/routes/protected-cluster-route";
 import { ProtectedOperatorRoute } from "@/app/routes/protected-operator-route";
 import { ProtectedRoute } from "@/app/routes/protected-route";
 import { RegisterOperatorGuard } from "@/guard/register-operator-guards";
+import { RegisterValidatorGuard } from "@/guard/register-validator-guard";
 import type { RouteObject } from "react-router-dom";
 import { createBrowserRouter, Link, Outlet } from "react-router-dom";
 
@@ -102,7 +103,11 @@ const routes = [
 
           {
             path: "validator",
-            element: <Outlet />,
+            element: (
+              <RegisterValidatorGuard>
+                <Outlet />
+              </RegisterValidatorGuard>
+            ),
             children: [
               {
                 path: ":clusterHash",
@@ -170,6 +175,10 @@ const routes = [
               {
                 path: "confirmation",
                 element: <RegisterValidatorConfirmation />,
+              },
+              {
+                path: "success",
+                element: <RegisterValidatorSuccess />,
               },
             ],
           },

@@ -5,7 +5,13 @@ import { formatClusterData } from "@/lib/utils/cluster";
 import { useMemo } from "react";
 import { keepPreviousData } from "@tanstack/react-query";
 
-export const useClusterBalance = (hash: string) => {
+export const useClusterBalance = (
+  hash: string,
+  {
+    watch = false,
+    enabled = true,
+  }: Partial<{ watch: boolean; enabled: boolean }> = {},
+) => {
   const account = useAccount();
   const cluster = useCluster(hash);
 
@@ -21,9 +27,9 @@ export const useClusterBalance = (hash: string) => {
       operatorIds,
     },
     {
-      watch: true,
+      watch,
       placeholderData: keepPreviousData,
-      enabled: Boolean(account.address && cluster.data),
+      enabled: Boolean(account.address && cluster.data && enabled),
     },
   );
 };

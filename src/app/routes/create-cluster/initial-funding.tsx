@@ -30,7 +30,7 @@ import {
 import { stringifyBigints } from "@/lib/utils/bigint";
 import { useOperators } from "@/hooks/operator/use-operators";
 import { sumOperatorsFees } from "@/lib/utils/operator";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 export type InitialFundingProps = {
   // TODO: Add props or remove this type
@@ -46,11 +46,12 @@ const schema = z.object({
 });
 
 export const InitialFunding: FCProps = ({ ...props }) => {
+  const navigate = useNavigate();
+
   const { state } = useRegisterValidatorContext;
   const operatorIds = useSelectedOperators();
 
   const operators = useOperators(operatorIds);
-  console.log("operators:", operators);
   const operatorsFee = sumOperatorsFees(operators.data ?? []);
 
   const computeFundingCost = useComputeFundingCost();
@@ -80,7 +81,9 @@ export const InitialFunding: FCProps = ({ ...props }) => {
       operatorsFee,
       validators: 1,
     });
+    console.log("amount:", amount);
     state.depositAmount = amount;
+    navigate("../balance-warning");
   });
 
   if (operators.isPending) {
@@ -119,6 +122,7 @@ export const InitialFunding: FCProps = ({ ...props }) => {
                 avoid liquidation please input a longer period.{" "}
                 <Button
                   as="a"
+                  variant="link"
                   href="https://docs.ssv.network/learn/protocol-overview/tokenomics/liquidations"
                   target="_blank"
                 >
@@ -130,7 +134,7 @@ export const InitialFunding: FCProps = ({ ...props }) => {
               </div>
             </Alert>
           </Collapse>
-          <Button as={Link} to="../balance-warning" size="xl" type="submit">
+          <Button size="xl" type="submit">
             Next
           </Button>
         </Card>

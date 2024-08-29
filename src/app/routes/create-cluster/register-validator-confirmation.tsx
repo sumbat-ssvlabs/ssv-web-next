@@ -91,7 +91,10 @@ export const RegisterValidatorConfirmation: FC = () => {
         useTransactionModal.state.meta.step = "indexing";
         await retryPromiseUntilSuccess(async () => {
           const cluster = await getCluster(clusterHash);
-          return clusterData.validatorCount !== cluster?.validatorCount;
+
+          return (
+            cluster && clusterData.validatorCount !== cluster?.validatorCount
+          );
         });
 
         await queryClient.refetchQueries({

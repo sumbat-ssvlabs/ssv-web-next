@@ -8,7 +8,7 @@ const variants = cva("", {
     variant: {
       title: "text-[40px] font-extrabold",
       headline1: "text-[32px] font-extrabold",
-      headline2: "text-[28] font-extrabold",
+      headline2: "text-[28px] font-extrabold",
       headline3: "text-2xl font-extrabold",
       headline4: "text-xl font-bold",
       "body-1-bold": "text-lg font-bold",

@@ -19,7 +19,7 @@ import { Text } from "@/components/ui/text";
 import { useClusterRunway } from "@/hooks/cluster/use-cluster-runway";
 import { useClusterPageParams } from "@/hooks/cluster/use-cluster-page-params";
 import { Divider } from "@/components/ui/divider";
-import { isBigIntChanged } from "@/lib/utils/bigint";
+import { isBigIntChanged, stringifyBigints } from "@/lib/utils/bigint";
 import { useClusterBalance } from "@/hooks/cluster/use-cluster-balance";
 import { formatSSV } from "@/lib/utils/number";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -27,6 +27,8 @@ import { useWithdrawClusterBalance } from "@/hooks/cluster/use-withdraw-cluster-
 import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
 import { useNavigate } from "react-router-dom";
 import { useLiquidateCluster } from "@/hooks/cluster/use-liquidate-cluster";
+import { setOptimisticData } from "@/lib/react-query";
+import { getClusterQueryOptions } from "@/hooks/cluster/use-cluster";
 
 const schema = z.object({
   amount: z.bigint().positive(),
@@ -40,7 +42,9 @@ export const WithdrawClusterBalance: FC = () => {
   const liquidate = useLiquidateCluster(params.clusterHash!);
   const isWriting = withdraw.isPending || liquidate.isPending;
 
-  const clusterBalance = useClusterBalance(params.clusterHash!);
+  const clusterBalance = useClusterBalance(params.clusterHash!, {
+    watch: true,
+  });
 
   const [hasAgreed, setHasAgreed] = useState(false);
 
@@ -63,7 +67,21 @@ export const WithdrawClusterBalance: FC = () => {
 
   const submit = form.handleSubmit(async (values) => {
     const options = withTransactionModal({
-      onMined: async () => {
+      onMined: async ({ events }) => {
+        const event = events.find((e) => e.eventName === "ClusterWithdrawn");
+
+        event &&
+          setOptimisticData(
+            getClusterQueryOptions(params.clusterHash!).queryKey,
+            (cluster) => {
+              if (!cluster) return cluster;
+              return {
+                ...cluster,
+                ...stringifyBigints(event.args.cluster),
+              };
+            },
+          );
+
         return () => navigate("..");
       },
     });

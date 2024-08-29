@@ -2,11 +2,10 @@ import { Button } from "@/components/ui/button";
 import { CopyBtn } from "@/components/ui/copy-btn";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Text } from "@/components/ui/text";
+import { useLinks } from "@/hooks/use-links";
 import { useTransactionModal } from "@/signals/modal";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import type { ComponentPropsWithoutRef, FC } from "react";
-import { LuSatelliteDish } from "react-icons/lu";
-import { Link } from "react-router-dom";
 
 export type TransactionModalProps = {
   // TODO: Add props or remove this type
@@ -19,6 +18,7 @@ type FCProps = FC<
 
 export const TransactionModal: FCProps = () => {
   const { meta, isOpen } = useTransactionModal();
+  const { etherscan } = useLinks();
 
   return (
     <Dialog isOpen={isOpen}>
@@ -46,16 +46,13 @@ export const TransactionModal: FCProps = () => {
                 {meta.hash}
               </Text>
               <CopyBtn text={meta.hash} className="size-8" />
-              <Button size="icon" variant="ghost" className="size-8">
-                <LuSatelliteDish className="size-5" />
-              </Button>
             </div>
           </div>
           <Button
-            as={Link}
+            as="a"
             target="_blank"
             variant="link"
-            to="/transactions"
+            href={`${etherscan}/tx/${meta.hash}`}
             className="w-full text-center"
           >
             View Transaction

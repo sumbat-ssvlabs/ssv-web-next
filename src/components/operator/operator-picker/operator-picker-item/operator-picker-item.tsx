@@ -1,8 +1,8 @@
 import { OperatorAvatar } from "@/components/operator/operator-avatar";
 import { MevRelays } from "@/components/operator/operator-picker/operator-picker-item/mev-relays/mev-relays";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { SsvExplorerBtn } from "@/components/ui/ssv-explorer-btn";
 import { Text } from "@/components/ui/text";
 import { Tooltip } from "@/components/ui/tooltip";
 import { useGetValidatorsPerOperatorLimit } from "@/lib/contract-interactions/read/use-get-validators-per-operator-limit";
@@ -11,8 +11,6 @@ import { getYearlyFee } from "@/lib/utils/operator";
 import { cn } from "@/lib/utils/tw";
 import type { Operator } from "@/types/api";
 import type { ComponentPropsWithoutRef, FC } from "react";
-import { MdOutlineQueryStats } from "react-icons/md";
-import { Link } from "react-router-dom";
 
 export type OperatorPickerItemProps = {
   operator: Operator;
@@ -94,12 +92,7 @@ export const OperatorPickerItem: FCProps = ({
         </div>
         <div>{getYearlyFee(BigInt(operator.fee), { format: true })}</div>
         <MevRelays mevRelays={operator.mev_relays} />
-        <Link to={`/operator/${operator.id}`}>
-          <Button variant="secondary" size="sm">
-            <MdOutlineQueryStats className="mr-2" />
-            Details
-          </Button>
-        </Link>
+        <SsvExplorerBtn operatorId={operator.id} />
       </label>
     </Tooltip>
   );

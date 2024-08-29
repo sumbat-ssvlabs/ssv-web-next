@@ -4,7 +4,7 @@ export const wait = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
 export const retryPromiseUntilSuccess = async (
-  promise: () => Promise<boolean>,
+  promise: () => Promise<boolean | null | undefined>,
   { delay = ms(1, "seconds"), timeout = ms(1, "minutes") } = {},
 ): Promise<void> => {
   return new Promise((resolve) => {
