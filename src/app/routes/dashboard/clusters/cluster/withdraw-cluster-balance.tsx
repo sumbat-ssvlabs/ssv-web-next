@@ -29,6 +29,7 @@ import { useNavigate } from "react-router-dom";
 import { useLiquidateCluster } from "@/hooks/cluster/use-liquidate-cluster";
 import { setOptimisticData } from "@/lib/react-query";
 import { getClusterQueryOptions } from "@/hooks/cluster/use-cluster";
+import { merge } from "lodash-es";
 
 const schema = z.object({
   amount: z.bigint().positive(),
@@ -69,16 +70,14 @@ export const WithdrawClusterBalance: FC = () => {
     const options = withTransactionModal({
       onMined: async ({ events }) => {
         const event = events.find((e) => e.eventName === "ClusterWithdrawn");
+        console.log("event:", event);
 
         event &&
           setOptimisticData(
             getClusterQueryOptions(params.clusterHash!).queryKey,
             (cluster) => {
               if (!cluster) return cluster;
-              return {
-                ...cluster,
-                ...stringifyBigints(event.args.cluster),
-              };
+              return merge({}, cluster, stringifyBigints(event.args.cluster));
             },
           );
 
@@ -133,7 +132,7 @@ export const WithdrawClusterBalance: FC = () => {
                         >
                           Max
                         </Button>
-                        <Text variant="headline2">SSV</Text>
+                        <Text variant="body-1-bold">SSV</Text>
                       </div>
                     }
                   />

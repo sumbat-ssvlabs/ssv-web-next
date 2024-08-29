@@ -13,7 +13,7 @@ export const [RegisterOperatorGuard, useRegisterOperatorContext] = createGuard(
     "/join/operator/confirm-transaction": (state) => {
       if (!state.publicKey) return "/join/operator/register";
     },
-    "/join/operator/success": (state, resetState) => {
+    "/join/operator/success": (state, { resetState }) => {
       if (!state.publicKey) return "/join/operator/register";
       resetState();
     },

@@ -1,5 +1,11 @@
 import { sortNumbers } from "@/lib/utils/number";
-import type { SolidityCluster, Operator, Cluster } from "@/types/api";
+import { add0x } from "@/lib/utils/strings";
+import type {
+  SolidityCluster,
+  Operator,
+  Cluster,
+  Validator,
+} from "@/types/api";
 import type { Address } from "abitype";
 import { isNumber, merge } from "lodash-es";
 import { encodePacked, keccak256 } from "viem";
@@ -45,3 +51,15 @@ export const formatClusterData = (
   networkFeeIndex: BigInt(cluster?.networkFeeIndex ?? 0),
   validatorCount: cluster?.validatorCount ?? 0,
 });
+
+export const filterOutRemovedValidators = (
+  fetchedValidators: Validator[],
+  removedOptimisticValidatorsPKs: string[],
+) =>
+  fetchedValidators.filter(
+    (validator) =>
+      !removedOptimisticValidatorsPKs.some(
+        (pk) =>
+          add0x(pk).toLowerCase() === add0x(validator.public_key).toLowerCase(),
+      ),
+  );

@@ -24,7 +24,7 @@ if (prevVersion !== APP_VERSION) {
 
 export const queryConfig = {
   queries: {
-    staleTime: ms(30, "seconds"),
+    staleTime: ms(1, "minutes"),
     gcTime: ms(24, "hours"),
   },
 } satisfies DefaultOptions;

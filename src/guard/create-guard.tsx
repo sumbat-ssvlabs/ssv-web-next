@@ -3,15 +3,23 @@ import type { RoutePaths } from "@/app/routes/router";
 import { reset } from "@/lib/utils/valtio";
 import type { ReactNode } from "react";
 import React, { useMemo } from "react";
-import { useLocation, matchPath, Navigate } from "react-router";
+import type { Location, Params } from "react-router";
+import { useLocation, matchPath, Navigate, useParams } from "react-router";
 import { useUnmount } from "react-use";
 import { proxy, useSnapshot } from "valtio";
 
+type GuardFn<T extends object> = (
+  state: T,
+  options: {
+    location: Location;
+    params: Readonly<Params<string>>;
+    resetState: () => void;
+  },
+) => string | void;
+
 export const createGuard = <T extends object>(
   defaultState: T,
-  guard: Partial<
-    Record<RoutePaths, (state: T, reset: () => void) => string | void>
-  > = {},
+  guard: Partial<Record<RoutePaths, GuardFn<T>>> = {},
   resetStateOnUnmount = true,
 ) => {
   const state = proxy<T>(defaultState);
@@ -21,6 +29,7 @@ export const createGuard = <T extends object>(
   hook.state = state;
 
   const guardProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+    const params = useParams();
     const location = useLocation();
     const guards = useMemo(() => Object.entries(guard), []);
 
@@ -29,7 +38,11 @@ export const createGuard = <T extends object>(
     for (const [pattern, guardFn] of guards) {
       const match = Boolean(matchPath(pattern, location.pathname));
       if (!match) continue;
-      const path = guardFn(state, resetState);
+      const path = guardFn(state, {
+        location,
+        params,
+        resetState,
+      });
       if (path) return <Navigate to={path} replace />;
     }
 

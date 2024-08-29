@@ -1,5 +1,6 @@
 import { ClusterValidatorsList } from "@/components/cluster/cluster-validators-list";
 import { EstimatedOperationalRunway } from "@/components/cluster/estimated-operational-runway";
+import { ValidatorsActionsMenu } from "@/components/cluster/validators-actions-menu";
 import { OperatorStatCard } from "@/components/operator/operator-stat-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -83,9 +84,9 @@ export const Cluster: FC = () => {
             <>
               <Divider />
               <EstimatedOperationalRunway />
+              <Divider />
             </>
           )}
-          <Divider />
           <div className="flex gap-4 [&>*]:flex-1">
             <Button as={Link} to="deposit" size="xl">
               Deposit
@@ -96,11 +97,12 @@ export const Cluster: FC = () => {
           </div>
         </Card>
         <Card className="flex-[2] h-full">
-          <div className="flex w-full justify-between">
+          <div className="flex w-full gap-2 justify-between">
             <Text variant="headline4" className="text-gray-500">
               Validators
             </Text>
             <Spacer />
+            <ValidatorsActionsMenu isLiquidated={Boolean(isLiquidated.data)} />
             <Tooltip
               content={
                 operatorsUsability.data?.hasPermissionedOperators
@@ -113,13 +115,17 @@ export const Cluster: FC = () => {
               <Button
                 disabled={
                   operatorsUsability.data?.hasExceededValidatorsLimit ||
-                  operatorsUsability.data?.hasPermissionedOperators
+                  operatorsUsability.data?.hasPermissionedOperators ||
+                  isLiquidated.data
                 }
-                isLoading={operatorsUsability.isLoading}
+                isLoading={
+                  operatorsUsability.isLoading || isLiquidated.isLoading
+                }
                 as={Link}
+                icon={<PlusIcon className="size-4" />}
                 to={`/join/validator/${clusterHash}/distribution-method`}
               >
-                <Text>Add Validator</Text> <PlusIcon className="size-4" />
+                <Text>Add Validator</Text>
               </Button>
             </Tooltip>
           </div>

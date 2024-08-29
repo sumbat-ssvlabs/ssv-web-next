@@ -176,7 +176,7 @@ export const RegisterOperator: FC<ComponentPropsWithoutRef<"div">> = ({
               }
             >
               <div className="flex gap-2 items-center">
-                <Text variant="headline2">Operator Status</Text>
+                <Text variant="body-1-bold">Operator Status</Text>
                 <FaCircleInfo className="size-4 text-gray-500" />
               </div>
             </Tooltip>

@@ -13,9 +13,6 @@ export default defineConfig(({ mode }) => {
     worker: {
       format: "es",
     },
-    optimizeDeps: {
-      exclude: ["ssv-keys"],
-    },
     build: {
       target: "es2022",
       outDir: "build",

@@ -30,7 +30,7 @@ export const ClusterBalance: EstimatedOperationalRunwayFC = ({
 
   return (
     <div className={cn(className, "flex flex-col gap-1")} {...props}>
-      <Text variant="body-1-bold" className="text-gray-500">
+      <Text variant="body-2-bold" className="text-gray-500">
         Cluster Balance
       </Text>
       <div className={cn("flex gap-1")}>

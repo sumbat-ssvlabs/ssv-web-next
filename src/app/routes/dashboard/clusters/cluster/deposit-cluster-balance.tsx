@@ -28,6 +28,7 @@ import { useSSVBalance } from "@/hooks/use-ssv-balance";
 import { formatSSV } from "@/lib/utils/number";
 import { getClusterQueryOptions } from "@/hooks/cluster/use-cluster";
 import { WithAllowance } from "@/components/with-allowance/with-allowance";
+import { merge } from "lodash-es";
 
 const schema = z.object({
   value: z.bigint().positive(),
@@ -55,16 +56,14 @@ export const DepositClusterBalance: FC = () => {
       withTransactionModal({
         onMined: async ({ events }) => {
           const event = events.find((e) => e.eventName === "ClusterDeposited");
+          console.log("event:", event);
 
           event &&
             setOptimisticData(
               getClusterQueryOptions(params.clusterHash!).queryKey,
               (cluster) => {
                 if (!cluster) return cluster;
-                return {
-                  ...cluster,
-                  ...stringifyBigints(event.args.cluster),
-                };
+                return merge({}, cluster, stringifyBigints(event.args.cluster));
               },
             );
 
@@ -108,7 +107,7 @@ export const DepositClusterBalance: FC = () => {
                           >
                             Max
                           </Button>
-                          <Text variant="headline2">SSV</Text>
+                          <Text variant="body-1-bold">SSV</Text>
                         </div>
                         <Text variant="body-3-medium" className="text-gray-500">
                           Balance: {formatSSV(ssvBalance?.value ?? 0n)} SSV

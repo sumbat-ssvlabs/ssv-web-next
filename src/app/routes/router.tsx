@@ -12,8 +12,10 @@ import { RegisterValidatorSuccess } from "@/app/routes/create-cluster/register-v
 import { SelectOperators } from "@/app/routes/create-cluster/select-operators";
 import { SlashingWarning } from "@/app/routes/create-cluster/slashing-warning";
 import { UploadKeyshares } from "@/app/routes/create-cluster/upload-keyshares";
+import { Bulk } from "@/app/routes/dashboard/clusters/cluster/bulk";
 import { Cluster } from "@/app/routes/dashboard/clusters/cluster/cluster";
 import { DepositClusterBalance } from "@/app/routes/dashboard/clusters/cluster/deposit-cluster-balance";
+import { RemoveValidatorsConfirmation } from "@/app/routes/dashboard/clusters/cluster/remove-validators-confirmation";
 import { WithdrawClusterBalance } from "@/app/routes/dashboard/clusters/cluster/withdraw-cluster-balance";
 import { Clusters } from "@/app/routes/dashboard/clusters/clusters";
 import { FeeRecipientAddress } from "@/app/routes/dashboard/clusters/fee-recipient-address";
@@ -41,6 +43,7 @@ import { SetOperatorFee } from "@/app/routes/join/operator/set-operator-fee";
 import { ProtectedClusterRoute } from "@/app/routes/protected-cluster-route";
 import { ProtectedOperatorRoute } from "@/app/routes/protected-operator-route";
 import { ProtectedRoute } from "@/app/routes/protected-route";
+import { BulkActionGuard } from "@/guard/bulk-action-guard";
 import { RegisterOperatorGuard } from "@/guard/register-operator-guards";
 import { RegisterValidatorGuard } from "@/guard/register-validator-guard";
 import type { RouteObject } from "react-router-dom";
@@ -215,6 +218,24 @@ const routes = [
               {
                 path: "deposit",
                 element: <DepositClusterBalance />,
+              },
+              {
+                path: "remove",
+                element: (
+                  <BulkActionGuard>
+                    <Outlet />
+                  </BulkActionGuard>
+                ),
+                children: [
+                  {
+                    index: true,
+                    element: <Bulk type="remove" />,
+                  },
+                  {
+                    path: "confirmation",
+                    element: <RemoveValidatorsConfirmation />,
+                  },
+                ],
               },
             ],
           },
