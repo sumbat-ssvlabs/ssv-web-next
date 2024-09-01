@@ -1,4 +1,4 @@
-import { locationState } from "@/hooks/use-subscribe-to-path-changes";
+import { locationState } from "@/app/routes/router";
 import { matchPath } from "react-router";
 
 export const isFrom = (pattern: string) => {

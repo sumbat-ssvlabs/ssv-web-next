@@ -80,7 +80,7 @@ export const useRunway = ({
       };
     },
     placeholderData: keepPreviousData,
-    enabled: Boolean(balance && _burnRate && isSuccess),
+    enabled: Boolean(_burnRate && isSuccess),
   });
   return {
     ...query,

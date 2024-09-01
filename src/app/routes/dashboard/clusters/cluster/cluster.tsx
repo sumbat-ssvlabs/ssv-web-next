@@ -8,16 +8,14 @@ import { Card } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
 import { Divider } from "@/components/ui/divider";
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Spacer } from "@/components/ui/spacer";
 import { Text } from "@/components/ui/text";
 import { Tooltip } from "@/components/ui/tooltip";
-import { useCluster } from "@/hooks/cluster/use-cluster";
-import { useClusterBalance } from "@/hooks/cluster/use-cluster-balance";
 import { useClusterPageParams } from "@/hooks/cluster/use-cluster-page-params";
 import { useClusterRunway } from "@/hooks/cluster/use-cluster-runway";
+import { useClusterState } from "@/hooks/cluster/use-cluster-state";
 import { useOperatorsUsability } from "@/hooks/keyshares/use-operators-usability";
-import { useIsLiquidated } from "@/lib/contract-interactions/read/use-is-liquidated";
-import { formatClusterData } from "@/lib/utils/cluster";
 import { formatSSV } from "@/lib/utils/number";
 import { cn } from "@/lib/utils/tw";
 import { PlusIcon } from "lucide-react";
@@ -29,19 +27,11 @@ export const Cluster: FC = () => {
   const account = useAccount();
 
   const { clusterHash } = useClusterPageParams();
-  const cluster = useCluster(clusterHash!);
-  const balance = useClusterBalance(clusterHash!, { watch: true });
 
-  const isLiquidated = useIsLiquidated(
-    {
-      cluster: formatClusterData(cluster.data!),
-      clusterOwner: account.address!,
-      operatorIds: cluster.data?.operators.map((id) => BigInt(id)) ?? [],
-    },
-    {
-      enabled: Boolean(cluster.data && account.address),
-    },
-  );
+  const { cluster, isLiquidated, balance } = useClusterState(clusterHash!, {
+    balance: { watch: true },
+    isLiquidated: { watch: true },
+  });
 
   const operatorsUsability = useOperatorsUsability({
     account: account.address!,
@@ -71,14 +61,18 @@ export const Cluster: FC = () => {
               </Text>
               {isLiquidated.data && <Badge variant="error">Liquidated</Badge>}
             </div>
-            <Text
-              variant="headline1"
-              className={cn({
-                "text-error-500": runway?.isAtRisk,
-              })}
-            >
-              {formatSSV(balance.data || 0n)}
-            </Text>
+            {balance.isLoading ? (
+              <Skeleton className="h-10 w-24 my-1" />
+            ) : (
+              <Text
+                variant="headline1"
+                className={cn({
+                  "text-error-500": runway?.isAtRisk,
+                })}
+              >
+                {formatSSV(balance.data || 0n)}
+              </Text>
+            )}
           </div>
           {Boolean(cluster.data?.validatorCount) && (
             <>
@@ -87,14 +81,20 @@ export const Cluster: FC = () => {
               <Divider />
             </>
           )}
-          <div className="flex gap-4 [&>*]:flex-1">
-            <Button as={Link} to="deposit" size="xl">
-              Deposit
+          {isLiquidated.data ? (
+            <Button as={Link} to="reactivate" size="xl">
+              Reactivate Cluster
             </Button>
-            <Button as={Link} to="withdraw" size="xl" variant="secondary">
-              Withdraw
-            </Button>
-          </div>
+          ) : (
+            <div className="flex gap-4 [&>*]:flex-1">
+              <Button as={Link} to="deposit" size="xl">
+                Deposit
+              </Button>
+              <Button as={Link} to="withdraw" size="xl" variant="secondary">
+                Withdraw
+              </Button>
+            </div>
+          )}
         </Card>
         <Card className="flex-[2] h-full">
           <div className="flex w-full gap-2 justify-between">

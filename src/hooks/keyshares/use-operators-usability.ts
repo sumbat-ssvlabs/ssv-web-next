@@ -41,7 +41,6 @@ export const useOperatorsUsability = (
             [operator, await canAccountUseOperator(account, operator)] as const,
         ),
       );
-      console.log("result:", result);
 
       return result.reduce(
         (acc, [operator, canUse]) => {
@@ -55,7 +54,6 @@ export const useOperatorsUsability = (
     enabled: Boolean(operators.data && options.enabled),
   });
 
-  console.log("canUse:", canUse);
   const queryStatus = combineQueryStatus(canUse, operators);
   return {
     ...queryStatus,

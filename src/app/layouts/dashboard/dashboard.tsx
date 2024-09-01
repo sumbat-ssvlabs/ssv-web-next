@@ -2,7 +2,6 @@ import { Navbar } from "@/app/layouts/dashboard/navbar";
 import { SsvLogo } from "@/components/ui/ssv-logo";
 import { TransactionModal } from "@/components/ui/transaction-modal";
 import { useBlockNavigationOnPendingTx } from "@/hooks/use-block-navigation-on-pending-tx";
-import { useSubscribeToPathChanges } from "@/hooks/use-subscribe-to-path-changes";
 import { cn } from "@/lib/utils/tw";
 import { useIsRestoring } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
@@ -16,7 +15,6 @@ export const DashboardLayout: FC<ComponentPropsWithRef<"div">> = ({
   const isRestoring = useIsRestoring();
   const account = useAccount();
   useBlockNavigationOnPendingTx();
-  useSubscribeToPathChanges();
 
   return (
     <>

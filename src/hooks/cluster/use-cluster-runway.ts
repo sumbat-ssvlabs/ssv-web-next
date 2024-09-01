@@ -7,11 +7,12 @@ import { useClusterPageParams } from "@/hooks/cluster/use-cluster-page-params";
 type Options = {
   deltaBalance?: bigint;
   deltaValidators?: bigint;
+  watch?: boolean;
 };
 
 export const useClusterRunway = (
   hash?: string,
-  opts: Options = { deltaBalance: 0n, deltaValidators: 0n },
+  opts: Options = { deltaBalance: 0n, deltaValidators: 0n, watch: false },
 ) => {
   const params = useClusterPageParams();
   const clusterHash = hash ?? params.clusterHash;
@@ -21,6 +22,7 @@ export const useClusterRunway = (
 
   const { data: balance = 0n, isLoading: isBalanceLoading } = useClusterBalance(
     clusterHash!,
+    { watch: opts.watch },
   );
 
   const { data: burnRate = 0n, isLoading: isBurnRateLoading } =

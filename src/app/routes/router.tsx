@@ -7,6 +7,7 @@ import { DistributionMethod } from "@/app/routes/create-cluster/distribution-met
 import { GenerateKeySharesOnline } from "@/app/routes/create-cluster/generate-key-shares-online";
 import { InitialFunding } from "@/app/routes/create-cluster/initial-funding";
 import { Preparation } from "@/app/routes/create-cluster/preparation";
+import { ReactivateCluster } from "@/app/routes/create-cluster/reactivate";
 import { RegisterValidatorConfirmation } from "@/app/routes/create-cluster/register-validator-confirmation";
 import { RegisterValidatorSuccess } from "@/app/routes/create-cluster/register-validator-success";
 import { SelectOperators } from "@/app/routes/create-cluster/select-operators";
@@ -50,6 +51,7 @@ import { RegisterOperatorGuard } from "@/guard/register-operator-guards";
 import { RegisterValidatorGuard } from "@/guard/register-validator-guard";
 import type { RouteObject } from "react-router-dom";
 import { createBrowserRouter, Link, Outlet } from "react-router-dom";
+import { proxy } from "valtio";
 
 const routes = [
   {
@@ -220,6 +222,10 @@ const routes = [
               {
                 path: "deposit",
                 element: <DepositClusterBalance />,
+              },
+              {
+                path: "reactivate",
+                element: <ReactivateCluster />,
               },
               {
                 path: "remove",
@@ -413,3 +419,13 @@ export type WritableRoutePaths = ExtractPaths2<typeof routes>;
 
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter(routes);
+
+export const locationState = proxy({
+  current: router.state.location.pathname,
+  previous: router.state.location.pathname,
+});
+
+router.subscribe((state) => {
+  locationState.previous = locationState.current;
+  locationState.current = state.location.pathname;
+});

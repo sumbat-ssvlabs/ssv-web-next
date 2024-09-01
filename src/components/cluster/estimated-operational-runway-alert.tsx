@@ -8,6 +8,7 @@ export type EstimatedOperationalRunwayAlertProps = {
   hasDeltaValidators?: boolean;
   isWithdrawing?: boolean;
   isAtRisk: boolean;
+  isLiquidated: boolean;
   runway: bigint;
 };
 
@@ -25,6 +26,7 @@ export const EstimatedOperationalRunwayAlert: EstimatedOperationalRunwayAlertFC 
     isWithdrawing,
     isAtRisk,
     hasDeltaValidators,
+    isLiquidated,
     runway,
     ...props
   }) => {
@@ -39,6 +41,14 @@ export const EstimatedOperationalRunwayAlert: EstimatedOperationalRunwayAlertFC 
             Your updated operational puts your cluster validators at risk. To
             avoid liquidation please top up your cluster balance with greater
             funds.
+          </Text>
+        );
+      }
+      if (isLiquidated) {
+        return (
+          <Text>
+            Your cluster has been liquidated. Please reactivate your cluster in
+            order to resume your validators operation.
           </Text>
         );
       }

@@ -27,7 +27,9 @@ export const useClusterBalance = (
       operatorIds,
     },
     {
-      watch,
+      watch: cluster.data?.isLiquidated ? false : watch,
+      retry: cluster.data?.isLiquidated ? false : undefined,
+      refetchOnWindowFocus: false,
       placeholderData: keepPreviousData,
       enabled: Boolean(account.address && cluster.data && enabled),
     },
