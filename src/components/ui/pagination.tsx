@@ -56,9 +56,13 @@ const PaginationLink = ({
       aria-current={isActive ? "page" : undefined}
       size="icon"
       variant={isActive ? "secondary" : "ghost"}
-      className={cn(className, {
-        "font-bold": isActive,
-      })}
+      className={cn(
+        className,
+        {
+          "font-bold": isActive,
+        },
+        "size-10",
+      )}
       {...props}
     />
   );

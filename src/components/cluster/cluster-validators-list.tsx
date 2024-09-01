@@ -6,18 +6,32 @@ import { VirtualizedInfinityTable } from "@/components/ui/virtualized-infinity-t
 import { shortenAddress } from "@/lib/utils/strings";
 import { Badge } from "@/components/ui/badge";
 import { Text } from "@/components/ui/text";
-import { Button } from "@/components/ui/button";
-import { LuSatelliteDish } from "react-icons/lu";
+import { IconButton } from "@/components/ui/button";
+import { LuLogOut, LuSatelliteDish, LuTrash2 } from "react-icons/lu";
 import { useLinks } from "@/hooks/use-links";
 import { FaCircleInfo } from "react-icons/fa6";
 import { Tooltip } from "@/components/ui/tooltip";
 import { useInfiniteClusterValidators } from "@/hooks/cluster/use-infinite-cluster-validators";
+import { HiOutlineCog } from "react-icons/hi";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Link } from "react-router-dom";
+import { useCluster } from "@/hooks/cluster/use-cluster";
+import { TbExternalLink, TbRefresh } from "react-icons/tb";
+import { useBulkActionContext } from "@/guard/bulk-action-guard";
+import { Spacer } from "@/components/ui/spacer";
 
 export const ClusterValidatorsList: FC<ComponentPropsWithoutRef<"div">> = ({
   ...props
 }) => {
+  const cluster = useCluster();
   const { validators, infiniteQuery } = useInfiniteClusterValidators();
   const links = useLinks();
+
   return (
     <VirtualizedInfinityTable
       gridTemplateColumns="220px minmax(200px, auto) 120px"
@@ -48,18 +62,71 @@ export const ClusterValidatorsList: FC<ComponentPropsWithoutRef<"div">> = ({
               {item.status}
             </Badge>
           </TableCell>
-          <TableCell className="flex gap-1 justify-end">
+          <TableCell className="flex gap-0.5 justify-end">
             <SsvExplorerBtn validatorId={item.public_key} />
-            <Button
+            <IconButton
               as="a"
-              size="icon"
-              className="size-7 text-gray-700"
-              variant="subtle"
               href={`${links.beaconcha}/validator/${item.public_key}`}
               target="_blank"
             >
-              <LuSatelliteDish className="size-[65%]" />
-            </Button>
+              <LuSatelliteDish />
+            </IconButton>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <IconButton>
+                  <HiOutlineCog />
+                </IconButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <a
+                  href="https://docs.ssv.network/learn/stakers/validators/update-operators"
+                  target="_blank"
+                >
+                  <DropdownMenuItem>
+                    <TbRefresh className="size-4" />
+                    <span>Change Operators</span>
+                    <Spacer />
+                    <TbExternalLink className="size-3" />
+                  </DropdownMenuItem>
+                </a>
+                <Link
+                  to="remove/confirmation"
+                  onClick={() =>
+                    (useBulkActionContext.state.selectedPublicKeys = [
+                      item.public_key,
+                    ])
+                  }
+                >
+                  <DropdownMenuItem>
+                    <LuTrash2 className="size-4" />
+                    <span>Remove Validators</span>
+                  </DropdownMenuItem>
+                </Link>
+                <Tooltip
+                  side="bottom"
+                  delayDuration={350}
+                  content={
+                    cluster.data?.isLiquidated
+                      ? "You cannot perform this operation when your cluster is liquidated. Please reactivate to proceed."
+                      : undefined
+                  }
+                >
+                  <Link
+                    to="exit/confirmation"
+                    onClick={() =>
+                      (useBulkActionContext.state.selectedPublicKeys = [
+                        item.public_key,
+                      ])
+                    }
+                  >
+                    <DropdownMenuItem disabled={cluster.data?.isLiquidated}>
+                      <LuLogOut className="size-4" />
+                      <span>Exit Validators</span>
+                    </DropdownMenuItem>
+                  </Link>
+                </Tooltip>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </TableCell>
         </TableRow>
       )}

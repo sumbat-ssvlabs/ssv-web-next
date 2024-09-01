@@ -15,6 +15,8 @@ import { UploadKeyshares } from "@/app/routes/create-cluster/upload-keyshares";
 import { Bulk } from "@/app/routes/dashboard/clusters/cluster/bulk";
 import { Cluster } from "@/app/routes/dashboard/clusters/cluster/cluster";
 import { DepositClusterBalance } from "@/app/routes/dashboard/clusters/cluster/deposit-cluster-balance";
+import { ExitValidatorsConfirmation } from "@/app/routes/dashboard/clusters/cluster/exit-validators-confirmation";
+import { ExitValidatorsSuccess } from "@/app/routes/dashboard/clusters/cluster/exit-validators-success";
 import { RemoveValidatorsConfirmation } from "@/app/routes/dashboard/clusters/cluster/remove-validators-confirmation";
 import { WithdrawClusterBalance } from "@/app/routes/dashboard/clusters/cluster/withdraw-cluster-balance";
 import { Clusters } from "@/app/routes/dashboard/clusters/clusters";
@@ -237,6 +239,28 @@ const routes = [
                   },
                 ],
               },
+              {
+                path: "exit",
+                element: (
+                  <BulkActionGuard>
+                    <Outlet />
+                  </BulkActionGuard>
+                ),
+                children: [
+                  {
+                    index: true,
+                    element: <Bulk type="exit" />,
+                  },
+                  {
+                    path: "confirmation",
+                    element: <ExitValidatorsConfirmation />,
+                  },
+                  {
+                    path: "success",
+                    element: <ExitValidatorsSuccess />,
+                  },
+                ],
+              },
             ],
           },
         ],
@@ -354,19 +378,19 @@ type ExtractPaths<T extends RouteObject | RouteObject[]> =
   T extends RouteObject[]
     ? ExtractPaths<T[number]> // Recursively apply to each element in the array
     : T extends { path: infer P; children?: infer C }
-      ?
-          | P
-          | (C extends RouteObject[]
-              ? P extends string
+      ? P extends string
+        ?
+            | P
+            | (C extends RouteObject[]
                 ? `${P}/${ExtractPaths<C> extends string ? ExtractPaths<C> : never}`
-                : never
-              : never)
+                : never)
+        : never
       : never;
 
 type ExtractParts<P> = P extends `${infer Start}:${string}/${infer Rest}`
-  ? `${Start}${string}/${Rest}`
+  ? `${Start}${string}/${Rest}` | `${Start}${string}/${Rest}/*`
   : P extends `${infer Start}:${string}`
-    ? `${Start}${string}/`
+    ? `${Start}${string}/` | `${Start}${string}/*`
     : P;
 
 type ExtractPaths2<T extends RouteObject | RouteObject[]> =
@@ -383,7 +407,8 @@ type ExtractPaths2<T extends RouteObject | RouteObject[]> =
         >
       : never;
 
-export type RoutePaths = ExtractPaths<typeof routes>;
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type RoutePaths = ExtractPaths<typeof routes> | (string & {});
 export type WritableRoutePaths = ExtractPaths2<typeof routes>;
 
 export const router: ReturnType<typeof createBrowserRouter> =

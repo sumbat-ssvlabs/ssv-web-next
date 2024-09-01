@@ -1,7 +1,7 @@
 import { OperatorAvatar } from "@/components/operator/operator-avatar";
 import { OperatorDetails } from "@/components/operator/operator-details";
 import { Badge } from "@/components/ui/badge";
-import { Spinner } from "@/components/ui/spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Tooltip } from "@/components/ui/tooltip";
 import { useClusterRunway } from "@/hooks/cluster/use-cluster-runway";
@@ -23,6 +23,7 @@ type FCProps = FC<
 
 export const ClustersTableRow: FCProps = ({ cluster, className, ...props }) => {
   const runway = useClusterRunway(cluster.clusterId);
+  const isLoadingRunway = !cluster.isLiquidated && runway.isLoading;
   return (
     <TableRow
       key={cluster.id}
@@ -61,16 +62,23 @@ export const ClustersTableRow: FCProps = ({ cluster, className, ...props }) => {
       </TableCell>
       <TableCell>{cluster.validatorCount}</TableCell>
       <TableCell>
-        {runway.isLoading ? <Spinner size="sm" /> : runway.data?.runwayDisplay}
-      </TableCell>
-      <TableCell>
-        {runway.data?.isAtRisk && (
-          <Badge size="sm" variant="error">
-            Low runway
-          </Badge>
+        {isLoadingRunway ? (
+          <Skeleton className="h-5 w-14" />
+        ) : (
+          runway.data?.runwayDisplay
         )}
       </TableCell>
-      <TableCell />
+      <TableCell>
+        {isLoadingRunway ? (
+          <Skeleton className="h-7 w-24" />
+        ) : (
+          runway.data?.isAtRisk && (
+            <Badge size="sm" variant="error">
+              Low runway
+            </Badge>
+          )
+        )}
+      </TableCell>
       <TableCell className="">
         <HiArrowRight className="size-4 text-gray-500" />
       </TableCell>

@@ -70,7 +70,6 @@ export const ClusterTable: FCProps = ({
           <TableHead>Est Operational Runway</TableHead>
           <TableHead />
           <TableHead />
-          <TableHead />
         </TableHeader>
         <TableBody>
           {clusters.map((cluster) => {

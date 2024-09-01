@@ -40,7 +40,6 @@ import { queryClient } from "@/lib/react-query";
 import { useNavigate } from "react-router";
 import { Badge } from "@/components/ui/badge";
 import { WithAllowance } from "@/components/with-allowance/with-allowance";
-import { useClusterBalance } from "@/hooks/cluster/use-cluster-balance";
 
 export const RegisterValidatorConfirmation: FC = () => {
   const navigate = useNavigate();
@@ -55,7 +54,6 @@ export const RegisterValidatorConfirmation: FC = () => {
   const operatorsDailyFee = computeDailyAmount(operatorsFee, 1);
 
   const clusterHash = createClusterHash(account.address!, operatorIds);
-  const clusterBalance = useClusterBalance(clusterHash);
   const clusterQuery = useCluster(clusterHash, {
     retry: false,
   });
@@ -197,10 +195,7 @@ export const RegisterValidatorConfirmation: FC = () => {
             SSV
           </Text>
         </div>
-        <WithAllowance
-          size="xl"
-          amount={(clusterBalance.data ?? 0n) + depositAmount}
-        >
+        <WithAllowance size="xl" amount={depositAmount}>
           <Button
             size="xl"
             isLoading={isWriting}

@@ -15,11 +15,19 @@ export const useClusterRunway = (
 ) => {
   const params = useClusterPageParams();
   const clusterHash = hash ?? params.clusterHash;
-  const { data: cluster } = useCluster(clusterHash);
-  const { data: balance = 0n } = useClusterBalance(clusterHash!);
-  const { data: burnRate = 0n } = useClusterBurnRate(clusterHash!);
+
+  const { data: cluster, isLoading: isClusterLoading } =
+    useCluster(clusterHash);
+
+  const { data: balance = 0n, isLoading: isBalanceLoading } = useClusterBalance(
+    clusterHash!,
+  );
+
+  const { data: burnRate = 0n, isLoading: isBurnRateLoading } =
+    useClusterBurnRate(clusterHash!);
 
   const burnRatePerValidator = burnRate / BigInt(cluster?.validatorCount || 1);
+  const isLoading = isClusterLoading || isBalanceLoading || isBurnRateLoading;
 
   const runway = useRunway({
     balance: balance,
@@ -29,5 +37,5 @@ export const useClusterRunway = (
     deltaBalance: opts.deltaBalance,
   });
 
-  return runway;
+  return { ...runway, isLoading };
 };

@@ -19,7 +19,6 @@ import { Text } from "@/components/ui/text";
 import { useClusterPageParams } from "@/hooks/cluster/use-cluster-page-params";
 import { Divider } from "@/components/ui/divider";
 import { isBigIntChanged, stringifyBigints } from "@/lib/utils/bigint";
-import { useClusterBalance } from "@/hooks/cluster/use-cluster-balance";
 import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
 import { setOptimisticData } from "@/lib/react-query";
 import { useDepositClusterBalance } from "@/hooks/cluster/use-deposit-cluster-balance";
@@ -37,7 +36,6 @@ const schema = z.object({
 export const DepositClusterBalance: FC = () => {
   const params = useClusterPageParams();
   const deposit = useDepositClusterBalance(params.clusterHash!);
-  const clusterBalance = useClusterBalance(params.clusterHash!);
   const navigate = useNavigate();
 
   const { data: ssvBalance } = useSSVBalance();
@@ -123,10 +121,7 @@ export const DepositClusterBalance: FC = () => {
           <Divider />
           <EstimatedOperationalRunway deltaBalance={value} />
           <Divider />
-          <WithAllowance
-            size="xl"
-            amount={isChanged ? clusterBalance.data ?? 0n + value : 0n}
-          >
+          <WithAllowance size="xl" amount={value ?? 0n}>
             <Button
               type="submit"
               size="xl"

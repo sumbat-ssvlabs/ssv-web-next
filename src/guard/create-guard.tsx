@@ -3,7 +3,7 @@ import type { RoutePaths } from "@/app/routes/router";
 import { reset } from "@/lib/utils/valtio";
 import type { ReactNode } from "react";
 import React, { useMemo } from "react";
-import type { Location, Params } from "react-router";
+import type { Location, Params, PathMatch } from "react-router";
 import { useLocation, matchPath, Navigate, useParams } from "react-router";
 import { useUnmount } from "react-use";
 import { proxy, useSnapshot } from "valtio";
@@ -14,6 +14,7 @@ type GuardFn<T extends object> = (
     location: Location;
     params: Readonly<Params<string>>;
     resetState: () => void;
+    match: PathMatch<string>;
   },
 ) => string | void;
 
@@ -36,11 +37,12 @@ export const createGuard = <T extends object>(
     resetStateOnUnmount && useUnmount(resetState);
 
     for (const [pattern, guardFn] of guards) {
-      const match = Boolean(matchPath(pattern, location.pathname));
+      const match = matchPath(pattern, location.pathname);
       if (!match) continue;
-      const path = guardFn(state, {
+      const path = guardFn?.(state, {
         location,
         params,
+        match,
         resetState,
       });
       if (path) return <Navigate to={path} replace />;
@@ -51,3 +53,7 @@ export const createGuard = <T extends object>(
 
   return [guardProvider, hook] as const;
 };
+
+type A = "hi" | "bye" | (string & object);
+const a: A = "hi";
+console.log("a:", a);
