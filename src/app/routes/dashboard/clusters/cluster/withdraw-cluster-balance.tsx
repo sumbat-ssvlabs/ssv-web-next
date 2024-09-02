@@ -119,7 +119,8 @@ export const WithdrawClusterBalance: FC = () => {
               <FormItem>
                 <FormControl>
                   <NumberInput
-                    placeholder="0.0"
+                    placeholder="0"
+                    max={clusterBalance.data ?? 0n}
                     value={field.value}
                     onChange={field.onChange}
                     rightSlot={

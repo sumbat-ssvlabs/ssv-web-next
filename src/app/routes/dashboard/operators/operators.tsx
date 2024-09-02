@@ -20,7 +20,7 @@ export const Operators: FC<ComponentPropsWithoutRef<"div">> = () => {
       <Container variant="vertical" size="xl" className="py-6">
         <div className="flex justify-between w-full gap-3">
           <DashboardPicker />
-          <Button size="lg" as={Link} to="/join/operator">
+          <Button size="lg" as={Link} className="px-10" to="/join/operator">
             Add Operator
           </Button>
         </div>

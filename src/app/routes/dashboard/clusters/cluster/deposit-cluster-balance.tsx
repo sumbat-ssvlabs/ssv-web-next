@@ -86,7 +86,7 @@ export const DepositClusterBalance: FC = () => {
               <FormItem>
                 <FormControl>
                   <NumberInput
-                    placeholder="0.0"
+                    placeholder="0"
                     value={field.value}
                     onChange={field.onChange}
                     max={ssvBalance?.value}

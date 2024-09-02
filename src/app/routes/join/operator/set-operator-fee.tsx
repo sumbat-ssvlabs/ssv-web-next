@@ -7,42 +7,58 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Text } from "@/components/ui/text";
 import { NumberInput } from "@/components/ui/number-input";
-import { parseEther } from "viem";
+import { formatUnits, parseEther } from "viem";
 import { globals } from "@/config";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router";
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import { useFocus } from "@/hooks/use-focus";
 import { useRegisterOperatorContext } from "@/guard/register-operator-guards";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+
+const minimumFee =
+  globals.BLOCKS_PER_YEAR * globals.MINIMUM_OPERATOR_FEE_PER_BLOCK;
 
 export const SetOperatorFee: FC<ComponentPropsWithoutRef<"div">> = () => {
   const navigate = useNavigate();
   const { isPrivate } = useRegisterOperatorContext();
 
-  const schema = z.object({
-    yearlyFee: z
-      .bigint()
-      .min(
-        isPrivate
-          ? 0n
-          : globals.BLOCKS_PER_YEAR * globals.MINIMUM_OPERATOR_FEE_PER_BLOCK,
-      )
-      .max(parseEther("200")),
-  });
-
-  const form = useForm<z.infer<typeof schema>>({
+  const form = useForm({
     mode: "all",
     defaultValues: {
-      yearlyFee: useRegisterOperatorContext.state.yearlyFee,
+      yearlyFee: useRegisterOperatorContext.state.yearlyFee ?? "",
     },
-    resolver: zodResolver(schema),
+    resolver: zodResolver(
+      z.object({
+        yearlyFee: z.bigint().superRefine((value, ctx) => {
+          if (value > parseEther("200")) {
+            return ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "Fee must be lower than 200 SSV",
+            });
+          }
+          if (isPrivate) return;
+
+          if (value === parseEther("0"))
+            return ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: `Fee cannot be set to 0 while operator status is set to public. To set the fee to 0, switch the operator status to private in the previous step.`,
+            });
+
+          if (value >= parseEther("0") && value < minimumFee)
+            return ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: `Fee must be greater than ${formatUnits(minimumFee, 18)} SSV`,
+            });
+        }),
+      }),
+    ),
   });
 
   const submit = form.handleSubmit((values) => {
@@ -93,7 +109,7 @@ export const SetOperatorFee: FC<ComponentPropsWithoutRef<"div">> = () => {
           <FormField
             control={form.control}
             name="yearlyFee"
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <FormItem>
                 <FormLabel>Annual fee</FormLabel>
                 <FormControl>
@@ -114,7 +130,21 @@ export const SetOperatorFee: FC<ComponentPropsWithoutRef<"div">> = () => {
                     }
                   />
                 </FormControl>
-                <FormMessage />
+                {fieldState.error?.message && (
+                  <Alert variant="error">
+                    <AlertDescription>
+                      {fieldState.error?.message}
+                    </AlertDescription>
+                  </Alert>
+                )}
+                {isPrivate && form.watch("yearlyFee") === 0n && (
+                  <Alert variant="warning">
+                    <AlertDescription>
+                      If you set your fee to 0 you will not be able to change it
+                      in the future
+                    </AlertDescription>
+                  </Alert>
+                )}
               </FormItem>
             )}
           />

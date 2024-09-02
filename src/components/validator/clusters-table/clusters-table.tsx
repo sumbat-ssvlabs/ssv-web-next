@@ -86,13 +86,15 @@ export const ClusterTable: FCProps = ({
           })}
         </TableBody>
       </Table>
-      {pagination.pages > 1 && (
+      {pagination.pages > 1 ? (
         <>
           <Divider />
           <div className="flex w-full bg-gray-50 py-4 rounded-b-2xl">
             <Pagination pagination={pagination} />
           </div>
         </>
+      ) : (
+        <div className="flex w-full bg-gray-50 py-4 rounded-b-2xl"></div>
       )}
     </div>
   );

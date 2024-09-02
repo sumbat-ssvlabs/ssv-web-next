@@ -43,8 +43,10 @@ export const OperatorPickerItem: FCProps = ({
   const { address } = useAccount();
   const { data: maxValidatorsPerOperator = 0 } =
     useGetValidatorsPerOperatorLimit();
+
   const reachedMaxValidators =
-    operator.validators_count >= maxValidatorsPerOperator;
+    operator.validators_count + 1 >= maxValidatorsPerOperator;
+
   const hasValidators = operator.validators_count !== 0;
   const isInactive = operator.is_active < 1;
 
