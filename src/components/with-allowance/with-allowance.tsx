@@ -12,6 +12,7 @@ import { toast } from "@/components/ui/use-toast";
 import { globals } from "@/config";
 import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
 import { keepPreviousData } from "@tanstack/react-query";
+import { isUndefined } from "lodash-es";
 
 export type WithAllowanceProps = {
   size?: ButtonProps["size"];
@@ -81,7 +82,8 @@ export const WithAllowance: WithAllowanceFC = ({
     [canProceed, props.children, size],
   );
 
-  if (allowance.isLoading) return props.children;
+  console.log("allowance.isLoading:", allowance.isLoading);
+  if (allowance.isLoading || isUndefined(allowance.data)) return props.children;
   if (allowance.isSuccess && hasAllowance && approver.wait.status === "idle")
     return props.children;
 

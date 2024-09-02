@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { BiFilterAlt } from "react-icons/bi";
 
 export type OperatorPickerFilterProps = {
-  // TODO: Add props or remove this type
+  value: string;
+  onChange: (value: string) => void;
 };
 
 type FCProps = FC<
@@ -13,10 +14,15 @@ type FCProps = FC<
     OperatorPickerFilterProps
 >;
 
-export const OperatorPickerFilter: FCProps = ({ className, ...props }) => {
+export const OperatorPickerFilter: FCProps = ({
+  value,
+  onChange,
+  className,
+  ...props
+}) => {
   return (
     <div className={cn(className, "flex gap-2")} {...props}>
-      <SearchInput />
+      <SearchInput value={value} onChange={(e) => onChange(e.target.value)} />
       <Button size="lg" variant="outline" className="pl-4">
         <BiFilterAlt className="mr-4" /> Filters
       </Button>

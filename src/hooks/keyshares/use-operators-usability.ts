@@ -33,7 +33,7 @@ export const useOperatorsUsability = (
   const operators = useOperators(operatorIds);
 
   const canUse = useQuery({
-    queryKey: ["canAccountUseOperator", operatorIds, account, maxValidators],
+    queryKey: ["canAccountUseOperator", operators, account, maxValidators],
     queryFn: async () => {
       const result = await Promise.all(
         operators.data!.map(

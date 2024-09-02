@@ -1,4 +1,4 @@
-import type { FC, ReactNode } from "react";
+import { isValidElement, type FC, type ReactNode } from "react";
 import type { TableProps } from "@/components/ui/grid-table";
 import { Table, TableCell, TableHeader } from "@/components/ui/grid-table";
 
@@ -20,6 +20,7 @@ export type VirtualizedInfinityTableProps<
   headers: ReactNode[];
   renderRow: (args: { item: T; index: number }) => ReactNode;
   query: TQuery;
+  emptyMessage?: ReactNode;
 } & TableProps;
 
 const Trigger: FC<{
@@ -39,6 +40,7 @@ export const VirtualizedInfinityTable = <T,>({
   headers,
   renderRow,
   className,
+  emptyMessage,
   query,
   ...props
 }: VirtualizedInfinityTableProps<T>) => {
@@ -97,7 +99,13 @@ export const VirtualizedInfinityTable = <T,>({
             className="size-20"
             alt="No validators"
           />
-          <span className="text-gray-500">No Validators</span>
+          {isValidElement(emptyMessage) ? (
+            emptyMessage
+          ) : (
+            <span className="text-gray-500">
+              {emptyMessage ?? "No Validators"}
+            </span>
+          )}
         </div>
       )}
     </Table>

@@ -15,9 +15,9 @@ import { createClusterHash } from "@/lib/utils/cluster";
 import { useAccount } from "wagmi";
 import { SelectedOperators } from "@/components/operator/operator-picker/selected-operators";
 import { useSearchOperators } from "@/hooks/use-search-operators";
-import type { Operator } from "@/types/api";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useRegisterValidatorContext } from "@/guard/register-validator-guard";
+import { useDebouncedValue } from "@/hooks/use-debounced-value";
 
 export type SelectOperatorsProps = {
   // TODO: Add props or remove this type
@@ -33,19 +33,15 @@ export const SelectOperators: FCProps = ({ className, ...props }) => {
   const { state } = useRegisterValidatorContext;
   const { clusterSize, selectedOperatorsIds } = useRegisterValidatorContext();
 
-  const searchOperators = useSearchOperators();
-  const operatorsMap =
-    searchOperators.data?.pages
-      .flatMap((page) => page.operators)
-      .reduce(
-        (acc, operator) => {
-          acc[operator.id] = operator;
-          return acc;
-        },
-        {} as Record<number, Operator>,
-      ) ?? {};
+  const search = useDebouncedValue("", 500);
 
-  const selectedOperators = selectedOperatorsIds.map((id) => operatorsMap[id]);
+  const { operators, infiniteQuery, fetched } = useSearchOperators({
+    search: search.debouncedValue,
+  });
+
+  const selectedOperators = selectedOperatorsIds.map(
+    (id) => fetched.operatorsMap[id],
+  );
 
   const hasUnverifiedOperators = selectedOperators.some(
     (operator) => operator.type !== "verified_operator",
@@ -73,9 +69,13 @@ export const SelectOperators: FCProps = ({ className, ...props }) => {
             value={clusterSize}
             onChange={(size) => (state.clusterSize = size)}
           />
-          <OperatorPickerFilter />
+          <OperatorPickerFilter
+            value={search.value}
+            onChange={search.setValue}
+          />
           <OperatorPicker
-            query={searchOperators}
+            operators={operators}
+            query={infiniteQuery}
             maxSelection={clusterSize}
             selectedOperatorIds={selectedOperatorsIds}
             onOperatorCheckedChange={(id) => {

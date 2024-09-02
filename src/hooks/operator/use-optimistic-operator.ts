@@ -1,6 +1,6 @@
 import { getOperatorQueryOptions } from "@/hooks/operator/use-operator";
 import type { Operator } from "@/types/api";
-import { useQuery } from "@tanstack/react-query";
+import { useQueries, useQuery } from "@tanstack/react-query";
 
 export const useOptimisticOrProvidedOperator = (operator: Operator) => {
   const optimisticOperator = useQuery({
@@ -9,4 +9,23 @@ export const useOptimisticOrProvidedOperator = (operator: Operator) => {
   });
   if (optimisticOperator.isStale) return operator;
   return optimisticOperator.data ?? operator;
+};
+
+export const useOptimisticOrProvidedOperators = (operators: Operator[]) => {
+  const optimisticOperators = useQueries({
+    queries: operators.map((operator) => ({
+      ...getOperatorQueryOptions(operator.id),
+      enabled: false,
+    })),
+  });
+  console.log(
+    "optimisticOperators:",
+    optimisticOperators.map((optimisticOperator) => optimisticOperator.data),
+  );
+
+  return operators.map((operator, index) => {
+    const optimisticOperator = optimisticOperators[index];
+    if (optimisticOperator?.isStale) return operator;
+    return optimisticOperator?.data ?? operator;
+  });
 };

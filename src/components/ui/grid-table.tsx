@@ -74,7 +74,7 @@ const TableCell = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("block p-1 overflow-hidden", className)}
+    className={cn("flex items-center p-1 h-full overflow-hidden", className)}
     {...props}
   />
 ));

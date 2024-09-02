@@ -1,14 +1,17 @@
 import { OperatorPickerItem } from "@/components/operator/operator-picker/operator-picker-item/operator-picker-item";
+import { Text } from "@/components/ui/text";
+import { VirtualizedInfinityTable } from "@/components/ui/virtualized-infinity-table";
 import type { useSearchOperators } from "@/hooks/use-search-operators";
+import type { Operator } from "@/types/api";
 import type { FC } from "react";
 import type { VListProps } from "virtua";
-import { VList } from "virtua";
 
 export type OperatorPickerProps = {
   selectedOperatorIds: readonly number[];
   onOperatorCheckedChange: (operatorId: number, checked: boolean) => void;
   maxSelection?: number;
-  query: ReturnType<typeof useSearchOperators>;
+  operators: Operator[];
+  query: ReturnType<typeof useSearchOperators>["infiniteQuery"];
 };
 
 type FCProps = FC<Omit<VListProps, "children"> & OperatorPickerProps>;
@@ -16,44 +19,49 @@ type FCProps = FC<Omit<VListProps, "children"> & OperatorPickerProps>;
 export const OperatorPicker: FCProps = ({
   selectedOperatorIds,
   onOperatorCheckedChange,
+  operators,
   maxSelection,
   query,
-  ...props
 }) => {
   const isMaxSelected = selectedOperatorIds.length === maxSelection;
 
   return (
-    <VList
-      className="flex-1"
-      {...props}
-      onRangeChange={async (_, end) => {
-        const page = query.data?.pages.at(-1);
-        if (!page || query.isFetching) return;
-        const last = page.pagination.page * page.pagination.per_page;
-        if (end + page.pagination.per_page * 0.5 > last) {
-          query.fetchNextPage();
-        }
+    <VirtualizedInfinityTable
+      gridTemplateColumns="38px 196px 90px 120px 120px minmax(50px, auto) 80px"
+      query={query}
+      headers={[
+        null,
+        "Name",
+        "Validators",
+        "30D Performance",
+        "Yearly Fee",
+        "MEV Relays",
+        null,
+      ]}
+      items={operators}
+      renderRow={({ item: operator }) => {
+        const isSelected = selectedOperatorIds.includes(operator.id);
+        return (
+          <OperatorPickerItem
+            key={operator.id}
+            isSelected={isSelected}
+            isDisabled={isMaxSelected && !isSelected}
+            operator={operator}
+            onCheckedChange={(checked) =>
+              onOperatorCheckedChange(operator.id, checked)
+            }
+          />
+        );
       }}
-    >
-      {query.data?.pages.map((page) =>
-        page.operators.map((operator) => {
-          const isSelected = selectedOperatorIds.includes(operator.id);
-          return (
-            <OperatorPickerItem
-              key={operator.id}
-              isSelected={isSelected}
-              isDisabled={isMaxSelected && !isSelected}
-              operator={operator}
-              onCheckedChange={(checked) =>
-                onOperatorCheckedChange(operator.id, checked)
-              }
-            />
-          );
-        }),
-      )}
-      {query.isFetchingNextPage && <div>Loading...</div>}
-      {!query.hasNextPage && !query.isSuccess && <div>The end...</div>}
-    </VList>
+      emptyMessage={
+        <div className="flex flex-col items-center justify-center">
+          <Text variant="body-2-bold">No operators found</Text>
+          <Text variant="body-2-medium" className="text-gray-500">
+            Please try different keyword or filter
+          </Text>
+        </div>
+      }
+    />
   );
 };
 
