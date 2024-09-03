@@ -2,41 +2,39 @@ import { useOperator } from "@/hooks/operator/use-operator.ts";
 import { useGetOperatorFee } from "@/lib/contract-interactions/read/use-get-operator-fee.ts";
 import { getYearlyFee } from "@/lib/utils/operator.ts";
 import type { OperatorID } from "@/types/types.ts";
-import { formatSSV } from "@/lib/utils/number.ts";
-import type { StatusBadgeVariantType } from "@/components/ui/badge.tsx";
+import { formatSSV, percentageFormatter } from "@/lib/utils/number.ts";
+import { useQuery } from "@tanstack/react-query";
 
-export const useOperatorStats = (operatorId: OperatorID): {
-  status: string,
-  statusBadgeVariant: StatusBadgeVariantType,
-  performance: string,
-  yearlyFee: string
-} | null => {
-  const { data: operator, error } = useOperator(operatorId, { options: { retry: false } });
-  const isRemovedOperator = error?.message.includes("404") || false;
-  const { data: fee = 0n } = useGetOperatorFee(
+export const useOperatorStats = (operatorId: OperatorID) => {
+  const operator = useOperator(operatorId);
+  const isRemoved = operator.error?.message.includes("404") || false;
+
+  const operatorFee = useGetOperatorFee(
     { operatorId: BigInt(operatorId) },
-    { enabled: !!operator }
+    { enabled: !!operator },
   );
 
-  if (isRemovedOperator) {
-    return {
-      status: "Removed",
-      statusBadgeVariant: "uncoloredError",
-      performance: "-",
-      yearlyFee: "-"
-    };
-  }
+  const yearlyFee = formatSSV(getYearlyFee(operatorFee.data ?? 0n));
 
-  if (!operator) {
-    return null;
-  }
+  const stats = useQuery({
+    queryKey: ["operator-stats", operatorId, yearlyFee],
+    queryFn: async () => {
+      return {
+        isRemoved,
+        operator: {
+          id: Number(operatorId),
+          name: `Operator ${operatorId}`,
+          status: "Removed",
+          ...operator.data,
+        } as const,
+        yearlyFeeDisplay: isRemoved ? "-" : `${yearlyFee} SSV`,
+        performance30dDisplay: isRemoved
+          ? "-"
+          : percentageFormatter.format(operator.data?.performance["30d"] ?? 0),
+      };
+    },
+    enabled: isRemoved || (operator.isSuccess && operatorFee.isSuccess),
+  });
 
-  const operatorYearlyFee = formatSSV(getYearlyFee(fee));
-  const statusBadgeVariant = operator.status === "Active" ? "success" : operator.status === "No Validators" ? "uncoloredError" : "error";
-  return {
-    status: operator.status,
-    statusBadgeVariant,
-    performance: `${operator.performance["30d"].toFixed(2)}%`,
-    yearlyFee: `${operatorYearlyFee} SSV`
-  };
+  return stats;
 };

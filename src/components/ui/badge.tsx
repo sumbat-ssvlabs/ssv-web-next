@@ -30,20 +30,11 @@ const badgeVariants = cva(
   },
 );
 
-export type StatusBadgeVariantType =
-  "error"
-  | "success"
-  | "warning"
-  | "info"
-  | "unstyled"
-  | "multi-select"
-  | "uncoloredError"
-  | null
-  | undefined;
+export type BadgeVariants = VariantProps<typeof badgeVariants>;
 
 export interface BadgeProps
   extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof badgeVariants> {}
+    BadgeVariants {}
 
 export function Badge({ className, variant, size, ...props }: BadgeProps) {
   return (

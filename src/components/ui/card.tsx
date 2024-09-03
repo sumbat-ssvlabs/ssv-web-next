@@ -2,11 +2,11 @@ import { cn } from "@/lib/utils/tw";
 import { cva, type VariantProps } from "class-variance-authority";
 import type { ComponentWithAs } from "@/types/component";
 
-const variants = cva("bg-[#FDFEFE] dark:bg-[#0B2A3C] rounded-2xl mx-auto", {
+const variants = cva("bg-gray-50 rounded-2xl mx-auto", {
   variants: {
     variant: {
       default: "p-8 flex flex-col gap-6",
-      disabled: "bg-[#F8FCFF] dark:bg-[#0b2a3c]",
+      disabled: "opacity-80",
       unstyled: "",
     },
   },

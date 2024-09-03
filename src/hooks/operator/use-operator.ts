@@ -20,13 +20,11 @@ export const invalidateOperatorQuery = (id: OperatorID) => {
   });
 };
 
-type UseOperatorOptions = {
-  options?: QueryConfig<typeof getOperatorQueryOptions>;
-};
+type UseOperatorOptions = QueryConfig<typeof getOperatorQueryOptions>;
 
 export const useOperator = (
   id?: OperatorID,
-  { options }: UseOperatorOptions = {},
+  options: UseOperatorOptions = { enabled: true },
 ) => {
   const params = useOperatorPageParams();
   const _id = (id ?? params.operatorId ?? "").toString();
