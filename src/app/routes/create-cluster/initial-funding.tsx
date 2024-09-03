@@ -49,6 +49,7 @@ export const InitialFunding: FCProps = ({ ...props }) => {
   const navigate = useNavigate();
 
   const { state } = useRegisterValidatorContext;
+  const { shares } = useRegisterValidatorContext();
   const operatorIds = useSelectedOperators();
 
   const operators = useOperators(operatorIds);
@@ -71,7 +72,7 @@ export const InitialFunding: FCProps = ({ ...props }) => {
       computeFundingCost.mutateAsync({
         fundingDays: days,
         operatorsFee,
-        validators: 1,
+        validators: shares.length,
       }),
   });
 
@@ -79,9 +80,8 @@ export const InitialFunding: FCProps = ({ ...props }) => {
     const amount = await computeFundingCost.mutateAsync({
       fundingDays: days,
       operatorsFee,
-      validators: 1,
+      validators: shares.length,
     });
-    console.log("amount:", amount);
     state.depositAmount = amount;
     navigate("../balance-warning");
   });

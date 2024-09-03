@@ -14,16 +14,23 @@ import { proxy, useSnapshot } from "valtio";
 export const useSearchOperators = ({
   ordering = "id:asc",
   search,
-}: Pick<SearchOperatorsParams, "ordering" | "search"> = {}) => {
+  has_dkg_address,
+  type,
+}: Pick<
+  SearchOperatorsParams,
+  "ordering" | "search" | "has_dkg_address" | "type"
+> = {}) => {
   const query = useInfiniteQuery({
     staleTime: ms(1, "minutes"),
     gcTime: ms(1, "minutes"),
     initialPageParam: 1,
-    queryKey: ["search-operators", ordering, search],
+    queryKey: ["search-operators", ordering, search, has_dkg_address, type],
     queryFn: ({ pageParam }) =>
       searchOperators({
+        type,
         search,
         ordering,
+        has_dkg_address,
         page: pageParam,
         perPage: 20,
       }),
@@ -78,7 +85,6 @@ queryClient.getQueryCache().subscribe((event) => {
     const data = event.query.state.data as
       | InfiniteData<OperatorsSearchResponse, unknown>
       | undefined;
-    console.log("setting data!");
     fetchedSearchOperators.operators = uniqBy(
       [
         ...(data?.pages.flatMap((page) => page.operators) || []),

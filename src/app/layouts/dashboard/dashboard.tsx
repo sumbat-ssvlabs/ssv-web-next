@@ -1,5 +1,6 @@
 import { Navbar } from "@/app/layouts/dashboard/navbar";
 import { SsvLogo } from "@/components/ui/ssv-logo";
+import { Text } from "@/components/ui/text";
 import { TransactionModal } from "@/components/ui/transaction-modal";
 import { useBlockNavigationOnPendingTx } from "@/hooks/use-block-navigation-on-pending-tx";
 import { cn } from "@/lib/utils/tw";
@@ -15,14 +16,13 @@ export const DashboardLayout: FC<ComponentPropsWithRef<"div">> = ({
   const isRestoring = useIsRestoring();
   const account = useAccount();
   useBlockNavigationOnPendingTx();
-
   return (
     <>
       <AnimatePresence>
         {isRestoring || account.isReconnecting ? (
           <motion.div
             className={cn(
-              "fixed bg-gray-50 inset-0 flex h-screen items-center justify-center",
+              "fixed flex-col gap-1 bg-gray-50 inset-0 flex h-screen items-center justify-center",
             )}
             key="loading"
             initial={{ opacity: 0 }}
@@ -30,6 +30,9 @@ export const DashboardLayout: FC<ComponentPropsWithRef<"div">> = ({
             exit={{ opacity: 0 }}
           >
             <SsvLogo />
+            <Text variant="caption-semibold" className="ml-4">
+              Reconnecting...
+            </Text>
           </motion.div>
         ) : (
           <motion.div

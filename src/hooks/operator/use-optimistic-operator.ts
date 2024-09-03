@@ -18,10 +18,6 @@ export const useOptimisticOrProvidedOperators = (operators: Operator[]) => {
       enabled: false,
     })),
   });
-  console.log(
-    "optimisticOperators:",
-    optimisticOperators.map((optimisticOperator) => optimisticOperator.data),
-  );
 
   return operators.map((operator, index) => {
     const optimisticOperator = optimisticOperators[index];

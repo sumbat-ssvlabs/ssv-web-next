@@ -9,7 +9,6 @@ import { cn } from "@/lib/utils/tw";
 import { xor } from "lodash-es";
 import { type ComponentPropsWithoutRef, type FC } from "react";
 import { Link } from "react-router-dom";
-import { OperatorPickerFilter } from "@/components/operator/operator-picker/operator-picker-filter/operator-picker-filter";
 import { useCluster } from "@/hooks/cluster/use-cluster";
 import { createClusterHash } from "@/lib/utils/cluster";
 import { useAccount } from "wagmi";
@@ -17,7 +16,12 @@ import { SelectedOperators } from "@/components/operator/operator-picker/selecte
 import { useSearchOperators } from "@/hooks/use-search-operators";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useRegisterValidatorContext } from "@/guard/register-validator-guard";
-import { useDebouncedValue } from "@/hooks/use-debounced-value";
+import { getYearlyFee } from "@/lib/utils/operator";
+import { formatSSV } from "@/lib/utils/number";
+import { Divider } from "@/components/ui/divider";
+import { SearchInput } from "@/components/ui/search-input";
+import { useSearchParamsState } from "@/hooks/app/use-search-param-state";
+import { OperatorPickerFilter } from "@/components/operator/operator-picker/operator-picker-filter/operator-picker-filter";
 
 export type SelectOperatorsProps = {
   // TODO: Add props or remove this type
@@ -33,35 +37,57 @@ export const SelectOperators: FCProps = ({ className, ...props }) => {
   const { state } = useRegisterValidatorContext;
   const { clusterSize, selectedOperatorsIds } = useRegisterValidatorContext();
 
-  const search = useDebouncedValue("", 500);
+  const [search, setSearch, searchDebounced] = useSearchParamsState<string>({
+    key: "search",
+    initialValue: "",
+  });
+
+  const [isVerifiedChecked, setIsVerifiedChecked, isVerifiedCheckedDebounced] =
+    useSearchParamsState<"verified_operator" | "">({
+      key: "type",
+      initialValue: "",
+    });
+
+  const [isDKGChecked, setIsDKGChecked, isDKGCheckedDebounced] =
+    useSearchParamsState<"true" | "false">({
+      key: "has_dkg_address",
+      initialValue: "false",
+    });
 
   const { operators, infiniteQuery, fetched } = useSearchOperators({
-    search: search.debouncedValue,
+    search: searchDebounced,
+    has_dkg_address: isDKGCheckedDebounced === "true",
+    type: isVerifiedCheckedDebounced || undefined,
   });
 
   const selectedOperators = selectedOperatorsIds.map(
     (id) => fetched.operatorsMap[id],
   );
 
+  const totalYearlyFee = selectedOperators.reduce(
+    (acc, operator) => acc + getYearlyFee(BigInt(operator.fee)),
+    0n,
+  );
+
   const hasUnverifiedOperators = selectedOperators.some(
     (operator) => operator.type !== "verified_operator",
   );
 
+  const isClusterSizeMet = selectedOperatorsIds.length === clusterSize;
+
   const hash = createClusterHash(address!, selectedOperatorsIds);
   const cluster = useCluster(hash, {
-    enabled: selectedOperatorsIds.length === clusterSize,
+    enabled: isClusterSizeMet,
   });
 
   const isClusterExists =
-    selectedOperatorsIds.length === clusterSize &&
-    cluster.isSuccess &&
-    cluster.data !== null;
+    isClusterSizeMet && cluster.isSuccess && cluster.data !== null;
 
   return (
-    <Container variant="vertical" className="h-full max-h-full py-6" size="xl">
+    <Container variant="vertical" className="py-6 max-h-full h-full" size="xl">
       <NavigateBackBtn />
-      <div className="flex items-stretch flex-1 gap-6 h-full w-full">
-        <Card className={cn(className, "flex flex-col flex-[2]")} {...props}>
+      <div className="flex items-stretch flex-1 overflow-hidden gap-6 w-full">
+        <Card className={cn(className, "flex flex-col flex-[2.2]")} {...props}>
           <Text variant="headline4">
             Pick the cluster of network operators to run your validator
           </Text>
@@ -69,11 +95,24 @@ export const SelectOperators: FCProps = ({ className, ...props }) => {
             value={clusterSize}
             onChange={(size) => (state.clusterSize = size)}
           />
-          <OperatorPickerFilter
-            value={search.value}
-            onChange={search.setValue}
-          />
+          <div className="flex gap-2">
+            <SearchInput
+              value={search}
+              onChange={(e) => setSearch(e.target.value as string)}
+            />
+            <OperatorPickerFilter
+              onChange={({ isVerifiedChecked, isDKGChecked }) => {
+                setIsVerifiedChecked(
+                  isVerifiedChecked ? "verified_operator" : "",
+                );
+                setIsDKGChecked(isDKGChecked ? "true" : "false");
+              }}
+              isVerifiedChecked={isVerifiedChecked === "verified_operator"}
+              isDKGChecked={isDKGChecked === "true"}
+            />
+          </div>
           <OperatorPicker
+            className="h-full flex-1"
             operators={operators}
             query={infiniteQuery}
             maxSelection={clusterSize}
@@ -85,14 +124,18 @@ export const SelectOperators: FCProps = ({ className, ...props }) => {
         </Card>
         <Card className="flex-[1]">
           <SelectedOperators
-            className="flex-[1] overflow-auto"
+            className="flex-[1] overflow-auto "
             clusterSize={clusterSize}
             selectedOperators={selectedOperators}
             onRemoveOperator={({ id }) => {
               state.selectedOperatorsIds = xor(selectedOperatorsIds, [id]);
             }}
           />
-
+          <Divider />
+          <div className="flex justify-between">
+            <Text>Operators Yearly Fee</Text>
+            <Text variant="body-2-bold">{formatSSV(totalYearlyFee)} SSV</Text>
+          </div>
           {hasUnverifiedOperators && (
             <Alert variant="warning">
               <AlertDescription className="flex flex-col gap-4">
@@ -117,6 +160,7 @@ export const SelectOperators: FCProps = ({ className, ...props }) => {
               </AlertDescription>
             </Alert>
           )}
+
           {isClusterExists && (
             <Alert variant="error">
               <AlertDescription>
@@ -133,7 +177,13 @@ export const SelectOperators: FCProps = ({ className, ...props }) => {
               </AlertDescription>
             </Alert>
           )}
-          <Button size="xl" as={Link} to="../distribution-method">
+          <Button
+            size="xl"
+            as={Link}
+            isLoading={cluster.isLoading}
+            disabled={!isClusterSizeMet}
+            to="../distribution-method"
+          >
             Next
           </Button>
         </Card>

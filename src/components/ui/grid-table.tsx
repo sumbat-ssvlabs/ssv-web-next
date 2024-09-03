@@ -53,7 +53,7 @@ const TableRow: TableRowFC = React.forwardRef<
     <Comp
       ref={ref}
       className={cn(
-        "_row grid w-full p-4 py-2 text-left align-middle font-semibold  border-b border-gray-300",
+        "_row grid w-full p-4 py-2 text-left align-middle font-medium  border-b border-gray-300",
         className,
         {
           "hover:bg-gray-300": clickable,
