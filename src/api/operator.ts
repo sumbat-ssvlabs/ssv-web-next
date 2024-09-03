@@ -19,6 +19,8 @@ type Sort = "asc" | "desc";
 export type SearchOperatorsParams = {
   search?: string;
   ordering?: `${OrderBy}:${Sort}`;
+  type?: "verified_operator";
+  has_dkg_address?: boolean;
   page?: number;
   perPage?: number;
 };

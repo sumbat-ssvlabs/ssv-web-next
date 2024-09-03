@@ -23,10 +23,14 @@ export const computeLiquidationCollateralCost = ({
   minimumLiquidationCollateral,
   validators = 1,
 }: LiquidationCollateralCostArgs) => {
-  const cost =
-    operatorsFee +
-    networkFee * liquidationCollateralPeriod * BigInt(validators);
-  return bigintMax(cost, minimumLiquidationCollateral) / BigInt(validators);
+  const total =
+    (operatorsFee + networkFee) *
+    liquidationCollateralPeriod *
+    BigInt(validators);
+
+  const perValidator =
+    bigintMax(total, minimumLiquidationCollateral) / BigInt(validators);
+  return perValidator * BigInt(validators);
 };
 
 type ComputeFundingCostArgs = Prettify<
@@ -39,8 +43,9 @@ export const computeFundingCost = (args: ComputeFundingCostArgs) => {
   const networkCost = computeDailyAmount(args.networkFee, args.fundingDays);
   const operatorsCost = computeDailyAmount(args.operatorsFee, args.fundingDays);
   const liquidationCollateralCost = computeLiquidationCollateralCost(args);
+
   return (
-    (networkCost + operatorsCost + liquidationCollateralCost) *
-    BigInt(args.validators ?? 1)
+    (networkCost + operatorsCost) * BigInt(args.validators ?? 1) +
+    liquidationCollateralCost
   );
 };

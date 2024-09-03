@@ -11,7 +11,7 @@ type Props = {
 
 export const DistributionMethod: FC<Props> = ({ variant = "create" }) => {
   return (
-    <Container variant="vertical">
+    <Container variant="vertical" className="py-6">
       <Card className="font-medium">
         <Text variant="headline4">Generate Validator KeyShares</Text>
         <Text>

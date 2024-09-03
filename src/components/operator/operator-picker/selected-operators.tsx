@@ -2,6 +2,8 @@ import type { FC, ComponentPropsWithoutRef } from "react";
 import { cn } from "@/lib/utils/tw";
 import { Text } from "@/components/ui/text";
 import type { Operator } from "@/types/api";
+import { SelectedOperatorItem } from "@/components/operator/operator-picker/selected-operator-item";
+import { SelectedOperatorPlaceholder } from "@/components/operator/operator-picker/selected-operator-placholder";
 
 export type SelectedOperatorsProps = {
   clusterSize: number;
@@ -22,36 +24,28 @@ export const SelectedOperators: SelectedOperatorsFC = ({
   ...props
 }) => {
   return (
-    <div className={cn(className)} {...props}>
+    <div className={cn(className, "space-y-6")} {...props}>
       <div className="flex justify-between items-center">
         <Text variant="headline4">Selected Operators</Text>
         <Text variant="headline4" className="text-primary-500">
           {selectedOperators.length}/{clusterSize}
         </Text>
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3">
         {selectedOperators.map((operator) => (
-          <div
+          <SelectedOperatorItem
+            className="mr-2"
             key={operator.public_key}
-            className={cn(
-              "flex items-center gap-2 p-4 rounded-sm bg-primary-100",
-            )}
-          >
-            <Text>{operator.name}</Text>
-            <button
-              onClick={() => onRemoveOperator(operator)}
-              className="text-primary-500"
-            >
-              Remove
-            </button>
-          </div>
+            operator={operator}
+            onRemoveOperator={onRemoveOperator}
+          />
         ))}
         {new Array(clusterSize - selectedOperators.length)
           .fill(0)
           .map((_, index) => (
-            <div
+            <SelectedOperatorPlaceholder
               key={index}
-              className="p-8 rounded-sm bg-gray-200 border border-gray-500 border-dashed"
+              number={selectedOperators.length + index + 1}
             />
           ))}
       </div>

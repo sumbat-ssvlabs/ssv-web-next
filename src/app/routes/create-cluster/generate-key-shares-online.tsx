@@ -105,7 +105,7 @@ export const GenerateKeySharesOnline: FCProps = () => {
   });
 
   return (
-    <Container variant="vertical">
+    <Container variant="vertical" className="py-6">
       <NavigateBackBtn by="history" />
       <Card className="flex flex-col w-full">
         <FileUploader

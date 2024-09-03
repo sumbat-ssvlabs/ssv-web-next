@@ -85,9 +85,7 @@ export const OperatorPickerItem: FCProps = ({
             checked={isSelected}
             id={operator.id.toString()}
             onCheckedChange={disabled ? undefined : onCheckedChange}
-          >
-            Hello
-          </Checkbox>
+          ></Checkbox>
         </TableCell>
         <TableCell>
           <div className="flex items-center gap-2">
@@ -97,21 +95,32 @@ export const OperatorPickerItem: FCProps = ({
               src={operator.logo}
               isPrivate={operator.is_private}
             />
-            <Text
-              className="flex-1 text-ellipsis overflow-hidden"
-              title={operator.name}
-            >
-              {operator.name}
-            </Text>
+            <div className="flex flex-col">
+              <Text
+                className="flex-1 text-ellipsis overflow-hidden"
+                title={operator.name}
+                variant="body-3-medium"
+              >
+                {operator.name}
+              </Text>
+              <Text variant="caption-medium" className="text-gray-500">
+                ID: {operator.id}
+              </Text>
+            </div>
           </div>
         </TableCell>
         <TableCell>{operator.validators_count}</TableCell>
         <TableCell
-          className={cn("flex flex-col gap-1 items-start", {
-            "text-error-500": hasValidators && isInactive,
-          })}
+          className={cn(
+            "flex h-full justify-center flex-col gap-1 items-start",
+            {
+              "text-error-500": hasValidators && isInactive,
+            },
+          )}
         >
-          {percentageFormatter.format(operator.performance["30d"] / 100)}
+          <Text>
+            {percentageFormatter.format(operator.performance["30d"] / 100)}
+          </Text>
           {isInactive && <Badge variant="error">Inactive</Badge>}
         </TableCell>
         <TableCell>

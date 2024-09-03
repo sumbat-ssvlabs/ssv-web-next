@@ -22,11 +22,13 @@ export const OperatorPicker: FCProps = ({
   operators,
   maxSelection,
   query,
+  className,
 }) => {
   const isMaxSelected = selectedOperatorIds.length === maxSelection;
 
   return (
     <VirtualizedInfinityTable
+      className={className}
       gridTemplateColumns="38px 196px 90px 120px 120px minmax(50px, auto) 80px"
       query={query}
       headers={[

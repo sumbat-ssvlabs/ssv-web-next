@@ -75,15 +75,19 @@ export const ReactivateCluster: FCProps = ({ ...props }) => {
     !isEmpty(days) && days < globals.CLUSTER_VALIDITY_PERIOD_MINIMUM;
 
   const fundingCost = useQuery({
-    queryKey: stringifyBigints(["funding-cost", days, operatorsFee]),
+    queryKey: stringifyBigints([
+      "funding-cost",
+      days,
+      operatorsFee,
+      cluster.data?.validatorCount,
+    ]),
     queryFn: () =>
       computeFundingCost.mutateAsync({
         fundingDays: days,
         operatorsFee,
-        validators: 1,
+        validators: cluster.data?.validatorCount ?? 1,
       }),
   });
-  console.log("fundingCost:", fundingCost.data);
 
   const reactive = useReactivate();
 
@@ -91,8 +95,9 @@ export const ReactivateCluster: FCProps = ({ ...props }) => {
     const amount = await computeFundingCost.mutateAsync({
       fundingDays: days,
       operatorsFee,
-      validators: 1,
+      validators: cluster.data?.validatorCount ?? 1,
     });
+    console.log(formatSSV(amount));
 
     return reactive.write(
       {
@@ -167,9 +172,7 @@ export const ReactivateCluster: FCProps = ({ ...props }) => {
             name="days"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>
-                  Days {formatSSV(fundingCost.data ?? 0n)}SSV
-                </FormLabel>
+                <FormLabel>{formatSSV(fundingCost.data ?? 0n)} SSV</FormLabel>
                 <FormControl>
                   <Input type="number" {...field} />
                 </FormControl>
