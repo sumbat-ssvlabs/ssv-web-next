@@ -19,7 +19,7 @@ export const DashboardLayout: FC<ComponentPropsWithRef<"div">> = ({
   return (
     <>
       <AnimatePresence>
-        {isRestoring || account.isReconnecting || account.isConnecting ? (
+        {isRestoring || account.isReconnecting ? (
           <motion.div
             className={cn(
               "fixed bg-gray-50 inset-0 flex h-screen items-center justify-center",

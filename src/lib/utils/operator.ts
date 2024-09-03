@@ -198,7 +198,10 @@ export const sumOperatorsFees = (operators: Operator[]) =>
 
 export const canAccountUseOperator = async (
   account: Address,
-  operator: Operator,
+  operator: Pick<
+    Operator,
+    "is_private" | "whitelisting_contract" | "whitelist_addresses" | "id"
+  >,
 ): Promise<boolean> => {
   if (!operator.is_private) return true;
 

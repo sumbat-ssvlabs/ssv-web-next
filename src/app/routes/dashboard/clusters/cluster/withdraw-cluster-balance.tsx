@@ -41,6 +41,7 @@ export const WithdrawClusterBalance: FC = () => {
 
   const withdraw = useWithdrawClusterBalance(params.clusterHash!);
   const liquidate = useLiquidateCluster(params.clusterHash!);
+
   const isWriting = withdraw.isPending || liquidate.isPending;
 
   const clusterBalance = useClusterBalance(params.clusterHash!, {
@@ -69,8 +70,11 @@ export const WithdrawClusterBalance: FC = () => {
   const submit = form.handleSubmit(async (values) => {
     const options = withTransactionModal({
       onMined: async ({ events }) => {
-        const event = events.find((e) => e.eventName === "ClusterWithdrawn");
-        console.log("event:", event);
+        const event = events.find(
+          (e) =>
+            e.eventName === "ClusterWithdrawn" ||
+            e.eventName === "ClusterLiquidated",
+        );
 
         event &&
           setOptimisticData(
@@ -115,7 +119,8 @@ export const WithdrawClusterBalance: FC = () => {
               <FormItem>
                 <FormControl>
                   <NumberInput
-                    placeholder="0.0"
+                    placeholder="0"
+                    max={clusterBalance.data ?? 0n}
                     value={field.value}
                     onChange={field.onChange}
                     rightSlot={

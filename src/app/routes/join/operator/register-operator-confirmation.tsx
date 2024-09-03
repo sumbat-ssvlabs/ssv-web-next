@@ -78,7 +78,7 @@ export const RegisterOperatorConfirmation: FC = () => {
   useFocus("#register-operator-confirmation");
 
   return (
-    <Container variant="vertical">
+    <Container variant="vertical" className="py-6">
       <NavigateBackBtn by="history" />
       <Card
         id="register-operator-confirmation"

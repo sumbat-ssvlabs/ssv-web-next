@@ -7,19 +7,29 @@ import { useClusterPageParams } from "@/hooks/cluster/use-cluster-page-params";
 type Options = {
   deltaBalance?: bigint;
   deltaValidators?: bigint;
+  watch?: boolean;
 };
 
 export const useClusterRunway = (
   hash?: string,
-  opts: Options = { deltaBalance: 0n, deltaValidators: 0n },
+  opts: Options = { deltaBalance: 0n, deltaValidators: 0n, watch: false },
 ) => {
   const params = useClusterPageParams();
   const clusterHash = hash ?? params.clusterHash;
-  const { data: cluster } = useCluster(clusterHash);
-  const { data: balance = 0n } = useClusterBalance(clusterHash!);
-  const { data: burnRate = 0n } = useClusterBurnRate(clusterHash!);
+
+  const { data: cluster, isLoading: isClusterLoading } =
+    useCluster(clusterHash);
+
+  const { data: balance = 0n, isLoading: isBalanceLoading } = useClusterBalance(
+    clusterHash!,
+    { watch: opts.watch },
+  );
+
+  const { data: burnRate = 0n, isLoading: isBurnRateLoading } =
+    useClusterBurnRate(clusterHash!);
 
   const burnRatePerValidator = burnRate / BigInt(cluster?.validatorCount || 1);
+  const isLoading = isClusterLoading || isBalanceLoading || isBurnRateLoading;
 
   const runway = useRunway({
     balance: balance,
@@ -29,5 +39,5 @@ export const useClusterRunway = (
     deltaBalance: opts.deltaBalance,
   });
 
-  return runway;
+  return { ...runway, isLoading };
 };

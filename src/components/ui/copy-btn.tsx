@@ -1,5 +1,5 @@
 import type { ButtonProps } from "@/components/ui/button";
-import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/ui/button";
 import { useClipboard } from "@/hooks/use-clipboard";
 import { cn } from "@/lib/utils/tw";
 import { AnimatePresence, motion } from "framer-motion";
@@ -15,14 +15,10 @@ type FCProps = FC<Omit<ButtonProps, keyof CopyBtnProps> & CopyBtnProps>;
 export const CopyBtn: FCProps = ({ className, text, ...props }) => {
   const { copy, hasCopied } = useClipboard();
   return (
-    <Button
+    <IconButton
       disabled={!text}
-      size="icon"
-      variant="ghost"
-      className={cn(
-        "relative inline-flex size-6 text-gray-500 overflow-hidden",
-        className,
-      )}
+      variant="subtle"
+      className={cn("relative inline-flex overflow-hidden size-6", className)}
       {...props}
       onClick={(ev) => {
         ev.stopPropagation();
@@ -66,7 +62,7 @@ export const CopyBtn: FCProps = ({ className, text, ...props }) => {
           </motion.div>
         )}
       </AnimatePresence>
-    </Button>
+    </IconButton>
   );
 };
 

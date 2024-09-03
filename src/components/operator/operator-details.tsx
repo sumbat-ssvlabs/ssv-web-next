@@ -46,7 +46,7 @@ export const OperatorDetails: FCProps = ({ operator, isRemovedOperator, classNam
           <Text variant="body-3-medium" className="text-gray-500">
             ID: {operator.id}
           </Text>
-          <CopyBtn text={operator.id_str} />
+          <CopyBtn text={operator.id_str} className="text-gray-500" />
         </div>
       </div>
     </div>

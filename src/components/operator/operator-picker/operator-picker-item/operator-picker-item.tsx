@@ -1,16 +1,24 @@
 import { OperatorAvatar } from "@/components/operator/operator-avatar";
 import { MevRelays } from "@/components/operator/operator-picker/operator-picker-item/mev-relays/mev-relays";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { TableCell, TableRow } from "@/components/ui/grid-table";
 import { SsvExplorerBtn } from "@/components/ui/ssv-explorer-btn";
 import { Text } from "@/components/ui/text";
 import { Tooltip } from "@/components/ui/tooltip";
 import { useGetValidatorsPerOperatorLimit } from "@/lib/contract-interactions/read/use-get-validators-per-operator-limit";
 import { percentageFormatter } from "@/lib/utils/number";
-import { getYearlyFee } from "@/lib/utils/operator";
+import { canAccountUseOperator, getYearlyFee } from "@/lib/utils/operator";
 import { cn } from "@/lib/utils/tw";
 import type { Operator } from "@/types/api";
+import { useQuery } from "@tanstack/react-query";
 import type { ComponentPropsWithoutRef, FC } from "react";
+import { LuLogIn } from "react-icons/lu";
+import { Link } from "react-router-dom";
+import type { Address } from "viem";
+import { isAddressEqual } from "viem";
+import { useAccount } from "wagmi";
 
 export type OperatorPickerItemProps = {
   operator: Operator;
@@ -32,12 +40,23 @@ export const OperatorPickerItem: FCProps = ({
   isDisabled,
   ...props
 }) => {
+  const { address } = useAccount();
   const { data: maxValidatorsPerOperator = 0 } =
     useGetValidatorsPerOperatorLimit();
+
   const reachedMaxValidators =
-    operator.validators_count >= maxValidatorsPerOperator;
+    operator.validators_count + 1 >= maxValidatorsPerOperator;
+
   const hasValidators = operator.validators_count !== 0;
   const isInactive = operator.is_active < 1;
+
+  const isUsable = useQuery({
+    queryKey: ["operator-usable", operator],
+    queryFn: () => canAccountUseOperator(address!, operator),
+  });
+
+  const disabled =
+    isDisabled || reachedMaxValidators || isUsable.isLoading || !isUsable.data;
 
   return (
     <Tooltip
@@ -48,52 +67,73 @@ export const OperatorPickerItem: FCProps = ({
           : undefined
       }
     >
-      <label
+      <TableRow
+        as="label"
         htmlFor={operator.id.toString()}
         className={cn(
-          "grid grid-cols-7 gap-2 text-sm p-4 rounded-sm font-medium items-center",
+          "items-center h-[85px]",
           {
-            "opacity-50": isDisabled || reachedMaxValidators,
+            "opacity-50": disabled,
             "bg-primary-100": isSelected,
           },
           className,
         )}
-        style={{
-          gridTemplateColumns: "32px 1fr 1fr 1fr 1fr 1fr 1fr",
-        }}
         {...props}
       >
-        <Checkbox
-          checked={isSelected}
-          id={operator.id.toString()}
-          onCheckedChange={
-            isDisabled || reachedMaxValidators ? undefined : onCheckedChange
-          }
-        >
-          Hello
-        </Checkbox>
-        <div className="flex items-center gap-2 overflow-hidden">
-          <OperatorAvatar size="md" />
-          <Text
-            className="flex-1 text-ellipsis overflow-hidden"
-            title={operator.name}
+        <TableCell>
+          <Checkbox
+            checked={isSelected}
+            id={operator.id.toString()}
+            onCheckedChange={disabled ? undefined : onCheckedChange}
           >
-            {operator.name}
-          </Text>
-        </div>
-        <div>{operator.validators_count}</div>
-        <div
+            Hello
+          </Checkbox>
+        </TableCell>
+        <TableCell>
+          <div className="flex items-center gap-2">
+            <OperatorAvatar
+              size="md"
+              className="ml-2"
+              src={operator.logo}
+              isPrivate={operator.is_private}
+            />
+            <Text
+              className="flex-1 text-ellipsis overflow-hidden"
+              title={operator.name}
+            >
+              {operator.name}
+            </Text>
+          </div>
+        </TableCell>
+        <TableCell>{operator.validators_count}</TableCell>
+        <TableCell
           className={cn("flex flex-col gap-1 items-start", {
             "text-error-500": hasValidators && isInactive,
           })}
         >
           {percentageFormatter.format(operator.performance["30d"] / 100)}
           {isInactive && <Badge variant="error">Inactive</Badge>}
-        </div>
-        <div>{getYearlyFee(BigInt(operator.fee), { format: true })}</div>
-        <MevRelays mevRelays={operator.mev_relays} />
-        <SsvExplorerBtn operatorId={operator.id} />
-      </label>
+        </TableCell>
+        <TableCell>
+          {getYearlyFee(BigInt(operator.fee), { format: true })}
+        </TableCell>
+        <TableCell>
+          <MevRelays mevRelays={operator.mev_relays} />
+        </TableCell>
+        <TableCell className="flex gap-1 justify-end">
+          <SsvExplorerBtn operatorId={operator.id} />
+          {isAddressEqual(operator.owner_address as Address, address!) && (
+            <Button
+              as={Link}
+              to={`/operators/${operator.id}`}
+              variant="subtle"
+              size="icon"
+            >
+              <LuLogIn />
+            </Button>
+          )}
+        </TableCell>
+      </TableRow>
     </Tooltip>
   );
 };

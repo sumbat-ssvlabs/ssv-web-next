@@ -8,10 +8,13 @@ import { Spacer } from "@/components/ui/spacer";
 import { FiEdit3 } from "react-icons/fi";
 import { ClusterTable } from "@/components/validator/clusters-table/clusters-table";
 import { usePaginatedAccountClusters } from "@/hooks/cluster/use-paginated-account-clusters";
+import { useIsNewAccount } from "@/hooks/account/use-is-new-account";
 
 export const Clusters: FC<ComponentPropsWithoutRef<"div">> = () => {
   const { clusters, pagination } = usePaginatedAccountClusters();
   const navigate = useNavigate();
+  const { isNewAccount, isLoading } = useIsNewAccount();
+
   return (
     <>
       <Helmet>
@@ -22,10 +25,17 @@ export const Clusters: FC<ComponentPropsWithoutRef<"div">> = () => {
         <div className="flex justify-between w-full gap-3">
           <DashboardPicker />
           <Spacer />
-          <Button size="lg" variant="secondary" as={Link} to="/fee-recipient">
+          <Button
+            size="lg"
+            variant="secondary"
+            as={Link}
+            to="/fee-recipient"
+            disabled={isNewAccount}
+            isLoading={isLoading}
+          >
             Fee Address <FiEdit3 />
           </Button>
-          <Button size="lg" as={Link} to="/join/validator">
+          <Button size="lg" className="px-10" as={Link} to="/join/validator">
             Add Cluster
           </Button>
         </div>

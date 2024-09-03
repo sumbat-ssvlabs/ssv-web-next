@@ -24,7 +24,7 @@ export const OperatorSettingsBtn: FC<ButtonProps> = ({
           {...props}
           size="icon"
           variant="subtle"
-          className={cn(className, "rounded-full")}
+          className={cn(className, "rounded-full size-10")}
         >
           <LuMoreVertical className="size-5" />
         </Button>

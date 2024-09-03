@@ -66,8 +66,9 @@ export const NumberInput: NumberInputFC = forwardRef<HTMLInputElement, Props>(
 
     useKey(
       "ArrowUp",
-      () => {
-        const next = value + parseUnits(step, decimals);
+      (event) => {
+        const stepp = +step * (event.shiftKey ? 10 : 1);
+        const next = value + parseUnits(stepp.toString(), decimals);
         if (max && next > max) return onChange(max);
         onChange(next);
       },
@@ -77,8 +78,9 @@ export const NumberInput: NumberInputFC = forwardRef<HTMLInputElement, Props>(
 
     useKey(
       "ArrowDown",
-      () => {
-        const parsed = parseUnits(step, decimals);
+      (event) => {
+        const stepp = +step * (event.shiftKey ? 10 : 1);
+        const parsed = parseUnits(stepp.toString(), decimals);
         const newValue = value - parsed;
         if (newValue < 0n) return onChange(0n);
         onChange(newValue);

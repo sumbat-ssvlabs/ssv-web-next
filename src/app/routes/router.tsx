@@ -7,6 +7,7 @@ import { DistributionMethod } from "@/app/routes/create-cluster/distribution-met
 import { GenerateKeySharesOnline } from "@/app/routes/create-cluster/generate-key-shares-online";
 import { InitialFunding } from "@/app/routes/create-cluster/initial-funding";
 import { Preparation } from "@/app/routes/create-cluster/preparation";
+import { ReactivateCluster } from "@/app/routes/create-cluster/reactivate";
 import { RegisterValidatorConfirmation } from "@/app/routes/create-cluster/register-validator-confirmation";
 import { RegisterValidatorSuccess } from "@/app/routes/create-cluster/register-validator-success";
 import { SelectOperators } from "@/app/routes/create-cluster/select-operators";
@@ -15,6 +16,8 @@ import { UploadKeyshares } from "@/app/routes/create-cluster/upload-keyshares";
 import { Bulk } from "@/app/routes/dashboard/clusters/cluster/bulk";
 import { Cluster } from "@/app/routes/dashboard/clusters/cluster/cluster";
 import { DepositClusterBalance } from "@/app/routes/dashboard/clusters/cluster/deposit-cluster-balance";
+import { ExitValidatorsConfirmation } from "@/app/routes/dashboard/clusters/cluster/exit-validators-confirmation";
+import { ExitValidatorsSuccess } from "@/app/routes/dashboard/clusters/cluster/exit-validators-success";
 import { RemoveValidatorsConfirmation } from "@/app/routes/dashboard/clusters/cluster/remove-validators-confirmation";
 import { WithdrawClusterBalance } from "@/app/routes/dashboard/clusters/cluster/withdraw-cluster-balance";
 import { Clusters } from "@/app/routes/dashboard/clusters/clusters";
@@ -48,6 +51,7 @@ import { RegisterOperatorGuard } from "@/guard/register-operator-guards";
 import { RegisterValidatorGuard } from "@/guard/register-validator-guard";
 import type { RouteObject } from "react-router-dom";
 import { createBrowserRouter, Link, Outlet } from "react-router-dom";
+import { proxy } from "valtio";
 
 const routes = [
   {
@@ -220,6 +224,10 @@ const routes = [
                 element: <DepositClusterBalance />,
               },
               {
+                path: "reactivate",
+                element: <ReactivateCluster />,
+              },
+              {
                 path: "remove",
                 element: (
                   <BulkActionGuard>
@@ -234,6 +242,28 @@ const routes = [
                   {
                     path: "confirmation",
                     element: <RemoveValidatorsConfirmation />,
+                  },
+                ],
+              },
+              {
+                path: "exit",
+                element: (
+                  <BulkActionGuard>
+                    <Outlet />
+                  </BulkActionGuard>
+                ),
+                children: [
+                  {
+                    index: true,
+                    element: <Bulk type="exit" />,
+                  },
+                  {
+                    path: "confirmation",
+                    element: <ExitValidatorsConfirmation />,
+                  },
+                  {
+                    path: "success",
+                    element: <ExitValidatorsSuccess />,
                   },
                 ],
               },
@@ -354,19 +384,19 @@ type ExtractPaths<T extends RouteObject | RouteObject[]> =
   T extends RouteObject[]
     ? ExtractPaths<T[number]> // Recursively apply to each element in the array
     : T extends { path: infer P; children?: infer C }
-      ?
-          | P
-          | (C extends RouteObject[]
-              ? P extends string
+      ? P extends string
+        ?
+            | P
+            | (C extends RouteObject[]
                 ? `${P}/${ExtractPaths<C> extends string ? ExtractPaths<C> : never}`
-                : never
-              : never)
+                : never)
+        : never
       : never;
 
 type ExtractParts<P> = P extends `${infer Start}:${string}/${infer Rest}`
-  ? `${Start}${string}/${Rest}`
+  ? `${Start}${string}/${Rest}` | `${Start}${string}/${Rest}/*`
   : P extends `${infer Start}:${string}`
-    ? `${Start}${string}/`
+    ? `${Start}${string}/` | `${Start}${string}/*`
     : P;
 
 type ExtractPaths2<T extends RouteObject | RouteObject[]> =
@@ -383,8 +413,19 @@ type ExtractPaths2<T extends RouteObject | RouteObject[]> =
         >
       : never;
 
-export type RoutePaths = ExtractPaths<typeof routes>;
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type RoutePaths = ExtractPaths<typeof routes> | (string & {});
 export type WritableRoutePaths = ExtractPaths2<typeof routes>;
 
 export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter(routes);
+
+export const locationState = proxy({
+  current: router.state.location.pathname,
+  previous: router.state.location.pathname,
+});
+
+router.subscribe((state) => {
+  locationState.previous = locationState.current;
+  locationState.current = state.location.pathname;
+});

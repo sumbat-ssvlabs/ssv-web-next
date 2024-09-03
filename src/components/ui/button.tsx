@@ -4,6 +4,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils/tw";
 import type { ComponentWithAs, PropsWithAs } from "@/types/component";
 import { CgSpinner } from "react-icons/cg";
+import { Spinner } from "@/components/ui/spinner";
 
 export const buttonVariants = cva(
   "inline-flex gap-2 items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ",
@@ -33,7 +34,7 @@ export const buttonVariants = cva(
         sm: "h-9 px-3 font-semibold text-sm rounded-lg",
         lg: "h-12 px-6 font-semibold text-md rounded-lg",
         xl: "h-[60px] px-6 font-semibold text-md rounded-lg",
-        icon: "h-10 w-10 rounded-lg",
+        icon: "size-7 rounded-lg",
         network: "h-12 pl-3 pr-4 font-semibold text-md rounded-lg",
         wallet: "h-12 px-4 font-semibold text-md rounded-lg",
         none: "",
@@ -128,4 +129,70 @@ export const Button: ButtonFC = React.forwardRef<
     );
   },
 );
+
 Button.displayName = "Button";
+
+// @ts-expect-error - I don't know how to fix this
+export const IconButton: ButtonFC = React.forwardRef<
+  HTMLButtonElement,
+  ButtonProps
+>(
+  (
+    {
+      className,
+      variant,
+      colorScheme,
+      width,
+      isLoading,
+      children,
+      disabled,
+      type = "button",
+      as,
+      ...props
+    },
+    ref,
+  ) => {
+    const Comp = as ?? "button";
+
+    const copiedChildren = React.useMemo(() => {
+      if (React.isValidElement(children)) {
+        return React.cloneElement(children, {
+          ...props,
+          // @ts-expect-error className is not a valid prop
+          className: cn(children.props.className, className, "size-[65%]"),
+        });
+      }
+    }, [children, className, props]);
+
+    return (
+      <Comp
+        className={cn(
+          "size-7",
+          buttonVariants({
+            variant: disabled ? "disabled" : variant ?? "subtle",
+            colorScheme,
+            className,
+            size: "icon",
+            width,
+          }),
+
+          {
+            "opacity-50": isLoading,
+          },
+        )}
+        aria-disabled={disabled}
+        disabled={disabled}
+        type={type}
+        ref={ref}
+        {...props}
+        onClick={
+          disabled || isLoading
+            ? (ev: React.MouseEvent<HTMLButtonElement>) => ev.preventDefault()
+            : props.onClick
+        }
+      >
+        {isLoading ? <Spinner className="size-[65%]" /> : copiedChildren}
+      </Comp>
+    );
+  },
+);

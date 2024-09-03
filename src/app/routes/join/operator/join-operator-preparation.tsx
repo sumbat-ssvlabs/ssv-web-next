@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
+import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils/tw";
 import type { ComponentPropsWithoutRef, FC } from "react";
@@ -12,6 +13,7 @@ export const JoinOperatorPreparation: FC<ComponentPropsWithoutRef<"div">> = ({
 }) => {
   return (
     <Container variant="vertical" className="py-6">
+      <NavigateBackBtn to="/operators"></NavigateBackBtn>
       <Card className={cn(className)} {...props}>
         <Text variant="headline4">Join the SSV Network Operators</Text>
         <Text>

@@ -7,7 +7,6 @@ import { Container } from "@/components/ui/container";
 import { Text } from "@/components/ui/text";
 import { useBulkActionContext } from "@/guard/bulk-action-guard";
 import { useCluster } from "@/hooks/cluster/use-cluster";
-import { useClusterPageParams } from "@/hooks/cluster/use-cluster-page-params";
 import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
 import { useBulkExitValidator } from "@/lib/contract-interactions/write/use-bulk-exit-validator";
 import { useExitValidator } from "@/lib/contract-interactions/write/use-exit-validator";
@@ -20,7 +19,6 @@ import { useNavigate } from "react-router-dom";
 export const ExitValidatorsConfirmation: FC = () => {
   const navigate = useNavigate();
   const cluster = useCluster();
-  const params = useClusterPageParams();
 
   const [agree1, setAgree1] = useState(false);
   const [agree2, setAgree2] = useState(false);
@@ -39,7 +37,7 @@ export const ExitValidatorsConfirmation: FC = () => {
 
     const options = withTransactionModal({
       onMined: () => {
-        return () => navigate(`/clusters/${params.clusterHash!}`);
+        return () => navigate(`../success`);
       },
     });
 
