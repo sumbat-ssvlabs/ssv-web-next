@@ -67,6 +67,7 @@ export const AdditionalFunding: FC = () => {
         </div>
         <UnmountClosed isOpened={Boolean(clusterRunway?.isAtRisk)}>
           <EstimatedOperationalRunwayAlert
+            isLiquidated={false}
             isAtRisk={Boolean(clusterRunway?.isAtRisk)}
             isWithdrawing={false}
             hasDeltaValidators={true}

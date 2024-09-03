@@ -50,7 +50,12 @@ export const Operator: FC<ComponentPropsWithoutRef<"div">> = ({ ...props }) => {
                 <Text variant="body-3-medium" className="text-gray-500">
                   Name
                 </Text>
-                <OperatorDetails operator={operator.data} />
+                <OperatorDetails
+                  operator={{
+                    id: 1,
+                    name: "",
+                  }}
+                />
               </div>{" "}
               <div className="flex flex-col gap-2">
                 <Tooltip content="Is the operator performing duties for the majority of its validators for the last 2 epochs.">
