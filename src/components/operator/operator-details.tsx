@@ -11,8 +11,7 @@ import { FaPowerOff } from "react-icons/fa";
 
 export type OperatorDetailsProps = {
   operator: Pick<Operator, "id" | "name"> &
-    Partial<Pick<Operator, "logo" | "is_private" | "id_str">>;
-  isRemoved?: boolean;
+    Partial<Pick<Operator, "logo" | "is_private" | "id_str" | "is_deleted">>;
 };
 
 type FCProps = FC<
@@ -20,12 +19,7 @@ type FCProps = FC<
     OperatorDetailsProps
 >;
 
-export const OperatorDetails: FCProps = ({
-  operator,
-  isRemoved,
-  className,
-  ...props
-}) => {
+export const OperatorDetails: FCProps = ({ operator, className, ...props }) => {
   return (
     <div className={cn(className, "flex items-center gap-3")} {...props}>
       <OperatorAvatar
@@ -36,7 +30,7 @@ export const OperatorDetails: FCProps = ({
       <div className="flex flex-col h-full justify-between">
         <div className="flex gap-2 items-center">
           <Text variant="body-2-medium">{operator.name}</Text>
-          {isRemoved ? (
+          {operator.is_deleted ? (
             <div className="flex gap-2">
               <div className="size-5 rounded bg-error-100 flex items-center justify-center">
                 <FaPowerOff className="size-3 text-error-500" />

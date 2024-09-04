@@ -1,7 +1,8 @@
 import type { FC, ComponentPropsWithoutRef } from "react";
 import { cn } from "@/lib/utils/tw";
 import { cva, type VariantProps } from "class-variance-authority";
-import { Loader2 } from "lucide-react";
+import type { Loader2 } from "lucide-react";
+import { CgSpinner } from "react-icons/cg";
 
 export const spinnerVariants = cva("text-primary-500 animate-spin", {
   variants: {
@@ -22,7 +23,7 @@ export const Spinner: FC<
     VariantProps<typeof spinnerVariants>
 > = ({ className, size, ...props }) => {
   return (
-    <Loader2
+    <CgSpinner
       className={cn(
         spinnerVariants({
           className,

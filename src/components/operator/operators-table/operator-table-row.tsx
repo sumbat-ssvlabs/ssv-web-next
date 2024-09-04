@@ -1,5 +1,5 @@
 import { OperatorDetails } from "@/components/operator/operator-details";
-import { Badge } from "@/components/ui/badge";
+import { OperatorStatusBadge } from "@/components/operator/operator-status-badge";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { useOptimisticOrProvidedOperator } from "@/hooks/operator/use-optimistic-operator";
 import { useGetOperatorEarnings } from "@/lib/contract-interactions/read/use-get-operator-earnings";
@@ -42,9 +42,7 @@ export const OperatorTableRow: FCProps = ({
         <OperatorDetails operator={operator} />
       </TableCell>
       <TableCell>
-        <Badge size="sm" variant="multi-select">
-          {operator.status}
-        </Badge>
+        <OperatorStatusBadge size="sm" status={operator.status} />
       </TableCell>
       <TableCell>
         {percentageFormatter.format(operator.performance["30d"])}

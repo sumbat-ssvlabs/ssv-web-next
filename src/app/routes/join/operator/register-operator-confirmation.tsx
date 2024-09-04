@@ -1,4 +1,4 @@
-import { OperatorStatusBadge } from "@/components/operator/operator-permission/operator-status-badge";
+import { OperatorVisibilityBadge } from "@/components/operator/operator-permission/operator-visibility-badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
@@ -144,7 +144,7 @@ export const RegisterOperatorConfirmation: FC = () => {
             >
               Status
             </Text>
-            <OperatorStatusBadge isPrivate={isPrivate} />
+            <OperatorVisibilityBadge isPrivate={isPrivate} />
           </div>
         </div>
         <Button

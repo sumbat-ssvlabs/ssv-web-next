@@ -1,5 +1,5 @@
 import { OperatorDetails } from "@/components/operator/operator-details";
-import { OperatorStatusBadge } from "@/components/operator/operator-permission/operator-status-badge";
+import { OperatorVisibilityBadge } from "@/components/operator/operator-permission/operator-visibility-badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -80,7 +80,7 @@ export const OperatorStatus: FC = () => {
           </div>
           <div className="flex items-center justify-between bg-gray-100 px-6 py-5 rounded-lg">
             <OperatorDetails operator={operator} />
-            <OperatorStatusBadge isPrivate={operator?.is_private} />
+            <OperatorVisibilityBadge isPrivate={operator?.is_private} />
           </div>
           {isFeeZero && operator?.is_private && (
             <Alert variant="error">

@@ -23,6 +23,7 @@ type Result = {
   hasPermissionedOperators: boolean;
   hasExceededValidatorsLimit: boolean;
   maxAddableValidators: number;
+  hasDeletedOperators: boolean;
 };
 
 export const useOperatorsUsability = (
@@ -55,6 +56,7 @@ export const useOperatorsUsability = (
   });
 
   const queryStatus = combineQueryStatus(canUse, operators);
+
   return {
     ...queryStatus,
     data: queryStatus.isSuccess
@@ -66,7 +68,8 @@ export const useOperatorsUsability = (
 
             acc.operators.push({
               operator,
-              isUsable: isUsable && !hasExceededValidatorsLimit,
+              isUsable:
+                isUsable && !hasExceededValidatorsLimit && !operator.is_deleted,
               status: hasExceededValidatorsLimit
                 ? "exceeded_validators_limit"
                 : !isUsable
@@ -76,6 +79,7 @@ export const useOperatorsUsability = (
 
             acc.hasPermissionedOperators ||= !isUsable;
             acc.hasExceededValidatorsLimit ||= hasExceededValidatorsLimit;
+            acc.hasDeletedOperators ||= operator.is_deleted;
             acc.maxAddableValidators = Math.min(
               acc.maxAddableValidators,
               maxValidators - operator.validators_count,
@@ -87,6 +91,7 @@ export const useOperatorsUsability = (
             hasPermissionedOperators: false,
             hasExceededValidatorsLimit: false,
             maxAddableValidators: Infinity,
+            hasDeletedOperators: false,
           } as Result,
         )
       : undefined,

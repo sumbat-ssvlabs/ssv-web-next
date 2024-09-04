@@ -29,7 +29,6 @@ import { useNavigate } from "react-router-dom";
 import { useLiquidateCluster } from "@/hooks/cluster/use-liquidate-cluster";
 import { setOptimisticData } from "@/lib/react-query";
 import { getClusterQueryOptions } from "@/hooks/cluster/use-cluster";
-import { merge } from "lodash-es";
 
 const schema = z.object({
   amount: z.bigint().positive(),
@@ -81,7 +80,13 @@ export const WithdrawClusterBalance: FC = () => {
             getClusterQueryOptions(params.clusterHash!).queryKey,
             (cluster) => {
               if (!cluster) return cluster;
-              return merge({}, cluster, stringifyBigints(event.args.cluster));
+              return {
+                ...cluster,
+                ...stringifyBigints(event.args.cluster),
+                isLiquidated: Boolean(
+                  events.find((e) => e.eventName === "ClusterLiquidated"),
+                ),
+              };
             },
           );
 

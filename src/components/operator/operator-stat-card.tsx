@@ -8,19 +8,10 @@ import { Divider } from "@/components/ui/divider";
 import { Text } from "@/components/ui/text";
 import { FaCircleInfo } from "react-icons/fa6";
 import { Tooltip } from "@/components/ui/tooltip";
-import type { BadgeVariants } from "@/components/ui/badge";
-import { Badge } from "@/components/ui/badge";
-import { useOperatorStats } from "@/hooks/operator/use-operator-stats.ts";
-
-const variants: Record<string, BadgeVariants["variant"]> = {
-  Active: "success",
-  Removed: "uncoloredError",
-  "No Validators": "uncoloredError",
-};
-
-const getBadgeVariant = (status: string) => {
-  return variants[status] ?? "error";
-};
+import { useOperatorState } from "@/hooks/operator/use-operator-state";
+import { formatSSV, percentageFormatter } from "@/lib/utils/number";
+import { CircleX } from "lucide-react";
+import { OperatorStatusBadge } from "@/components/operator/operator-status-badge";
 
 export type OperatorStatCardProps = {
   operatorId: OperatorID;
@@ -36,12 +27,15 @@ export const OperatorStatCard: OperatorStatCardFC = ({
   className,
   ...props
 }) => {
-  const stats = useOperatorStats(operatorId);
+  const operatorState = useOperatorState(operatorId);
 
-  if (!stats.isSuccess)
+  if (operatorState.isLoading)
     return (
       <Card
-        className={cn(className, "min-h-[180.8px] items-center justify-center")}
+        className={cn(
+          className,
+          "min-h-[180.8px] items-center justify-center  gap-2",
+        )}
         {...props}
       >
         <Spinner />
@@ -51,16 +45,33 @@ export const OperatorStatCard: OperatorStatCardFC = ({
       </Card>
     );
 
+  if (operatorState.isError || !operatorState.data)
+    return (
+      <Card
+        className={cn(
+          className,
+          "min-h-[180.8px] flex flex-col items-center justify-center gap-2",
+        )}
+        {...props}
+      >
+        <CircleX className="text-error-500 size-6" />
+        <Text variant="caption-semibold">
+          Could not load operator {operatorId.toString()}
+        </Text>
+      </Card>
+    );
+
+  const { operator, fee } = operatorState.data;
+
   return (
     <Card
-      variant={stats.data?.isRemoved ? "disabled" : "default"}
+      variant={
+        operatorState.data?.operator?.is_deleted ? "disabled" : "default"
+      }
       className={cn("flex flex-col p-6 gap-4", className)}
       {...props}
     >
-      <OperatorDetails
-        isRemoved={stats.data?.isRemoved}
-        operator={stats.data.operator}
-      />
+      <OperatorDetails operator={operator} />
       <Divider />
       <div className="flex justify-between items-start gap-2">
         <div className="flex flex-col gap-1">
@@ -70,22 +81,17 @@ export const OperatorStatCard: OperatorStatCardFC = ({
               <FaCircleInfo className="text-gray-400 size-3" />
             </div>
           </Tooltip>
-          <Badge
-            size="sm"
-            variant={getBadgeVariant(stats.data.operator.status)}
-          >
-            {stats.data.operator.status}
-          </Badge>
+          <OperatorStatusBadge status={operator.status} />
         </div>
         <div className="flex flex-col gap-1">
           <Text variant="caption-medium">30D Perform.</Text>
           <Text variant="body-2-semibold">
-            {stats.data.performance30dDisplay}
+            {percentageFormatter.format(operator.performance["30d"])}
           </Text>
         </div>
         <div className="flex flex-col justify-end gap-1 text-end">
           <Text variant="caption-medium">Yearly Fee</Text>
-          <Text variant="body-2-semibold">{stats.data.yearlyFeeDisplay}</Text>
+          <Text variant="body-2-semibold">{formatSSV(fee.yearly)} SSV</Text>
         </div>
       </div>
     </Card>

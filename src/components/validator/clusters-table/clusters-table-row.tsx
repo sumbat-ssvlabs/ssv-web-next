@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Tooltip } from "@/components/ui/tooltip";
+import { useCluster } from "@/hooks/cluster/use-cluster";
 import { useClusterRunway } from "@/hooks/cluster/use-cluster-runway";
 import { useOptimisticOrProvidedOperator } from "@/hooks/operator/use-optimistic-operator";
 import { shortenAddress } from "@/lib/utils/strings";
@@ -22,10 +23,11 @@ type FCProps = FC<
 >;
 
 export const ClustersTableRow: FCProps = ({ cluster, className, ...props }) => {
+  const apiCluster = useCluster(cluster.clusterId);
   const runway = useClusterRunway(cluster.clusterId);
-  const isLoadingRunway = !cluster.isLiquidated && runway.isLoading;
+  const isLiquidated = apiCluster.data?.isLiquidated;
+  const isLoadingRunway = !isLiquidated && runway.isLoading;
 
-  const isLiquidated = cluster.isLiquidated;
   return (
     <TableRow
       key={cluster.id}
@@ -72,7 +74,7 @@ export const ClustersTableRow: FCProps = ({ cluster, className, ...props }) => {
         )}
       </TableCell>
       <TableCell>
-        {cluster.isLiquidated ? (
+        {isLiquidated ? (
           <Badge size="sm" variant="error">
             Liquidated
           </Badge>

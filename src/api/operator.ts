@@ -106,6 +106,13 @@ export const getOperatorLocations = () => {
 export const getOperatorNodes = (layer: number) => {
   return api.get<string[]>(endpoint("operators/nodes", layer));
 };
+
+export const checkOperatorDKGHealth = (dkgAddress: string) => {
+  return api.post<boolean>(endpoint("operators/dkg_health_check"), {
+    dkgAddress,
+  });
+};
+
 export interface OperatorMetadata {
   operatorName: string;
   description: string;

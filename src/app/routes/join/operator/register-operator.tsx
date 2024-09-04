@@ -25,7 +25,7 @@ import { getOperatorByPublicKeyQueryOptions } from "@/hooks/operator/use-get-ope
 import { FaCircleInfo } from "react-icons/fa6";
 import { Tooltip } from "@/components/ui/tooltip";
 import { Switch } from "@/components/ui/switch";
-import { OperatorStatusBadge } from "@/components/operator/operator-permission/operator-status-badge";
+import { OperatorVisibilityBadge } from "@/components/operator/operator-permission/operator-visibility-badge";
 import { useNavigate } from "react-router";
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import { useFocus } from "@/hooks/use-focus";
@@ -187,7 +187,7 @@ export const RegisterOperator: FC<ComponentPropsWithoutRef<"div">> = ({
                 <FormItem>
                   <FormControl>
                     <div className="flex items-center gap-2">
-                      <OperatorStatusBadge
+                      <OperatorVisibilityBadge
                         isPrivate={form.watch("isPrivate")}
                       />
                       <Switch

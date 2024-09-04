@@ -1,5 +1,5 @@
 import { ActiveBadge } from "@/components/operator/operator-permission/active-badge";
-import { OperatorStatusBadge } from "@/components/operator/operator-permission/operator-status-badge";
+import { OperatorVisibilityBadge } from "@/components/operator/operator-permission/operator-visibility-badge";
 import { PermissionSettingsItem } from "@/components/operator/operator-permission/permission-settings-item";
 import { Card } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
@@ -58,7 +58,7 @@ export const OperatorSettings: FC<ComponentPropsWithoutRef<"div">> = () => {
             "Switch between public and private modes for operator access control."
           }
           route="status"
-          addon={<OperatorStatusBadge isPrivate={operator?.is_private} />}
+          addon={<OperatorVisibilityBadge isPrivate={operator?.is_private} />}
         />
         <PermissionSettingsItem
           title="Authorized Addresses"

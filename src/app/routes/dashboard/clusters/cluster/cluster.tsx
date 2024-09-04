@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
+import { CopyBtn } from "@/components/ui/copy-btn";
 import { Divider } from "@/components/ui/divider";
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -16,6 +17,9 @@ import { useClusterPageParams } from "@/hooks/cluster/use-cluster-page-params";
 import { useClusterRunway } from "@/hooks/cluster/use-cluster-runway";
 import { useClusterState } from "@/hooks/cluster/use-cluster-state";
 import { useOperatorsUsability } from "@/hooks/keyshares/use-operators-usability";
+import { useOperators } from "@/hooks/operator/use-operators";
+import { useSSVAccount } from "@/hooks/use-ssv-account";
+import { generateSSVKeysCMD } from "@/lib/utils/keyshares";
 import { formatSSV } from "@/lib/utils/number";
 import { cn } from "@/lib/utils/tw";
 import { PlusIcon } from "lucide-react";
@@ -38,11 +42,33 @@ export const Cluster: FC = () => {
     operatorIds: cluster.data?.operators ?? [],
   });
 
+  const getTooltipContent = () => {
+    if (isLiquidated.data)
+      return "You cannot perform this operation when your cluster is liquidated. Please reactivate to proceed.";
+    if (operatorsUsability.isError)
+      return "Unable to fetch all operators. Adding validators is currently blocked due to unknown operator status. Please refresh the page and try again.";
+    if (operatorsUsability.data?.hasDeletedOperators)
+      return "One of your chosen operators has been removed by its owner. To onboard validators, you'll need to select a new cluster.";
+    if (operatorsUsability.data?.hasPermissionedOperators)
+      return "One of your chosen operators has shifted to a permissioned status. To onboard validators, you'll need to select a new cluster.";
+    if (operatorsUsability.data?.hasExceededValidatorsLimit)
+      return "One of your operators has reached their maximum number of validators";
+  };
+
+  const operators = useOperators(cluster.data?.operators ?? []);
+  const ssvAccount = useSSVAccount();
+  const cmd = generateSSVKeysCMD({
+    operators: operators.data ?? [],
+    account: account.address!,
+    nonce: ssvAccount.data?.nonce ?? 0,
+  });
+
   const { data: runway } = useClusterRunway(clusterHash!);
 
   return (
     <Container variant="vertical" size="xl" className="h-full py-6">
       <NavigateBackBtn />
+
       <div className="grid grid-cols-4 gap-6 w-full">
         {cluster.data?.operators.map((operatorId) => (
           <OperatorStatCard
@@ -54,6 +80,7 @@ export const Cluster: FC = () => {
       </div>
       <div className="flex flex-1 items-start gap-6 w-full">
         <Card className="flex-[1]">
+          <CopyBtn text={cmd} />
           <div className="flex flex-col gap-2 ">
             <div className="flex gap-2 items-center">
               <Text variant="headline4" className="text-gray-500">
@@ -103,19 +130,13 @@ export const Cluster: FC = () => {
             </Text>
             <Spacer />
             <ValidatorsActionsMenu isLiquidated={Boolean(isLiquidated.data)} />
-            <Tooltip
-              content={
-                operatorsUsability.data?.hasPermissionedOperators
-                  ? "One of your chosen operators has shifted to a permissioned status. To onboard validators, you'll need to select a new cluster."
-                  : operatorsUsability.data?.hasExceededValidatorsLimit
-                    ? "One of your operators has reached their maximum number of validators"
-                    : undefined
-              }
-            >
+            <Tooltip content={getTooltipContent()}>
               <Button
                 disabled={
+                  operatorsUsability.isError ||
                   operatorsUsability.data?.hasExceededValidatorsLimit ||
                   operatorsUsability.data?.hasPermissionedOperators ||
+                  operatorsUsability.data?.hasDeletedOperators ||
                   isLiquidated.data
                 }
                 isLoading={

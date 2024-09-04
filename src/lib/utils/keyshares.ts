@@ -1,9 +1,13 @@
 import { sortNumbers } from "@/lib/utils/number";
-import { getOperatorIds } from "@/lib/utils/operator";
+import { getOperatorIds, sortOperators } from "@/lib/utils/operator";
 import { keysharesSchema } from "@/lib/zod/keyshares";
 import type { Operator } from "@/types/api";
 import { KeyShares, type KeySharesItem } from "ssv-keys";
-
+import type { Address } from "viem";
+import { getChainName } from "@/lib/utils/wagmi";
+import { getChainId } from "@wagmi/core";
+import { config } from "@/wagmi/config";
+import { isWindows } from "@/lib/utils/os";
 export enum KeysharesValidationErrors {
   OPERATOR_NOT_EXIST_ID,
   OPERATOR_NOT_MATCHING_ID,
@@ -86,4 +90,64 @@ export const ensureValidatorsUniqueness = (keyshares: KeySharesItem[]) => {
     );
   }
   return true;
+};
+
+const cmd = isWindows ? "ssv-keys.exe" : "./ssv-keys-mac";
+const dynamicFullPath = isWindows ? "%cd%" : "$(pwd)";
+
+type GenerateSSVKeysCMDParams = {
+  operators: Pick<Operator, "id" | "public_key">[];
+  nonce: number;
+  account: Address;
+};
+
+export const generateSSVKeysCMD = ({
+  operators,
+  nonce,
+  account,
+}: GenerateSSVKeysCMDParams) => {
+  const sortedOperators = sortOperators(operators);
+  const operatorIds = sortedOperators.map((op) => op.id).join(",");
+  const operatorPublicKeys = sortedOperators
+    .map((op) => op.public_key)
+    .join(",");
+
+  return `${cmd} --operator-keys=${operatorPublicKeys} --operator-ids=${operatorIds} --owner-address=${account} --owner-nonce=${nonce}`;
+};
+
+type GenerateSSVKeysDockerCMDParams = {
+  operators: Pick<Operator, "id" | "public_key" | "dkg_address">[];
+  nonce: number;
+  account: Address;
+  withdrawalAddress: Address;
+  chainId?: number;
+  validatorsCount?: number;
+};
+
+export const generateSSVKeysDockerCMD = ({
+  operators,
+  nonce,
+  account,
+  withdrawalAddress,
+  chainId = getChainId(config),
+  validatorsCount = 1,
+}: GenerateSSVKeysDockerCMDParams) => {
+  const chainName = chainId === 1 ? "mainnet" : getChainName(chainId);
+  const sortedOperators = sortOperators(operators);
+  const operatorIds = sortedOperators.map((op) => op.id).join(",");
+
+  const getOperatorsData = () => {
+    const jsonOperatorInfo = JSON.stringify(
+      sortedOperators.map(({ id, public_key, dkg_address }) => ({
+        id,
+        public_key,
+        ip: dkg_address,
+      })),
+    );
+
+    return isWindows
+      ? `"${jsonOperatorInfo.replace(/"/g, '\\"')}"`
+      : `'${jsonOperatorInfo}'`;
+  };
+  return `docker pull bloxstaking/ssv-dkg:v2.1.0 && docker run --rm -v ${dynamicFullPath}:/data -it "bloxstaking/ssv-dkg:v2.1.0" init --owner ${account} --nonce ${nonce} --withdrawAddress ${withdrawalAddress} --operatorIDs ${operatorIds} --operatorsInfo ${getOperatorsData()} --network ${chainName} --validators ${validatorsCount} --logFilePath /data/debug.log --outputPath /data`;
 };

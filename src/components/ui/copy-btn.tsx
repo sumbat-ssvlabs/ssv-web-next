@@ -22,6 +22,7 @@ export const CopyBtn: FCProps = ({ className, text, ...props }) => {
       {...props}
       onClick={(ev) => {
         ev.stopPropagation();
+        props.onClick?.(ev);
         return copy(text ?? "");
       }}
     >

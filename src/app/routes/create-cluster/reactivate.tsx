@@ -37,7 +37,7 @@ import { isEmpty, merge } from "lodash-es";
 import type { ComponentPropsWithoutRef, FC } from "react";
 import { Collapse } from "react-collapse";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 import { z } from "zod";
 
 export type ReactivateClusterProps = {
@@ -134,6 +134,11 @@ export const ReactivateCluster: FCProps = ({ ...props }) => {
       }),
     );
   });
+
+  if (cluster.data && !cluster.data.isLiquidated) {
+    console.log("cluster.data:", cluster.data);
+    return <Navigate to={`/clusters/${cluster.data?.clusterId}`} replace />;
+  }
 
   if (operators.isPending) {
     return <Spinner />;

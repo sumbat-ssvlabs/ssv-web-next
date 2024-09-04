@@ -163,13 +163,18 @@ const routes = [
                 element: <DistributionMethod variant="create" />,
               },
               {
+                path: "keyshares",
+                element: <UploadKeyshares />,
+              },
+              {
                 path: "online",
                 element: <GenerateKeySharesOnline />,
               },
               {
                 path: "offline",
-                element: <UploadKeyshares />,
+                element: <DistributeOffline />,
               },
+
               {
                 path: "funding",
                 element: <InitialFunding />,

@@ -4,15 +4,16 @@ import { MdLockOutline } from "react-icons/md";
 import { Badge, type BadgeProps } from "@/components/ui/badge";
 import { cn } from "@/lib/utils/tw";
 
-export type OperatorStatusBadgeProps = {
+export type OperatorVisibilityBadgeProps = {
   isPrivate?: boolean;
 };
 
 type FCProps = FC<
-  Omit<BadgeProps, keyof OperatorStatusBadgeProps> & OperatorStatusBadgeProps
+  Omit<BadgeProps, keyof OperatorVisibilityBadgeProps> &
+    OperatorVisibilityBadgeProps
 >;
 
-export const OperatorStatusBadge: FCProps = ({
+export const OperatorVisibilityBadge: FCProps = ({
   isPrivate,
   className,
   ...props
@@ -30,4 +31,4 @@ export const OperatorStatusBadge: FCProps = ({
   );
 };
 
-OperatorStatusBadge.displayName = "OperatorStatusBadge";
+OperatorVisibilityBadge.displayName = "OperatorVisibilityBadge";
