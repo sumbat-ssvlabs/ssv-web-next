@@ -55,14 +55,6 @@ export const Cluster: FC = () => {
       return "One of your operators has reached their maximum number of validators";
   };
 
-  const operators = useOperators(cluster.data?.operators ?? []);
-  const ssvAccount = useSSVAccount();
-  const cmd = generateSSVKeysCMD({
-    operators: operators.data ?? [],
-    account: account.address!,
-    nonce: ssvAccount.data?.nonce ?? 0,
-  });
-
   const { data: runway } = useClusterRunway(clusterHash!);
 
   return (
@@ -80,7 +72,6 @@ export const Cluster: FC = () => {
       </div>
       <div className="flex flex-1 items-start gap-6 w-full">
         <Card className="flex-[1]">
-          <CopyBtn text={cmd} />
           <div className="flex flex-col gap-2 ">
             <div className="flex gap-2 items-center">
               <Text variant="headline4" className="text-gray-500">
