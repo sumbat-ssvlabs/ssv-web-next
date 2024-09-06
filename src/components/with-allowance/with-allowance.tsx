@@ -82,7 +82,6 @@ export const WithAllowance: WithAllowanceFC = ({
     [canProceed, props.children, size],
   );
 
-  console.log("allowance.isLoading:", allowance.isLoading);
   if (allowance.isLoading || isUndefined(allowance.data)) return props.children;
   if (allowance.isSuccess && hasAllowance && approver.wait.status === "idle")
     return props.children;

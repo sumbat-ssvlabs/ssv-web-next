@@ -114,7 +114,7 @@ export const SetOperatorFee: FC<ComponentPropsWithoutRef<"div">> = () => {
                 <FormLabel>Annual fee</FormLabel>
                 <FormControl>
                   <NumberInput
-                    maxDecimals={7}
+                    displayDecimals={7}
                     id="register-operator-fee"
                     value={field.value}
                     onChange={field.onChange}

@@ -1,9 +1,10 @@
 import type { InputProps } from "@/components/ui/input";
 import { Input } from "@/components/ui/input";
 import { Tooltip } from "@/components/ui/tooltip";
-import { formatSSV } from "@/lib/utils/number";
+import { formatBigintInput } from "@/lib/utils/number";
 import { cn } from "@/lib/utils/tw";
-import { type FC, forwardRef, useRef, useState } from "react";
+import { isUndefined } from "lodash-es";
+import { type FC, forwardRef, useState } from "react";
 import { useDebounce, useKey } from "react-use";
 import { parseUnits } from "viem";
 
@@ -13,17 +14,17 @@ export type NumberInputProps = {
   allowNegative?: boolean;
   onChange: (value: bigint) => void;
   decimals?: number;
-  maxDecimals?: number;
+  displayDecimals?: number;
 };
 
 type Props = Omit<InputProps, keyof NumberInputProps> & NumberInputProps;
 type NumberInputFC = FC<Props>;
 
 const ignoreKeys = ["ArrowUp", "ArrowDown"];
-const step = "0.1";
+const defaultStep = 0.1;
 
 const format = (value: bigint, decimals: number) => {
-  return formatSSV(value, decimals);
+  return formatBigintInput(value, decimals);
 };
 
 export const NumberInput: NumberInputFC = forwardRef<HTMLInputElement, Props>(
@@ -33,62 +34,60 @@ export const NumberInput: NumberInputFC = forwardRef<HTMLInputElement, Props>(
       max,
       className,
       decimals = 18,
-      allowNegative,
+      allowNegative = false,
       onChange,
-      maxDecimals = 4,
+      displayDecimals = 4,
       ...props
     },
     ref,
   ) => {
-    const numReg = new RegExp(`^(-?(\\d+)?)?(\\.\\d{0,${maxDecimals}})?$`);
-    const captureReg = new RegExp(`^(-?(\\d+)?)?(\\.\\d{0,${maxDecimals}})?`);
+    const capture = new RegExp(
+      `^(-)?(0)?(\\d+)?(\\.\\d{0,${displayDecimals}})?`,
+    );
 
-    const isTriggeredByEvent = useRef(false);
-    const prev = useRef(value);
     const [displayValue, setDisplayValue] = useState(format(value, decimals));
 
-    const [showMaxSet, setShowMaxSet] = useState(false);
-    useDebounce(
-      () => {
-        setShowMaxSet(false);
-      },
-      2500,
-      [showMaxSet],
-    );
+    const setValue = (parsed: bigint, displayValue?: string) => {
+      const hasMax = !isUndefined(max);
 
-    if (!isTriggeredByEvent.current && prev.current !== value) {
-      setTimeout(() => {
-        setDisplayValue(format(value, decimals));
-      }, 0);
+      if (hasMax && parsed > max) {
+        onChange(max);
+        setShowMaxSet(true);
+        return setDisplayValue(formatBigintInput(max));
+      }
+
+      if (!allowNegative && parsed < 0) {
+        onChange(0n);
+        return setDisplayValue("0");
+      }
+
+      setDisplayValue(displayValue ?? formatBigintInput(parsed));
+      onChange(parsed);
+    };
+
+    if (
+      formatBigintInput(value) !==
+      formatBigintInput(parseUnits(displayValue, decimals))
+    ) {
+      setValue(value);
     }
-    isTriggeredByEvent.current = false;
-    prev.current = value;
 
-    useKey(
-      "ArrowUp",
-      (event) => {
-        const stepp = +step * (event.shiftKey ? 10 : 1);
-        const next = value + parseUnits(stepp.toString(), decimals);
-        if (max && next > max) return onChange(max);
-        onChange(next);
-      },
-      undefined,
-      [value],
-    );
+    const [showMaxSet, setShowMaxSet] = useState(false);
+    useDebounce(() => setShowMaxSet(false), 2500, [showMaxSet]);
 
-    useKey(
-      "ArrowDown",
-      (event) => {
-        const stepp = +step * (event.shiftKey ? 10 : 1);
-        const parsed = parseUnits(stepp.toString(), decimals);
-        const newValue = value - parsed;
-        if (newValue < 0n) return onChange(0n);
-        onChange(newValue);
-      },
-      undefined,
-      [value],
-    );
+    const handleArrowKey =
+      (direction: "up" | "down") => (event: KeyboardEvent) => {
+        const step = defaultStep * (event.shiftKey ? 10 : 1);
+        return setValue(
+          value +
+            parseUnits(step.toString(), decimals) *
+              (direction === "up" ? 1n : -1n),
+        );
+      };
 
+    useKey("ArrowUp", handleArrowKey("up"), undefined, [value, decimals]);
+    useKey("ArrowDown", handleArrowKey("down"), undefined, [value, decimals]);
+    console.log(value);
     return (
       <Tooltip
         asChild
@@ -97,34 +96,29 @@ export const NumberInput: NumberInputFC = forwardRef<HTMLInputElement, Props>(
         hasArrow
         side="left"
       >
-        <Input
-          {...props}
-          ref={ref}
-          value={displayValue}
-          onKeyDown={(ev) => ignoreKeys.includes(ev.key) && ev.preventDefault()}
-          onInput={(ev) => {
-            const value = ev.currentTarget.value.match(captureReg)?.[0] || "";
-            const isNumber = numReg.test(value);
-
-            if (!isNumber) return;
-            if (!allowNegative && value.includes("-")) return;
-
-            isTriggeredByEvent.current = true;
-            const parsed = parseUnits(value, decimals);
-
-            if (max && parsed > max) {
-              isTriggeredByEvent.current = false;
-              setShowMaxSet(true);
-              return onChange(max);
+        <>
+          <Input
+            {...props}
+            ref={ref}
+            value={displayValue}
+            onKeyDown={(ev) =>
+              ignoreKeys.includes(ev.key) && ev.preventDefault()
             }
-            onChange(parsed);
+            onInput={(ev) => {
+              const input = ev.currentTarget.value;
+              const [, op = "", zero, d, dec = ""] = input.match(capture) || [];
+              if (!allowNegative && op === "-") return;
 
-            setDisplayValue(value);
-          }}
-          className={cn(className)}
-          inputMode="numeric"
-          type="text"
-        />
+              const nextDisplayValue = op + (d ?? zero ?? "") + dec;
+
+              const parsed = parseUnits(nextDisplayValue, decimals);
+              setValue(parsed, nextDisplayValue);
+            }}
+            className={cn(className)}
+            inputMode="numeric"
+            type="text"
+          />
+        </>
       </Tooltip>
     );
   },

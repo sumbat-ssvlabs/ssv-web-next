@@ -10,6 +10,11 @@ export const percentageFormatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 2,
 });
 
+export const bigintFormatter = new Intl.NumberFormat("en-US", {
+  useGrouping: false,
+  maximumFractionDigits: 4,
+});
+
 export const ethFormatter = new Intl.NumberFormat("en-US", {
   useGrouping: true,
   maximumFractionDigits: 3,
@@ -17,6 +22,9 @@ export const ethFormatter = new Intl.NumberFormat("en-US", {
 
 export const formatSSV = (num: bigint, decimals = 18) =>
   ethFormatter.format(+formatUnits(num, decimals));
+
+export const formatBigintInput = (num: bigint, decimals = 18) =>
+  bigintFormatter.format(+formatUnits(num, decimals));
 
 const units = {
   seconds: 1000,
