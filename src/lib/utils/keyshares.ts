@@ -7,7 +7,7 @@ import type { Address } from "viem";
 import { getChainName } from "@/lib/utils/wagmi";
 import { getChainId } from "@wagmi/core";
 import { config } from "@/wagmi/config";
-import { isWindows } from "@/lib/utils/os";
+import { getOSName, isWindows } from "@/lib/utils/os";
 export enum KeysharesValidationErrors {
   OPERATOR_NOT_EXIST_ID,
   OPERATOR_NOT_MATCHING_ID,
@@ -93,7 +93,6 @@ export const ensureValidatorsUniqueness = (keyshares: KeySharesItem[]) => {
 };
 
 const cmd = isWindows ? "ssv-keys.exe" : "./ssv-keys-mac";
-const dynamicFullPath = isWindows ? "%cd%" : "$(pwd)";
 
 type GenerateSSVKeysCMDParams = {
   operators: Pick<Operator, "id" | "public_key">[];
@@ -122,6 +121,7 @@ type GenerateSSVKeysDockerCMDParams = {
   withdrawalAddress: Address;
   chainId?: number;
   validatorsCount?: number;
+  os?: ReturnType<typeof getOSName>;
 };
 
 export const generateSSVKeysDockerCMD = ({
@@ -131,10 +131,12 @@ export const generateSSVKeysDockerCMD = ({
   withdrawalAddress,
   chainId = getChainId(config),
   validatorsCount = 1,
+  os = getOSName(),
 }: GenerateSSVKeysDockerCMDParams) => {
   const chainName = chainId === 1 ? "mainnet" : getChainName(chainId);
   const sortedOperators = sortOperators(operators);
   const operatorIds = sortedOperators.map((op) => op.id).join(",");
+  const dynamicFullPath = os === "windows" ? "%cd%" : "$(pwd)";
 
   const getOperatorsData = () => {
     const jsonOperatorInfo = JSON.stringify(
@@ -145,7 +147,7 @@ export const generateSSVKeysDockerCMD = ({
       })),
     );
 
-    return isWindows
+    return os === "windows"
       ? `"${jsonOperatorInfo.replace(/"/g, '\\"')}"`
       : `'${jsonOperatorInfo}'`;
   };

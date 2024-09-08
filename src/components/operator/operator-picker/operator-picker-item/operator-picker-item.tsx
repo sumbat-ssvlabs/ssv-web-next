@@ -1,6 +1,6 @@
 import { OperatorAvatar } from "@/components/operator/operator-avatar";
 import { MevRelays } from "@/components/operator/operator-picker/operator-picker-item/mev-relays/mev-relays";
-import { Badge } from "@/components/ui/badge";
+import { OperatorStatusBadge } from "@/components/operator/operator-status-badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TableCell, TableRow } from "@/components/ui/grid-table";
@@ -121,7 +121,9 @@ export const OperatorPickerItem: FCProps = ({
           <Text>
             {percentageFormatter.format(operator.performance["30d"] / 100)}
           </Text>
-          {isInactive && <Badge variant="error">Inactive</Badge>}
+          {isInactive && (
+            <OperatorStatusBadge size="xs" status={operator.status} />
+          )}
         </TableCell>
         <TableCell>
           {getYearlyFee(BigInt(operator.fee), { format: true })}

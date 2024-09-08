@@ -56,7 +56,7 @@ export const IncreaseOperatorFeeStatusBadge: FC<
 
   return (
     <div className={cn("flex flex-col items-end gap-1", className)} {...props}>
-      <Badge size="sm" variant={isExpired ? "error" : "info"}>
+      <Badge size="sm" variant={isExpired ? "error" : "primary"}>
         {title[status]}
       </Badge>
       {renderContent()}

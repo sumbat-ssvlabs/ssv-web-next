@@ -15,3 +15,10 @@ export const isLinux = bowser
   .getParser(window.navigator.userAgent)
   .getOSName(true)
   .includes("linux");
+
+export const getOSName = (): "windows" | "linux" | "mac" => {
+  if (isWindows) return "windows";
+  if (isMac) return "mac";
+  if (isLinux) return "linux";
+  return "windows";
+};

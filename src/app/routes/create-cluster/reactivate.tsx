@@ -16,7 +16,7 @@ import { Text } from "@/components/ui/text";
 import { toast } from "@/components/ui/use-toast";
 import { WithAllowance } from "@/components/with-allowance/with-allowance";
 import { globals } from "@/config";
-import { useSelectedOperators } from "@/guard/register-validator-guard";
+import { useSelectedOperatorIds } from "@/guard/register-validator-guard";
 import {
   getClusterQueryOptions,
   useCluster,
@@ -58,7 +58,7 @@ export const ReactivateCluster: FCProps = ({ ...props }) => {
   const params = useClusterPageParams();
 
   const cluster = useCluster();
-  const operatorIds = useSelectedOperators();
+  const operatorIds = useSelectedOperatorIds();
 
   const operators = useOperators(operatorIds);
   const operatorsFee = sumOperatorsFees(operators.data ?? []);

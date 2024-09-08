@@ -5,24 +5,36 @@ import { Text } from "@/components/ui/text";
 import { SelectionCard } from "@/components/ui/selection-card";
 import Cmd from "@/assets/images/cmd.svg?react";
 import Dkg from "@/assets/images/dkg.svg?react";
-import { useState } from "react";
-import { useSelectedOperators } from "@/guard/register-validator-guard";
+import { useSelectedOperatorIds } from "@/guard/register-validator-guard";
 import { useOperatorsDKGHealth } from "@/hooks/operator/use-operator-dkg-health";
 import { useOperators } from "@/hooks/operator/use-operators";
 import { UnhealthyOperatorsList } from "@/components/offline-generation/unhealthy-operators-list";
 import { Button } from "@/components/ui/button";
 import type { To } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { DockerInstructions } from "@/components/offline-generation/docker-instructions";
 import { SSVKeysInstructions } from "@/components/offline-generation/ssv-keys-instructions";
+import { useSearchParams } from "react-router-dom";
 
 export const DistributeOffline: FC = () => {
-  const [selectedOption, setSelectedOption] = useState<
-    "existing" | "new" | null
-  >(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedOption = searchParams.get("option") as
+    | "existing"
+    | "new"
+    | null;
+
+  const setSelectedOption = (option: "existing" | "new" | null) => {
+    if (option) {
+      setSearchParams({ option });
+    } else {
+      searchParams.delete("option");
+      setSearchParams(searchParams);
+    }
+  };
 
   const isNew = selectedOption === "new";
 
-  const selectedOperators = useSelectedOperators();
+  const selectedOperators = useSelectedOperatorIds();
   const operators = useOperators(selectedOperators);
   const health = useOperatorsDKGHealth(operators.data ?? [], {
     enabled: selectedOption === "new",
@@ -65,16 +77,17 @@ export const DistributeOffline: FC = () => {
             </Button>
           </>
         )}
+        {selectedOption === "new" &&
+          !hasUnhealthyOperators &&
+          health.isSuccess && (
+            <DockerInstructions operators={operators.data ?? []} />
+          )}
         {selectedOption === "existing" && (
           <SSVKeysInstructions operators={operators.data ?? []} />
         )}
       </Card>
     </Container>
   );
-};
-
-export const DockerInstructions: FC = () => {
-  return <div>DockerInstructions</div>;
 };
 
 DistributeOffline.displayName = "DistributeOffline";

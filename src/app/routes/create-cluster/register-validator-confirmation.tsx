@@ -3,7 +3,7 @@ import { Container } from "@/components/ui/container";
 import { Card } from "@/components/ui/card";
 import {
   useRegisterValidatorContext,
-  useSelectedOperators,
+  useSelectedOperatorIds,
 } from "@/guard/register-validator-guard";
 import { Text } from "@/components/ui/text";
 import { Input } from "@/components/ui/input";
@@ -48,7 +48,7 @@ export const RegisterValidatorConfirmation: FC = () => {
   const { shares, depositAmount } = useRegisterValidatorContext();
   const isBulk = shares.length > 1;
 
-  const operatorIds = useSelectedOperators();
+  const operatorIds = useSelectedOperatorIds();
   const operators = useOperators(operatorIds);
   const operatorsFee = sumOperatorsFee(operators.data ?? []);
   const operatorsDailyFee = computeDailyAmount(operatorsFee, 1);
@@ -127,7 +127,7 @@ export const RegisterValidatorConfirmation: FC = () => {
   };
 
   return (
-    <Container variant="vertical">
+    <Container variant="vertical" className="py-6">
       <Card className="w-full">
         <div className="flex justify-between w-full">
           <Text variant="headline4">Transaction Details</Text>

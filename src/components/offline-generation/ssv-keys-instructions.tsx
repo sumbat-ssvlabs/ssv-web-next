@@ -88,3 +88,5 @@ export const SSVKeysInstructions: FC<SSVKeysInstructionsProps> = ({
     </ol>
   );
 };
+
+SSVKeysInstructions.displayName = "SSVKeysInstructions";

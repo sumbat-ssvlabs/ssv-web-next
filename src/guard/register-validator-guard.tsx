@@ -7,6 +7,7 @@ import { useClusterPageParams } from "@/hooks/cluster/use-cluster-page-params";
 import { sortNumbers } from "@/lib/utils/number";
 import { useKeysharesSchemaValidation } from "@/hooks/keyshares/use-keyshares-schema-validation";
 import type { KeySharesPayload } from "ssv-keys/dist/tsc/src/lib/KeyShares/KeySharesData/KeySharesPayload";
+import { getOSName } from "@/lib/utils/os";
 
 export const [RegisterValidatorGuard, useRegisterValidatorContext] =
   createGuard({
@@ -27,7 +28,7 @@ export const [RegisterValidatorGuard, useRegisterValidatorContext] =
     get files() {
       return this._files;
     },
-    _selectedOperatorsIds: [] as number[],
+    _selectedOperatorsIds: [63, 64, 66, 67] as number[],
     set selectedOperatorsIds(ids: number[]) {
       this._selectedOperatorsIds = ids;
     },
@@ -37,9 +38,15 @@ export const [RegisterValidatorGuard, useRegisterValidatorContext] =
     get hasSelectedOperators() {
       return this.selectedOperatorsIds.length > 0;
     },
+
+    dkgCeremonyState: {
+      validatorsAmount: 1,
+      withdrawalAddress: "",
+      selectedOs: getOSName(),
+    },
   });
 
-export const useSelectedOperators = () => {
+export const useSelectedOperatorIds = () => {
   const inCluster = Boolean(useClusterPageParams().clusterHash);
   const cluster = useCluster();
 

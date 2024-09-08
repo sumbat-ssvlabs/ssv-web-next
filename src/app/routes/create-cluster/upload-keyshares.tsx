@@ -23,7 +23,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { Text } from "@/components/ui/text";
 import {
   useRegisterValidatorContext,
-  useSelectedOperators,
+  useSelectedOperatorIds,
 } from "@/guard/register-validator-guard";
 import { useCluster } from "@/hooks/cluster/use-cluster";
 import { useKeysharesValidation } from "@/hooks/keyshares/use-keyshares-validation";
@@ -85,7 +85,7 @@ export const UploadKeyshares: FCProps = ({ ...props }) => {
   const context = useRegisterValidatorContext();
 
   const validatedShares = useKeysharesValidation(context.files?.at(0) || null);
-  const operatorIds = useSelectedOperators();
+  const operatorIds = useSelectedOperatorIds();
 
   const validators = useKeysharesValidatorsList(validatedShares.data, {
     enabled: validatedShares.isSuccess,

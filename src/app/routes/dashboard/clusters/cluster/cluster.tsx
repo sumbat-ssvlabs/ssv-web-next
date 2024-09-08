@@ -130,10 +130,10 @@ export const Cluster: FC = () => {
                   operatorsUsability.isLoading || isLiquidated.isLoading
                 }
                 as={Link}
-                icon={<PlusIcon className="size-4" />}
                 to={`/join/validator/${clusterHash}/distribution-method`}
               >
                 <Text>Add Validator</Text>
+                <PlusIcon className="size-4" />
               </Button>
             </Tooltip>
           </div>

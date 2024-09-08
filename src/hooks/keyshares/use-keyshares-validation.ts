@@ -1,4 +1,4 @@
-import { useSelectedOperators } from "@/guard/register-validator-guard";
+import { useSelectedOperatorIds } from "@/guard/register-validator-guard";
 import { queryFetchOperators } from "@/hooks/operator/use-operators";
 import type { UseQueryOptions } from "@/lib/react-query";
 import { KeysharesValidationError } from "@/lib/utils/keyshares";
@@ -23,7 +23,7 @@ export const useKeysharesValidation = (
     enabled: true,
   },
 ) => {
-  const operatorIds = useSelectedOperators();
+  const operatorIds = useSelectedOperatorIds();
   const isEnabled = Boolean(file && operatorIds.length && options.enabled);
   return useQuery({
     queryKey: ["keyshares-validation", file, operatorIds],

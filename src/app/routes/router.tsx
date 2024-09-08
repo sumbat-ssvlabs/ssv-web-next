@@ -4,6 +4,7 @@ import { AdditionalFunding } from "@/app/routes/create-cluster/additional-fundin
 import { BalanceWarning } from "@/app/routes/create-cluster/balance-warning";
 import { DistributeOffline } from "@/app/routes/create-cluster/distribute-offline";
 import { DistributionMethod } from "@/app/routes/create-cluster/distribution-method";
+import { DKGCeremonySummary } from "@/app/routes/create-cluster/dkg-ceremony-summary";
 import { GenerateKeySharesOnline } from "@/app/routes/create-cluster/generate-key-shares-online";
 import { InitialFunding } from "@/app/routes/create-cluster/initial-funding";
 import { Preparation } from "@/app/routes/create-cluster/preparation";
@@ -38,6 +39,7 @@ import { OperatorFeeUpdated } from "@/app/routes/dashboard/operators/update-fee/
 import { ProtectedOperatorUpdateFeeRoute } from "@/app/routes/dashboard/operators/update-fee/protected-operator-update-fee-route";
 import { UpdateOperatorFee } from "@/app/routes/dashboard/operators/update-fee/update-operator-fee";
 import { WithdrawOperatorBalance } from "@/app/routes/dashboard/operators/withdraw-operator-balance";
+import { Join } from "@/app/routes/join/join";
 import { JoinOperatorPreparation } from "@/app/routes/join/operator/join-operator-preparation";
 import { RegisterOperator } from "@/app/routes/join/operator/register-operator";
 import { RegisterOperatorConfirmation } from "@/app/routes/join/operator/register-operator-confirmation";
@@ -77,6 +79,10 @@ const routes = [
         path: "join",
         element: <Outlet />,
         children: [
+          {
+            index: true,
+            element: <Join />,
+          },
           {
             path: "operator",
             element: (
@@ -133,6 +139,10 @@ const routes = [
                     element: <DistributeOffline />,
                   },
                   {
+                    path: "ceremony-summary",
+                    element: <DKGCeremonySummary />,
+                  },
+                  {
                     path: "keyshares",
                     element: <UploadKeyshares />,
                   },
@@ -170,11 +180,15 @@ const routes = [
                 path: "online",
                 element: <GenerateKeySharesOnline />,
               },
+
               {
                 path: "offline",
                 element: <DistributeOffline />,
               },
-
+              {
+                path: "ceremony-summary",
+                element: <DKGCeremonySummary />,
+              },
               {
                 path: "funding",
                 element: <InitialFunding />,

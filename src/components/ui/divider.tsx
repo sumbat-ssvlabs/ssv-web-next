@@ -16,10 +16,13 @@ export const Divider: FCProps = ({
 }) => {
   return (
     <div
-      className={cn(className, {
-        "border-t border-gray-300": orientation === "horizontal",
-        "border-l border-gray-300": orientation === "vertical",
-      })}
+      className={cn(
+        {
+          "border-t border-gray-300": orientation === "horizontal",
+          "border-l border-gray-300": orientation === "vertical",
+        },
+        className,
+      )}
       {...props}
     />
   );

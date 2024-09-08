@@ -46,11 +46,14 @@ export const NumberInput: NumberInputFC = forwardRef<HTMLInputElement, Props>(
     );
 
     const [displayValue, setDisplayValue] = useState(format(value, decimals));
+    const [showMaxSet, setShowMaxSet] = useState(false);
+    useDebounce(() => setShowMaxSet(false), 2500, [showMaxSet]);
 
     const setValue = (parsed: bigint, displayValue?: string) => {
       const hasMax = !isUndefined(max);
 
       if (hasMax && parsed > max) {
+        console.log("max:", max);
         onChange(max);
         setShowMaxSet(true);
         return setDisplayValue(formatBigintInput(max));
@@ -71,9 +74,6 @@ export const NumberInput: NumberInputFC = forwardRef<HTMLInputElement, Props>(
     ) {
       setValue(value);
     }
-
-    const [showMaxSet, setShowMaxSet] = useState(false);
-    useDebounce(() => setShowMaxSet(false), 2500, [showMaxSet]);
 
     const handleArrowKey =
       (direction: "up" | "down") => (event: KeyboardEvent) => {

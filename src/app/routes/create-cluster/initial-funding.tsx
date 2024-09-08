@@ -25,7 +25,7 @@ import { Container } from "@/components/ui/container";
 import { formatSSV } from "@/lib/utils/number";
 import {
   useRegisterValidatorContext,
-  useSelectedOperators,
+  useSelectedOperatorIds,
 } from "@/guard/register-validator-guard";
 import { stringifyBigints } from "@/lib/utils/bigint";
 import { useOperators } from "@/hooks/operator/use-operators";
@@ -50,7 +50,7 @@ export const InitialFunding: FCProps = ({ ...props }) => {
 
   const { state } = useRegisterValidatorContext;
   const { shares } = useRegisterValidatorContext();
-  const operatorIds = useSelectedOperators();
+  const operatorIds = useSelectedOperatorIds();
 
   const operators = useOperators(operatorIds);
   const operatorsFee = sumOperatorsFees(operators.data ?? []);

@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import {
   useRegisterValidatorContext,
-  useSelectedOperators,
+  useSelectedOperatorIds,
 } from "@/guard/register-validator-guard";
 import { useOperators } from "@/hooks/operator/use-operators";
 import { useCreateShares } from "@/hooks/use-create-shares";
@@ -79,7 +79,7 @@ export const GenerateKeySharesOnline: FCProps = () => {
   const { status } = useKeystoreValidation(files?.[0] as File);
   const createShares = useCreateShares();
 
-  const operatorsIds = useSelectedOperators();
+  const operatorsIds = useSelectedOperatorIds();
   const operators = useOperators(operatorsIds);
 
   const extractKeystoreData = useExtractKeystoreData({

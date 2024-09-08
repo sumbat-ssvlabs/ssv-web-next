@@ -42,7 +42,7 @@ export const Bulk: FC<{ type: "remove" | "exit" }> = ({ type }) => {
               ? "Select validators to Remove"
               : "Select validators to Exit"}
           </Text>
-          <Badge variant="info">
+          <Badge variant="primary">
             {selectedPublicKeys.length} of {total} selected
           </Badge>
         </div>

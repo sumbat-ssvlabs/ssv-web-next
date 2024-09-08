@@ -22,6 +22,7 @@ import { Divider } from "@/components/ui/divider";
 import { SearchInput } from "@/components/ui/search-input";
 import { useSearchParamsState } from "@/hooks/app/use-search-param-state";
 import { OperatorPickerFilter } from "@/components/operator/operator-picker/operator-picker-filter/operator-picker-filter";
+import { useOperators } from "@/hooks/operator/use-operators";
 
 export type SelectOperatorsProps = {
   // TODO: Add props or remove this type
@@ -54,15 +55,13 @@ export const SelectOperators: FCProps = ({ className, ...props }) => {
       initialValue: "false",
     });
 
-  const { operators, infiniteQuery, fetched } = useSearchOperators({
+  const { operators, infiniteQuery } = useSearchOperators({
     search: searchDebounced,
     has_dkg_address: isDKGCheckedDebounced === "true",
     type: isVerifiedCheckedDebounced || undefined,
   });
 
-  const selectedOperators = selectedOperatorsIds.map(
-    (id) => fetched.operatorsMap[id],
-  );
+  const { data: selectedOperators = [] } = useOperators(selectedOperatorsIds);
 
   const totalYearlyFee = selectedOperators.reduce(
     (acc, operator) => acc + getYearlyFee(BigInt(operator.fee)),
@@ -181,7 +180,7 @@ export const SelectOperators: FCProps = ({ className, ...props }) => {
             size="xl"
             as={Link}
             isLoading={cluster.isLoading}
-            disabled={!isClusterSizeMet}
+            disabled={!isClusterSizeMet || isClusterExists}
             to="../distribution-method"
           >
             Next

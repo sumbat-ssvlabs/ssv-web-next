@@ -23,15 +23,14 @@ export const ConnectWallet: FC<ComponentPropsWithoutRef<"div">> = () => {
     const isCameFromJoinOrConnect = ["join", "connect"].includes(
       match?.params.path ?? "",
     );
+    console.log("match:", match);
 
-    if (isNewAccount) return <Navigate to="/join" state={location} replace />;
-    if (!isCameFromJoinOrConnect)
+    if (isNewAccount) return <Navigate to="/join" replace />;
+    if (!isCameFromJoinOrConnect && match)
       return <Navigate to={location.state?.pathname ?? "/"} replace />;
 
-    if (hasClusters)
-      return <Navigate to="/clusters" state={location} replace />;
-    if (hasOperators)
-      return <Navigate to="/operators" state={location} replace />;
+    if (hasClusters) return <Navigate to="/clusters" replace />;
+    if (hasOperators) return <Navigate to="/operators" replace />;
   }
 
   return (

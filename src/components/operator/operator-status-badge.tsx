@@ -14,9 +14,9 @@ type OperatorStatusBadgeFC = FC<
 >;
 
 const variants: Record<OperatorStatus, BadgeVariants["variant"]> = {
-  Active: "success",
-  Removed: "uncoloredError",
-  "No Validators": "uncoloredError",
+  active: "success",
+  removed: "uncoloredError",
+  "no validators": "info",
 };
 
 const getBadgeVariant = (status: OperatorStatus) => {
@@ -32,7 +32,7 @@ export const OperatorStatusBadge: OperatorStatusBadgeFC = ({
     <Badge
       className={cn(className)}
       {...props}
-      variant={getBadgeVariant(status)}
+      variant={getBadgeVariant(status.toLowerCase())}
     >
       {status}
     </Badge>
