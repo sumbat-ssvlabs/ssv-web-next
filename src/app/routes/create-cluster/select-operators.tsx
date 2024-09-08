@@ -22,7 +22,6 @@ import { Divider } from "@/components/ui/divider";
 import { SearchInput } from "@/components/ui/search-input";
 import { useSearchParamsState } from "@/hooks/app/use-search-param-state";
 import { OperatorPickerFilter } from "@/components/operator/operator-picker/operator-picker-filter/operator-picker-filter";
-import { useOperators } from "@/hooks/operator/use-operators";
 
 export type SelectOperatorsProps = {
   // TODO: Add props or remove this type
@@ -55,13 +54,15 @@ export const SelectOperators: FCProps = ({ className, ...props }) => {
       initialValue: "false",
     });
 
-  const { operators, infiniteQuery } = useSearchOperators({
+  const { operators, infiniteQuery, fetched } = useSearchOperators({
     search: searchDebounced,
     has_dkg_address: isDKGCheckedDebounced === "true",
     type: isVerifiedCheckedDebounced || undefined,
   });
 
-  const { data: selectedOperators = [] } = useOperators(selectedOperatorsIds);
+  const selectedOperators = selectedOperatorsIds
+    .map((id) => fetched.operatorsMap[id])
+    .filter(Boolean);
 
   const totalYearlyFee = selectedOperators.reduce(
     (acc, operator) => acc + getYearlyFee(BigInt(operator.fee)),
@@ -83,9 +84,9 @@ export const SelectOperators: FCProps = ({ className, ...props }) => {
     isClusterSizeMet && cluster.isSuccess && cluster.data !== null;
 
   return (
-    <Container variant="vertical" className="py-6 max-h-full h-full" size="xl">
+    <Container variant="vertical" className="py-6 " size="xl">
       <NavigateBackBtn />
-      <div className="flex items-stretch flex-1 overflow-hidden gap-6 w-full">
+      <div className="flex items-stretch flex-1 gap-6 w-full">
         <Card className={cn(className, "flex flex-col flex-[2.2]")} {...props}>
           <Text variant="headline4">
             Pick the cluster of network operators to run your validator
@@ -111,7 +112,7 @@ export const SelectOperators: FCProps = ({ className, ...props }) => {
             />
           </div>
           <OperatorPicker
-            className="h-full flex-1"
+            className="flex-1 h-[600px] min-h-[600px]"
             operators={operators}
             query={infiniteQuery}
             maxSelection={clusterSize}
@@ -121,9 +122,9 @@ export const SelectOperators: FCProps = ({ className, ...props }) => {
             }}
           />
         </Card>
-        <Card className="flex-[1]">
+        <Card className="flex-[1] h-min">
           <SelectedOperators
-            className="flex-[1] overflow-auto "
+            className="flex-[1] overflow-auto min-h-[300px]"
             clusterSize={clusterSize}
             selectedOperators={selectedOperators}
             onRemoveOperator={({ id }) => {

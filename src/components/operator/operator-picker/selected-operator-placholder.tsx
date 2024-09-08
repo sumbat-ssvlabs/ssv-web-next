@@ -22,7 +22,7 @@ export const SelectedOperatorPlaceholder: SelectedOperatorPlaceholderFC = ({
   return (
     <div
       className={cn(
-        "px-5 mr-2 py-4 h-[72px] flex items-center  rounded-lg bg-gray-200 border border-gray-400 border-dashed text-gray-400",
+        "px-5 mr-2 py-4 min-h-[72px] flex items-center  rounded-lg bg-gray-200 border border-gray-400 border-dashed text-gray-400",
         className,
       )}
       {...props}

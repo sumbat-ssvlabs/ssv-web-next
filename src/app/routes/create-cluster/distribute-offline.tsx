@@ -10,7 +10,6 @@ import { useOperatorsDKGHealth } from "@/hooks/operator/use-operator-dkg-health"
 import { useOperators } from "@/hooks/operator/use-operators";
 import { UnhealthyOperatorsList } from "@/components/offline-generation/unhealthy-operators-list";
 import { Button } from "@/components/ui/button";
-import type { To } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { DockerInstructions } from "@/components/offline-generation/docker-instructions";
 import { SSVKeysInstructions } from "@/components/offline-generation/ssv-keys-instructions";
@@ -72,7 +71,12 @@ export const DistributeOffline: FC = () => {
               operators={operators.data ?? []}
               health={health.data ?? []}
             />
-            <Button as={Link} to={-2 as To} size="xl" className="w-full">
+            <Button
+              as={Link}
+              to="../select-operators?has_dkg_address=true"
+              size="xl"
+              className="w-full"
+            >
               Change Operators
             </Button>
           </>

@@ -31,7 +31,7 @@ export const SelectedOperators: SelectedOperatorsFC = ({
           {selectedOperators.length}/{clusterSize}
         </Text>
       </div>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3 max-h-[400px] pt-2 overflow-auto">
         {selectedOperators.map((operator) => (
           <SelectedOperatorItem
             className="mr-2"

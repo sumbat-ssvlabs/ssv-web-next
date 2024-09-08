@@ -53,9 +53,8 @@ export const NumberInput: NumberInputFC = forwardRef<HTMLInputElement, Props>(
       const hasMax = !isUndefined(max);
 
       if (hasMax && parsed > max) {
-        console.log("max:", max);
-        onChange(max);
         setShowMaxSet(true);
+        onChange(max);
         return setDisplayValue(formatBigintInput(max));
       }
 
@@ -96,29 +95,25 @@ export const NumberInput: NumberInputFC = forwardRef<HTMLInputElement, Props>(
         hasArrow
         side="left"
       >
-        <>
-          <Input
-            {...props}
-            ref={ref}
-            value={displayValue}
-            onKeyDown={(ev) =>
-              ignoreKeys.includes(ev.key) && ev.preventDefault()
-            }
-            onInput={(ev) => {
-              const input = ev.currentTarget.value;
-              const [, op = "", zero, d, dec = ""] = input.match(capture) || [];
-              if (!allowNegative && op === "-") return;
+        <Input
+          {...props}
+          ref={ref}
+          value={displayValue}
+          onKeyDown={(ev) => ignoreKeys.includes(ev.key) && ev.preventDefault()}
+          onInput={(ev) => {
+            const input = ev.currentTarget.value;
+            const [, op = "", zero, d, dec = ""] = input.match(capture) || [];
+            if (!allowNegative && op === "-") return;
 
-              const nextDisplayValue = op + (d ?? zero ?? "") + dec;
+            const nextDisplayValue = op + (d ?? zero ?? "") + dec;
 
-              const parsed = parseUnits(nextDisplayValue, decimals);
-              setValue(parsed, nextDisplayValue);
-            }}
-            className={cn(className)}
-            inputMode="numeric"
-            type="text"
-          />
-        </>
+            const parsed = parseUnits(nextDisplayValue, decimals);
+            setValue(parsed, nextDisplayValue);
+          }}
+          className={cn(className)}
+          inputMode="numeric"
+          type="text"
+        />
       </Tooltip>
     );
   },
