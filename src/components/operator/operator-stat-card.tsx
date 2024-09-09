@@ -81,7 +81,7 @@ export const OperatorStatCard: OperatorStatCardFC = ({
               <FaCircleInfo className="text-gray-400 size-3" />
             </div>
           </Tooltip>
-          <OperatorStatusBadge status={operator.status} />
+          <OperatorStatusBadge size="sm" status={operator.status} />
         </div>
         <div className="flex flex-col gap-1">
           <Text variant="caption-medium">30D Perform.</Text>

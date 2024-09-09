@@ -110,7 +110,7 @@ export const prepareOperatorsForShares = (operators: Operator[]): IOperator[] =>
     operatorKey: operator.public_key,
   }));
 
-export const sumOperatorsFee = (operators: Operator[]) => {
+export const sumOperatorsFee = (operators: Pick<Operator, "fee">[]) => {
   return operators.reduce((acc, operator) => acc + BigInt(operator.fee), 0n);
 };
 

@@ -1,5 +1,4 @@
 import { useComputeFundingCost } from "@/hooks/use-compute-funding-cost";
-import { useQuery } from "@tanstack/react-query";
 import type { ComponentPropsWithoutRef, FC } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -22,15 +21,14 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { Text } from "@/components/ui/text";
 import { Container } from "@/components/ui/container";
-import { formatSSV } from "@/lib/utils/number";
 import {
   useRegisterValidatorContext,
   useSelectedOperatorIds,
 } from "@/guard/register-validator-guard";
-import { stringifyBigints } from "@/lib/utils/bigint";
 import { useOperators } from "@/hooks/operator/use-operators";
 import { sumOperatorsFees } from "@/lib/utils/operator";
 import { useNavigate } from "react-router";
+import { ClusterFundingSummary } from "@/components/cluster/cluster-funding-summary";
 
 export type InitialFundingProps = {
   // TODO: Add props or remove this type
@@ -49,7 +47,7 @@ export const InitialFunding: FCProps = ({ ...props }) => {
   const navigate = useNavigate();
 
   const { state } = useRegisterValidatorContext;
-  const { shares } = useRegisterValidatorContext();
+  const { shares, fundingDays } = useRegisterValidatorContext();
   const operatorIds = useSelectedOperatorIds();
 
   const operators = useOperators(operatorIds);
@@ -58,7 +56,7 @@ export const InitialFunding: FCProps = ({ ...props }) => {
   const computeFundingCost = useComputeFundingCost();
 
   const form = useForm<z.infer<typeof schema>>({
-    defaultValues: { days: 365 },
+    defaultValues: { days: fundingDays },
     resolver: zodResolver(schema),
   });
 
@@ -66,23 +64,15 @@ export const InitialFunding: FCProps = ({ ...props }) => {
   const showLiquidationWarning =
     !isEmpty(days) && days < globals.CLUSTER_VALIDITY_PERIOD_MINIMUM;
 
-  const fundingCost = useQuery({
-    queryKey: stringifyBigints(["funding-cost", days, operatorsFee]),
-    queryFn: () =>
-      computeFundingCost.mutateAsync({
-        fundingDays: days,
-        operatorsFee,
-        validators: shares.length,
-      }),
-  });
-
   const submit = form.handleSubmit(async ({ days }) => {
-    const amount = await computeFundingCost.mutateAsync({
+    const cost = await computeFundingCost.mutateAsync({
       fundingDays: days,
       operatorsFee,
       validators: shares.length,
     });
-    state.depositAmount = amount;
+
+    state.depositAmount = cost.total;
+    state.fundingDays = days;
     navigate("../balance-warning");
   });
 
@@ -105,9 +95,7 @@ export const InitialFunding: FCProps = ({ ...props }) => {
             name="days"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>
-                  Days {formatSSV(fundingCost.data ?? 0n)}SSV
-                </FormLabel>
+                <FormLabel>Days</FormLabel>
                 <FormControl>
                   <Input type="number" {...field} />
                 </FormControl>
@@ -134,6 +122,11 @@ export const InitialFunding: FCProps = ({ ...props }) => {
               </div>
             </Alert>
           </Collapse>
+          <ClusterFundingSummary
+            operators={operators.data ?? []}
+            validatorsAmount={shares.length}
+            fundingDays={days}
+          />
           <Button size="xl" type="submit">
             Next
           </Button>

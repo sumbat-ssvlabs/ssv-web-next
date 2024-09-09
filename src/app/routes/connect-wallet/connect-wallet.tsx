@@ -1,17 +1,34 @@
 import robotRocket from "@/assets/images/robot-rocket.svg";
 import { ConnectWalletBtn } from "@/components/connect-wallet/connect-wallet-btn";
 import { Card } from "@/components/ui/card";
+import { Loading } from "@/components/ui/Loading";
 import { Text } from "@/components/ui/text";
+import { useIsNewAccount } from "@/hooks/account/use-is-new-account";
 import type { ComponentPropsWithoutRef, FC } from "react";
 import type { Location } from "react-router-dom";
-import { Navigate, useLocation } from "react-router-dom";
+import { matchPath, Navigate, useLocation } from "react-router-dom";
 import { useAccount } from "wagmi";
 
 export const ConnectWallet: FC<ComponentPropsWithoutRef<"div">> = () => {
   const { isConnected } = useAccount();
   const location = useLocation() as Location<Location | undefined>;
 
+  const { isNewAccount, isLoading, hasClusters, hasOperators } =
+    useIsNewAccount();
+
   if (isConnected) {
+    if (isLoading) return <Loading />;
+    if (isNewAccount) return <Navigate to="/join" replace />;
+    const match = matchPath("/:dashboard", location.state?.pathname ?? "/");
+    console.log("match?.params.dashboard:", match?.params.dashboard);
+    const isGoingToOperators = match?.params.dashboard === "operators";
+    const isGoingToClusters = match?.params.dashboard === "clusters";
+
+    if (isGoingToOperators && !hasOperators)
+      return <Navigate to="/clusters" replace />;
+    if (isGoingToClusters && !hasClusters)
+      return <Navigate to="/operators" replace />;
+
     return <Navigate to={location.state?.pathname ?? "/"} replace />;
   }
 

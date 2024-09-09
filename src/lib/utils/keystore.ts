@@ -1,6 +1,7 @@
 import { globals } from "@/config";
 import { bigintMax } from "./bigint";
 import type { Prettify } from "@/types/ts-utils";
+import { formatSSV } from "@/lib/utils/number";
 
 export const computeDailyAmount = (value: bigint, days: number) => {
   const scale = 10 ** 6;
@@ -13,24 +14,22 @@ type LiquidationCollateralCostArgs = {
   operatorsFee: bigint;
   liquidationCollateralPeriod: bigint;
   minimumLiquidationCollateral: bigint;
-  validators?: number;
+  validators?: bigint;
 };
 
-export const computeLiquidationCollateralCost = ({
+export const computeLiquidationCollateralCostPerValidator = ({
   networkFee,
   operatorsFee,
   liquidationCollateralPeriod,
   minimumLiquidationCollateral,
-  validators = 1,
+  validators = 1n,
 }: LiquidationCollateralCostArgs) => {
   const total =
     (operatorsFee + networkFee) *
     liquidationCollateralPeriod *
     BigInt(validators);
 
-  const perValidator =
-    bigintMax(total, minimumLiquidationCollateral) / BigInt(validators);
-  return perValidator * BigInt(validators);
+  return bigintMax(total, minimumLiquidationCollateral) / validators;
 };
 
 type ComputeFundingCostArgs = Prettify<
@@ -40,12 +39,32 @@ type ComputeFundingCostArgs = Prettify<
 >;
 
 export const computeFundingCost = (args: ComputeFundingCostArgs) => {
+  const validators = BigInt(args.validators || 1);
   const networkCost = computeDailyAmount(args.networkFee, args.fundingDays);
+  console.log("networkCost:", formatSSV(networkCost));
   const operatorsCost = computeDailyAmount(args.operatorsFee, args.fundingDays);
-  const liquidationCollateralCost = computeLiquidationCollateralCost(args);
+  console.log("operatorsCost:", formatSSV(operatorsCost));
+  const liquidationCollateral = computeLiquidationCollateralCostPerValidator({
+    ...args,
+    validators,
+  });
 
-  return (
-    (networkCost + operatorsCost) * BigInt(args.validators ?? 1) +
-    liquidationCollateralCost
-  );
+  console.log("liquidationCollateral:", formatSSV(liquidationCollateral));
+  const total =
+    (networkCost + operatorsCost + liquidationCollateral) * validators;
+  console.log("total:", formatSSV(total));
+
+  return {
+    perValidator: {
+      networkCost,
+      operatorsCost,
+      liquidationCollateral,
+    },
+    subtotal: {
+      networkCost: networkCost * validators,
+      operatorsCost: operatorsCost * validators,
+      liquidationCollateral: liquidationCollateral * validators,
+    },
+    total,
+  };
 };

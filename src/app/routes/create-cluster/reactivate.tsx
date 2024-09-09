@@ -23,16 +23,18 @@ import {
 } from "@/hooks/cluster/use-cluster";
 import { useClusterPageParams } from "@/hooks/cluster/use-cluster-page-params";
 import { useOperators } from "@/hooks/operator/use-operators";
-import { useComputeFundingCost } from "@/hooks/use-compute-funding-cost";
+import {
+  useComputeFundingCost,
+  useFundingCost,
+} from "@/hooks/use-compute-funding-cost";
 import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
 import { useReactivate } from "@/lib/contract-interactions/write/use-reactivate";
 import { setOptimisticData } from "@/lib/react-query";
 import { bigintifyNumbers, stringifyBigints } from "@/lib/utils/bigint";
 import { formatClusterData } from "@/lib/utils/cluster";
 import { formatSSV } from "@/lib/utils/number";
-import { sumOperatorsFees } from "@/lib/utils/operator";
+import { sumOperatorsFee } from "@/lib/utils/operator";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery } from "@tanstack/react-query";
 import { isEmpty, merge } from "lodash-es";
 import type { ComponentPropsWithoutRef, FC } from "react";
 import { Collapse } from "react-collapse";
@@ -59,10 +61,7 @@ export const ReactivateCluster: FCProps = ({ ...props }) => {
 
   const cluster = useCluster();
   const operatorIds = useSelectedOperatorIds();
-
   const operators = useOperators(operatorIds);
-  const operatorsFee = sumOperatorsFees(operators.data ?? []);
-  const computeFundingCost = useComputeFundingCost();
 
   const form = useForm<z.infer<typeof schema>>({
     defaultValues: { days: 365 },
@@ -74,34 +73,26 @@ export const ReactivateCluster: FCProps = ({ ...props }) => {
   const showLiquidationWarning =
     !isEmpty(days) && days < globals.CLUSTER_VALIDITY_PERIOD_MINIMUM;
 
-  const fundingCost = useQuery({
-    queryKey: stringifyBigints([
-      "funding-cost",
-      days,
-      operatorsFee,
-      cluster.data?.validatorCount,
-    ]),
-    queryFn: () =>
-      computeFundingCost.mutateAsync({
-        fundingDays: days,
-        operatorsFee,
-        validators: cluster.data?.validatorCount ?? 1,
-      }),
+  const computeFundingCost = useComputeFundingCost();
+  const fundingCost = useFundingCost({
+    operators: operators.data ?? [],
+    validatorsAmount: cluster.data?.validatorCount ?? 1,
+    fundingDays: days,
   });
+  console.log("fundingCost:", fundingCost);
 
   const reactive = useReactivate();
 
   const submit = form.handleSubmit(async ({ days }) => {
     const amount = await computeFundingCost.mutateAsync({
       fundingDays: days,
-      operatorsFee,
+      operatorsFee: sumOperatorsFee(operators.data ?? []),
       validators: cluster.data?.validatorCount ?? 1,
     });
-    console.log(formatSSV(amount));
 
     return reactive.write(
       {
-        amount,
+        amount: amount.total,
         operatorIds: bigintifyNumbers(operatorIds),
         cluster: formatClusterData(cluster.data),
       },
@@ -135,14 +126,10 @@ export const ReactivateCluster: FCProps = ({ ...props }) => {
     );
   });
 
-  if (cluster.data && !cluster.data.isLiquidated) {
-    console.log("cluster.data:", cluster.data);
+  if (cluster.data && !cluster.data.isLiquidated)
     return <Navigate to={`/clusters/${cluster.data?.clusterId}`} replace />;
-  }
 
-  if (operators.isPending) {
-    return <Spinner />;
-  }
+  if (operators.isPending) return <Spinner />;
 
   return (
     <Container>
@@ -177,7 +164,9 @@ export const ReactivateCluster: FCProps = ({ ...props }) => {
             name="days"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{formatSSV(fundingCost.data ?? 0n)} SSV</FormLabel>
+                <FormLabel>
+                  {formatSSV(fundingCost.data?.total ?? 0n)} SSV
+                </FormLabel>
                 <FormControl>
                   <Input type="number" {...field} />
                 </FormControl>
@@ -201,7 +190,7 @@ export const ReactivateCluster: FCProps = ({ ...props }) => {
               </AlertDescription>
             </Alert>
           </Collapse>
-          <WithAllowance amount={fundingCost.data ?? 0n}>
+          <WithAllowance amount={fundingCost.data?.total ?? 0n}>
             <Button
               isActionBtn
               isLoading={reactive.isPending}

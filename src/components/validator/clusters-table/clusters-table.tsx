@@ -15,11 +15,13 @@ import { FaCircleInfo } from "react-icons/fa6";
 import { Tooltip } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { TbLayoutGridAdd } from "react-icons/tb";
 
 export type ClusterTableProps = {
   clusters: Cluster[];
   onClusterClick: (cluster: Cluster) => void;
   pagination: IPagination;
+  isEmpty?: boolean;
 };
 
 type FCProps = FC<
@@ -32,6 +34,7 @@ export const ClusterTable: FCProps = ({
   onClusterClick,
   pagination,
   className,
+  isEmpty,
   ...props
 }) => {
   return (
@@ -86,7 +89,27 @@ export const ClusterTable: FCProps = ({
           })}
         </TableBody>
       </Table>
-      {pagination.pages > 1 ? (
+      {isEmpty ? (
+        <div className="flex flex-col items-center justify-center gap-4 w-full bg-gray-50 py-16 rounded-b-2xl">
+          <TbLayoutGridAdd
+            strokeWidth="1.7"
+            className="size-12 text-primary-500"
+          />
+          <div className="flex flex-col items-center gap-2">
+            <Text variant="body-2-medium">
+              You don't have any clusters yet.
+            </Text>
+            <Button
+              as={Link}
+              to="/join/validator"
+              size="lg"
+              className="w-[120%]"
+            >
+              Create a cluster
+            </Button>
+          </div>
+        </div>
+      ) : pagination.pages > 1 ? (
         <>
           <Divider />
           <div className="flex w-full bg-gray-50 py-4 rounded-b-2xl">

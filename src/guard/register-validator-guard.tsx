@@ -18,6 +18,7 @@ export const [RegisterValidatorGuard, useRegisterValidatorContext] =
 
     selectedValidatorsCount: 0,
     depositAmount: 0n,
+    fundingDays: 365,
 
     _files: [] as File[],
     set files(files: File[] | null) {
