@@ -12,7 +12,7 @@ import {
 } from "react";
 
 export const stepperDotVariants = cva(
-  "flex items-center justify-center size-6 text-xs font-bold rounded-full",
+  "flex items-center justify-center size-6 text-xs font-bold rounded-full disabled:opacity-30",
   {
     variants: {
       variant: {
@@ -29,12 +29,14 @@ export const stepperDotVariants = cva(
 );
 
 type StepperDotProps = VariantProps<typeof stepperDotVariants> & {
-  step: number;
+  step?: number;
 };
 
 type StepperDotFC = FC<
   Omit<ComponentPropsWithoutRef<"div">, keyof StepperDotProps | "children"> &
-    StepperDotProps
+    StepperDotProps & {
+      disabled?: boolean;
+    }
 >;
 
 export const StepperDot: StepperDotFC = ({
@@ -65,6 +67,7 @@ export type StepperStep = {
   variant?: StepperDotProps["variant"];
   label?: string;
   addon?: ReactNode;
+  disabled?: boolean;
 };
 
 export type StepperProps = {
@@ -95,7 +98,11 @@ export const Stepper: StepperFC = ({
         {steps.map((step, index) => (
           <Fragment key={index}>
             <StepperDot
+              disabled={step.disabled}
               variant={step.variant ?? getVariant(index)}
+              className={cn({
+                "opacity-30": step.disabled,
+              })}
               step={index + 1}
             />
             {index < steps.length - 1 && (
@@ -118,6 +125,7 @@ export const Stepper: StepperFC = ({
           <div
             key={`${index}-label`}
             className={cn("flex flex-col gap-1", {
+              "opacity-30": step.disabled,
               "flex-[3.5]":
                 steps.length > 3 && index > 0 && index < steps.length - 1,
               "flex-[2]":

@@ -10,10 +10,20 @@ export const useIsNewAccount = () => {
 
   const isLoading = clusters.query.isLoading || operators.query.isLoading;
 
+  const isNewAccount = isLoading ? undefined : !hasClusters && !hasOperators;
+  const accountRoutePath = isLoading
+    ? undefined
+    : isNewAccount
+      ? "/join"
+      : hasClusters
+        ? "/clusters"
+        : "/operators";
+
   return {
     isLoading,
-    isNewAccount: isLoading ? undefined : !hasClusters && !hasOperators,
+    isNewAccount,
     hasClusters,
     hasOperators,
+    accountRoutePath,
   };
 };

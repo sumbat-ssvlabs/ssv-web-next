@@ -13,7 +13,7 @@ import { useIsNewAccount } from "@/hooks/account/use-is-new-account";
 export const Clusters: FC<ComponentPropsWithoutRef<"div">> = () => {
   const { clusters, pagination } = usePaginatedAccountClusters();
   const navigate = useNavigate();
-  const { isNewAccount, isLoading } = useIsNewAccount();
+  const { hasClusters } = useIsNewAccount();
 
   return (
     <>
@@ -30,8 +30,7 @@ export const Clusters: FC<ComponentPropsWithoutRef<"div">> = () => {
             variant="secondary"
             as={Link}
             to="/fee-recipient"
-            disabled={isNewAccount}
-            isLoading={isLoading}
+            disabled={!hasClusters}
           >
             Fee Address <FiEdit3 />
           </Button>

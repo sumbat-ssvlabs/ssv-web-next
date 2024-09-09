@@ -7,6 +7,7 @@ import type {
   Updater,
   UseMutationOptions,
   UseQueryOptions as DefaultUseQueryOptions,
+  UseInfiniteQueryOptions as DefaultUseInfiniteQueryOptions,
   UseQueryResult,
   QueryKey,
 } from "@tanstack/react-query";
@@ -54,6 +55,16 @@ export type UseQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
 > = Omit<
   DefaultUseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  "queryKey" | "queryFn"
+>;
+
+export type UseInfiniteQueryOptions<
+  TQueryFnData = unknown,
+  TError = Error,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> = Omit<
+  DefaultUseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   "queryKey" | "queryFn"
 >;
 

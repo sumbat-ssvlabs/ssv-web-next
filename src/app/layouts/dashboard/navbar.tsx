@@ -21,6 +21,8 @@ import { Tooltip } from "@/components/ui/tooltip";
 import { SsvLogo } from "@/components/ui/ssv-logo";
 import { ThemeSwitcher } from "@/components/ui/theme-switcher";
 import { Link } from "react-router-dom";
+import { useLinks } from "@/hooks/use-links";
+import { useIsNewAccount } from "@/hooks/account/use-is-new-account";
 
 export type NavbarProps = {
   // TODO: Add props or remove this type
@@ -31,6 +33,8 @@ type FCProps = FC<
 >;
 
 export const Navbar: FCProps = ({ className, ...props }) => {
+  const links = useLinks();
+  const { accountRoutePath } = useIsNewAccount();
   return (
     <div
       className={cn(
@@ -40,11 +44,25 @@ export const Navbar: FCProps = ({ className, ...props }) => {
       {...props}
     >
       <SsvLogo className="h-full" />
-      <Text as={Link} to="/clusters" variant="body-3-medium">
+      <Text as={Link} to={accountRoutePath} variant="body-3-medium">
         My Account
       </Text>
-      <Text variant="body-3-medium">Explorer</Text>
-      <Text variant="body-3-medium">Docs</Text>
+      <Text
+        as="a"
+        href={links.ssv.explorer}
+        target="_blank"
+        variant="body-3-medium"
+      >
+        Explorer
+      </Text>
+      <Text
+        as="a"
+        href="https://docs.ssv.network/"
+        target="_blank"
+        variant="body-3-medium"
+      >
+        Docs
+      </Text>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon">
@@ -52,35 +70,50 @@ export const Navbar: FCProps = ({ className, ...props }) => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem>
-            Governance Forum <HiOutlineExternalLink className="text-gray-600" />
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            Snapshot <HiOutlineExternalLink className="text-gray-600" />
-          </DropdownMenuItem>
+          <a href={links.ssv.governanceForum} target="_blank">
+            <DropdownMenuItem>
+              Governance Forum{" "}
+              <HiOutlineExternalLink className="text-gray-600" />
+            </DropdownMenuItem>
+          </a>
+          <a href={links.ssv.snapshot} target="_blank">
+            <DropdownMenuItem>
+              Snapshot <HiOutlineExternalLink className="text-gray-600" />
+            </DropdownMenuItem>
+          </a>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            Terms of Use <HiOutlineExternalLink className="text-gray-600" />
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            Privacy Policy <HiOutlineExternalLink className="text-gray-600" />
-          </DropdownMenuItem>
+          <a href={links.ssv.tos} target="_blank">
+            <DropdownMenuItem>
+              Terms of Use <HiOutlineExternalLink className="text-gray-600" />
+            </DropdownMenuItem>
+          </a>
+          <a href={links.ssv.privacy} target="_blank">
+            <DropdownMenuItem>
+              Privacy Policy <HiOutlineExternalLink className="text-gray-600" />
+            </DropdownMenuItem>
+          </a>
           <div className="flex px-1 pb-1 text-gray-700">
-            <Tooltip delayDuration={500} content="Discord">
-              <DropdownMenuItem className="p-3 rounded-xl">
-                <FaDiscord className="size-4" />
-              </DropdownMenuItem>
-            </Tooltip>
-            <Tooltip delayDuration={500} content="X">
-              <DropdownMenuItem className="p-3 rounded-xl">
-                <FaXTwitter className="size-4" />
-              </DropdownMenuItem>
-            </Tooltip>
-            <Tooltip delayDuration={500} content="ssv.network website">
-              <DropdownMenuItem className="p-3 rounded-xl">
-                <HiOutlineGlobeAlt className="size-4" />
-              </DropdownMenuItem>
-            </Tooltip>
+            <a href={links.ssv.discord} target="_blank">
+              <Tooltip delayDuration={500} content="Discord">
+                <DropdownMenuItem className="p-3 rounded-xl">
+                  <FaDiscord className="size-4" />
+                </DropdownMenuItem>
+              </Tooltip>
+            </a>
+            <a href={links.ssv.x} target="_blank">
+              <Tooltip delayDuration={500} content="X">
+                <DropdownMenuItem className="p-3 rounded-xl">
+                  <FaXTwitter className="size-4" />
+                </DropdownMenuItem>
+              </Tooltip>
+            </a>
+            <a href={links.ssv.website} target="_blank">
+              <Tooltip delayDuration={500} content="ssv.network website">
+                <DropdownMenuItem className="p-3 rounded-xl">
+                  <HiOutlineGlobeAlt className="size-4" />
+                </DropdownMenuItem>
+              </Tooltip>
+            </a>
           </div>
         </DropdownMenuContent>
       </DropdownMenu>

@@ -40,7 +40,7 @@ export const RegisterOperatorConfirmation: FC = () => {
         ]),
       },
       withTransactionModal({
-        onMined: (receipt) => {
+        onMined: async (receipt) => {
           const event = receipt.events?.find(
             (event) => event.eventName === "OperatorAdded",
           );

@@ -28,7 +28,7 @@ export const [RegisterValidatorGuard, useRegisterValidatorContext] =
     get files() {
       return this._files;
     },
-    _selectedOperatorsIds: [63, 64, 66, 67] as number[],
+    _selectedOperatorsIds: [] as number[],
     set selectedOperatorsIds(ids: number[]) {
       this._selectedOperatorsIds = ids;
     },

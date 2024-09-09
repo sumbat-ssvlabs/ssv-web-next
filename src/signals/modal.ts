@@ -43,4 +43,11 @@ export const useTransactionModal = createModalSignal<{
   hash: string;
   variant?: "default" | "2-step";
   step: "pending" | "indexing";
-}>();
+}>({
+  isOpen: true,
+  meta: {
+    hash: "",
+    variant: "2-step",
+    step: "pending",
+  },
+});

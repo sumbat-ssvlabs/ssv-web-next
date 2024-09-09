@@ -40,9 +40,11 @@ import { queryClient } from "@/lib/react-query";
 import { useNavigate } from "react-router";
 import { Badge } from "@/components/ui/badge";
 import { WithAllowance } from "@/components/with-allowance/with-allowance";
+import { usePaginatedAccountClusters } from "@/hooks/cluster/use-paginated-account-clusters";
 
 export const RegisterValidatorConfirmation: FC = () => {
   const navigate = useNavigate();
+  const clusters = usePaginatedAccountClusters();
 
   const account = useAccount();
   const { shares, depositAmount } = useRegisterValidatorContext();
@@ -92,6 +94,10 @@ export const RegisterValidatorConfirmation: FC = () => {
             cluster && clusterData.validatorCount !== cluster?.validatorCount
           );
         });
+
+        if (!clusters.clusters.length) {
+          await clusters.query.refetch();
+        }
 
         await queryClient.refetchQueries({
           queryKey: getClusterQueryOptions(clusterHash).queryKey,

@@ -27,9 +27,9 @@ export const usePaginatedAccountClusters = (perPage = 10) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const page = Number(searchParams.get("page") || 1);
 
-  const query = useQuery({
-    ...getPaginatedAccountClustersQueryOptions(address, page, perPage),
-  });
+  const query = useQuery(
+    getPaginatedAccountClustersQueryOptions(address, page, perPage),
+  );
 
   const pagination = query.data?.pagination || createDefaultPagination();
   const hasNext = page < pagination.pages;

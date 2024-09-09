@@ -51,8 +51,10 @@ import { ProtectedRoute } from "@/app/routes/protected-route";
 import { BulkActionGuard } from "@/guard/bulk-action-guard";
 import { RegisterOperatorGuard } from "@/guard/register-operator-guards";
 import { RegisterValidatorGuard } from "@/guard/register-validator-guard";
+import { RootRedirection } from "@/app/routes/root-redirection";
+
 import type { RouteObject } from "react-router-dom";
-import { createBrowserRouter, Link, Outlet } from "react-router-dom";
+import { createBrowserRouter, Outlet } from "react-router-dom";
 import { proxy } from "valtio";
 
 const routes = [
@@ -68,12 +70,7 @@ const routes = [
     children: [
       {
         index: true,
-        element: (
-          <div className="flex gap-2">
-            <Link to="/clusters">Clusters</Link>
-            <Link to="/operators">Operators</Link>
-          </div>
-        ),
+        element: <RootRedirection />,
       },
       {
         path: "join",

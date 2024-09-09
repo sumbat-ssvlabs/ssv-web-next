@@ -11,6 +11,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { OperatorTableRow } from "@/components/operator/operators-table/operator-table-row";
 import { queryClient } from "@/lib/react-query";
 import { getOperatorQueryOptions } from "@/hooks/operator/use-operator";
+import { Divider } from "@/components/ui/divider";
 
 export type OperatorsTableProps = {
   operators: Operator[];
@@ -63,10 +64,15 @@ export const OperatorsTable: FCProps = ({
           })}
         </TableBody>
       </Table>
-      {pagination.pages > 1 && (
-        <div className="flex w-full bg-gray-50 py-4 rounded-b-2xl">
-          <Pagination pagination={pagination} />
-        </div>
+      {pagination.pages > 1 ? (
+        <>
+          <Divider />
+          <div className="flex w-full bg-gray-50 py-4 rounded-b-2xl">
+            <Pagination pagination={pagination} />
+          </div>
+        </>
+      ) : (
+        <div className="flex w-full bg-gray-50 py-4 rounded-b-2xl"></div>
       )}
     </div>
   );
