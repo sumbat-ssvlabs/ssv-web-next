@@ -37,7 +37,6 @@ export const FancyMultiSelect: React.FC<Props> = ({
     const input = inputRef.current;
     if (input) {
       if (e.key === "Delete" || e.key === "Backspace") {
-        console.log("yes");
         if (input.value === "") {
           onChange(selected.slice(0, -1));
         }

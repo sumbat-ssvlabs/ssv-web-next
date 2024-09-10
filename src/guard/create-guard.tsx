@@ -53,7 +53,3 @@ export const createGuard = <T extends object>(
 
   return [guardProvider, hook] as const;
 };
-
-type A = "hi" | "bye" | (string & object);
-const a: A = "hi";
-console.log("a:", a);

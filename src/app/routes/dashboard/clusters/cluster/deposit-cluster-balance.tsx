@@ -54,7 +54,6 @@ export const DepositClusterBalance: FC = () => {
       withTransactionModal({
         onMined: async ({ events }) => {
           const event = events.find((e) => e.eventName === "ClusterDeposited");
-          console.log("event:", event);
 
           event &&
             setOptimisticData(

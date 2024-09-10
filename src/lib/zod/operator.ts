@@ -5,7 +5,6 @@ export const ALLOWED_IMAGE_TYPES = ["image/jpg", "image/jpeg", "image/png"];
 const fileSchema = z
   .instanceof(File)
   .refine((file) => {
-    console.log("Boolean(file.type):", Boolean(file.type));
     return Boolean(file.type) && ALLOWED_IMAGE_TYPES.includes(file.type);
   }, "Invalid file type. Allowed types are: PNG and JPEG.")
   .refine(

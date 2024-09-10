@@ -80,10 +80,7 @@ export const ClusterTable: FCProps = ({
               <ClustersTableRow
                 key={cluster.id}
                 cluster={cluster}
-                onClick={() => {
-                  console.log(cluster);
-                  return onClusterClick(cluster);
-                }}
+                onClick={() => onClusterClick(cluster)}
               />
             );
           })}

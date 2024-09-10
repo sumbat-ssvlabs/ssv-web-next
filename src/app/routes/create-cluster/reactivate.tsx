@@ -79,7 +79,6 @@ export const ReactivateCluster: FCProps = ({ ...props }) => {
     validatorsAmount: cluster.data?.validatorCount ?? 1,
     fundingDays: days,
   });
-  console.log("fundingCost:", fundingCost);
 
   const reactive = useReactivate();
 

@@ -86,7 +86,6 @@ export const NumberInput: NumberInputFC = forwardRef<HTMLInputElement, Props>(
 
     useKey("ArrowUp", handleArrowKey("up"), undefined, [value, decimals]);
     useKey("ArrowDown", handleArrowKey("down"), undefined, [value, decimals]);
-    console.log(value);
     return (
       <Tooltip
         asChild

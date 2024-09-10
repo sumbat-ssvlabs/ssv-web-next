@@ -84,7 +84,6 @@ export const GenerateKeySharesOnline: FCProps = () => {
 
   const extractKeystoreData = useExtractKeystoreData({
     onSuccess: async (data) => {
-      console.log("useExtractKeystoreData:", data);
       const nonce = await getOwnerNonce(address!);
 
       const shares = await createShares.mutateAsync({
@@ -146,7 +145,6 @@ export const GenerateKeySharesOnline: FCProps = () => {
           className="flex flex-col gap-4"
           onSubmit={form.handleSubmit(async (data) => {
             state.password = data.password;
-            console.log("state.password:", state.password);
             await extractKeystoreData.mutateAsync({
               file: files![0],
               password: data.password,

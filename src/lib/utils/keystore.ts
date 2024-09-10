@@ -1,7 +1,6 @@
 import { globals } from "@/config";
 import { bigintMax } from "./bigint";
 import type { Prettify } from "@/types/ts-utils";
-import { formatSSV } from "@/lib/utils/number";
 
 export const computeDailyAmount = (value: bigint, days: number) => {
   const scale = 10 ** 6;
@@ -41,18 +40,14 @@ type ComputeFundingCostArgs = Prettify<
 export const computeFundingCost = (args: ComputeFundingCostArgs) => {
   const validators = BigInt(args.validators || 1);
   const networkCost = computeDailyAmount(args.networkFee, args.fundingDays);
-  console.log("networkCost:", formatSSV(networkCost));
   const operatorsCost = computeDailyAmount(args.operatorsFee, args.fundingDays);
-  console.log("operatorsCost:", formatSSV(operatorsCost));
   const liquidationCollateral = computeLiquidationCollateralCostPerValidator({
     ...args,
     validators,
   });
 
-  console.log("liquidationCollateral:", formatSSV(liquidationCollateral));
   const total =
     (networkCost + operatorsCost + liquidationCollateral) * validators;
-  console.log("total:", formatSSV(total));
 
   return {
     perValidator: {

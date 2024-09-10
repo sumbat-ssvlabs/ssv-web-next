@@ -446,7 +446,6 @@ router.subscribe((state) => {
   locationState.previous = locationState.current;
   locationState.current = state.location;
 
-  console.log("state.historyAction:", state.historyAction);
   if (state.historyAction === "PUSH") {
     locationState.history.push(state.location);
   } else if (state.historyAction === "POP") {

@@ -103,8 +103,6 @@ export const DockerInstructions: FC<DockerInstructionsProps> = ({
     useRegisterValidatorContext.state.dkgCeremonyState.withdrawalAddress =
       data.withdrawalAddress;
 
-    console.log("all good ");
-
     navigate("../ceremony-summary");
   });
 
