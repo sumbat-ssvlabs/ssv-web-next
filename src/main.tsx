@@ -36,9 +36,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <PersistQueryClientProvider
       client={queryClient}
       persistOptions={{ persister }}
-      onSuccess={(...args) => {
-        console.log("Query client persisted", args);
-      }}
     >
       <RainbowKitProvider>
         {/* {import.meta.env.DEV && (
