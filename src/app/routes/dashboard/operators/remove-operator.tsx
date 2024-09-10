@@ -43,7 +43,7 @@ export const RemoveOperator: FC = () => {
   const [accepted, setAccepted] = useState(false);
 
   return (
-    <Container variant="vertical">
+    <Container variant="vertical" className="py-6">
       <NavigateBackBtn />
       <Card>
         <Text variant="headline4">Remove Operator</Text>

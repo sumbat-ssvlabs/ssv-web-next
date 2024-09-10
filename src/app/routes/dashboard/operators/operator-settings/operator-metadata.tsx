@@ -82,6 +82,7 @@ export const OperatorMetadata: FC<ComponentPropsWithoutRef<"div">> = ({
   const form = useForm<
     z.infer<typeof metadataScheme> & { mev_relays: string[] }
   >({
+    mode: "all",
     defaultValues: defaults,
     resolver: zodResolver(metadataScheme),
   });

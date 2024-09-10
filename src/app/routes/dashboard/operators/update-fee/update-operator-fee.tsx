@@ -62,7 +62,7 @@ export const UpdateOperatorFee: FC<ComponentPropsWithoutRef<"div">> = ({
   const isChanged = isBigIntChanged(form.watch("yearlyFee"), operatorYearlyFee);
 
   return (
-    <Container variant="vertical" className={cn(className)} {...props}>
+    <Container variant="vertical" className={cn(className, "py-6")} {...props}>
       <NavigateBackBtn by="path" to="../.." />
       <Form {...form}>
         <Card as="form" className="w-full" onSubmit={submit}>
@@ -86,6 +86,7 @@ export const UpdateOperatorFee: FC<ComponentPropsWithoutRef<"div">> = ({
                     max={max}
                     placeholder="shadcn"
                     {...field}
+                    className="pr-1.5"
                     rightSlot={
                       <Button
                         size="sm"

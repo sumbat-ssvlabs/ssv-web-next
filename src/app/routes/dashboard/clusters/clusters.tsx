@@ -21,7 +21,7 @@ export const Clusters: FC<ComponentPropsWithoutRef<"div">> = () => {
         <title>SSV My Clusters</title>
       </Helmet>
 
-      <Container variant="vertical" size="xl" className="h-full py-6">
+      <Container variant="vertical" size="xl" className="py-6">
         <div className="flex justify-between w-full gap-3">
           <DashboardPicker />
           <Spacer />
