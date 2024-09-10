@@ -148,6 +148,14 @@ const routes = [
                     element: <AdditionalFunding />,
                   },
                   {
+                    path: "balance-warning",
+                    element: <BalanceWarning />,
+                  },
+                  {
+                    path: "slashing-warning",
+                    element: <SlashingWarning />,
+                  },
+                  {
                     path: "confirmation",
                     element: <RegisterValidatorConfirmation />,
                   },

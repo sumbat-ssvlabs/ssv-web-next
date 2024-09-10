@@ -36,8 +36,13 @@ import { Badge } from "@/components/ui/badge";
 import { WithAllowance } from "@/components/with-allowance/with-allowance";
 import { usePaginatedAccountClusters } from "@/hooks/cluster/use-paginated-account-clusters";
 import { ClusterFundingSummary } from "@/components/cluster/cluster-funding-summary";
+import { useClusterPageParams } from "@/hooks/cluster/use-cluster-page-params";
+import { ClusterAdditionalFundingSummary } from "@/components/cluster/cluster-additional-funding-summary";
+import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 
 export const RegisterValidatorConfirmation: FC = () => {
+  const inCluster = Boolean(useClusterPageParams().clusterHash);
+
   const navigate = useNavigate();
   const accountClusters = usePaginatedAccountClusters();
 
@@ -66,18 +71,20 @@ export const RegisterValidatorConfirmation: FC = () => {
     const [share] = shares;
 
     const options = withTransactionModal({
+      variant: "2-step",
       onMined: async () => {
-        await retryPromiseUntilSuccess(async () => {
-          const cluster = await getCluster(clusterHash);
+        await retryPromiseUntilSuccess(() =>
+          getCluster(clusterHash)
+            .then(
+              (cluster) =>
+                cluster &&
+                clusterData.validatorCount !== cluster?.validatorCount,
+            )
+            .catch(() => false),
+        );
 
-          return (
-            cluster && clusterData.validatorCount !== cluster?.validatorCount
-          );
-        });
-
-        if (!accountClusters.clusters.length) {
+        if (!accountClusters.clusters.length)
           await accountClusters.query.refetch();
-        }
 
         await queryClient.refetchQueries({
           queryKey: getClusterQueryOptions(clusterHash).queryKey,
@@ -114,6 +121,7 @@ export const RegisterValidatorConfirmation: FC = () => {
 
   return (
     <Container variant="vertical" className="py-6">
+      <NavigateBackBtn by="history" />
       <Card className="w-full">
         <div className="flex justify-between w-full">
           <Text variant="headline4">Transaction Details</Text>
@@ -151,11 +159,15 @@ export const RegisterValidatorConfirmation: FC = () => {
           ))}
         </div>
         <Divider />
-        <ClusterFundingSummary
-          operators={operators.data ?? []}
-          validatorsAmount={shares.length}
-          fundingDays={fundingDays}
-        />
+        {inCluster ? (
+          <ClusterAdditionalFundingSummary />
+        ) : (
+          <ClusterFundingSummary
+            operators={operators.data ?? []}
+            validatorsAmount={shares.length}
+            fundingDays={fundingDays}
+          />
+        )}
         <WithAllowance size="xl" amount={depositAmount}>
           <Button
             size="xl"

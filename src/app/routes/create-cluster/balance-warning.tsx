@@ -6,13 +6,15 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Link } from "react-router-dom";
+import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 
 export const BalanceWarning: FC = () => {
   const [agree1, setAgree1] = useState(false);
   const [agree2, setAgree2] = useState(false);
 
   return (
-    <Container variant="vertical">
+    <Container variant="vertical" className="py-6">
+      <NavigateBackBtn by="history" />
       <Card>
         <Text variant="headline4">Cluster Balances and Fees</Text>
         <Text>

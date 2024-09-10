@@ -9,13 +9,15 @@ import { SsvExplorerBtn } from "@/components/ui/ssv-explorer-btn";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 
 export const SlashingWarning: FC = () => {
   const [agree1, setAgree1] = useState(false);
   const { shares } = useRegisterValidatorContext();
 
   return (
-    <Container variant="vertical">
+    <Container variant="vertical" className="py-6">
+      <NavigateBackBtn by="history" />
       <Card className="font-medium">
         <Text variant="headline4">Slashing Warning</Text>
         {shares.length === 1 && (

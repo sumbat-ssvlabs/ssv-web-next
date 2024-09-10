@@ -1,4 +1,4 @@
-import { type FC } from "react";
+import { useState, type FC } from "react";
 import { Container } from "@/components/ui/container";
 import { Card } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
@@ -13,19 +13,30 @@ import { EstimatedOperationalRunwayAlert } from "@/components/cluster/estimated-
 import { UnmountClosed } from "react-collapse";
 import { Link } from "react-router-dom";
 import { useRegisterValidatorContext } from "@/guard/register-validator-guard";
+import { useSSVBalance } from "@/hooks/use-ssv-balance";
+import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 
 export const AdditionalFunding: FC = () => {
   const params = useClusterPageParams();
+  const ssvBalance = useSSVBalance();
 
-  const { depositAmount } = useRegisterValidatorContext();
+  const context = useRegisterValidatorContext();
+  const [depositAmount, setDepositAmount] = useState(context.depositAmount);
+
+  const deltaValidators = BigInt(context.shares.length);
 
   const { data: clusterRunway } = useClusterRunway(params.clusterHash!, {
     deltaBalance: depositAmount,
-    deltaValidators: 1n,
+    deltaValidators,
   });
+
+  const submit = () => {
+    useRegisterValidatorContext.state.depositAmount = depositAmount;
+  };
 
   return (
     <Container variant="vertical" className="p-6">
+      <NavigateBackBtn by="history" />
       <Card>
         <Text variant="headline4">Select your validator funding period</Text>
         <Text>
@@ -40,7 +51,7 @@ export const AdditionalFunding: FC = () => {
           <Divider />
           <EstimatedOperationalRunway
             withAlerts={false}
-            deltaValidators={1n}
+            deltaValidators={deltaValidators}
             deltaBalance={depositAmount}
           />
         </Card>
@@ -58,9 +69,8 @@ export const AdditionalFunding: FC = () => {
             </div>
             <NumberInput
               value={depositAmount}
-              onChange={(value) => {
-                useRegisterValidatorContext.state.depositAmount = value;
-              }}
+              max={ssvBalance.data?.value ?? 0n}
+              onChange={setDepositAmount}
               rightSlot={<>SSV</>}
             />
           </Card>
@@ -76,9 +86,10 @@ export const AdditionalFunding: FC = () => {
         </UnmountClosed>
         <Button
           as={Link}
-          to="../confirmation"
+          to="../balance-warning"
           size="xl"
           disabled={clusterRunway?.isAtRisk}
+          onClick={submit}
         >
           Next
         </Button>

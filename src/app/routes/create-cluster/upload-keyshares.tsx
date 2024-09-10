@@ -18,6 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/grid-table";
+import { Input } from "@/components/ui/input";
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import { Spacer } from "@/components/ui/spacer";
 import { Spinner } from "@/components/ui/spinner";
@@ -34,7 +35,7 @@ import { createClusterHash } from "@/lib/utils/cluster";
 import { shortenAddress } from "@/lib/utils/strings";
 import { cn } from "@/lib/utils/tw";
 import { Paperclip } from "lucide-react";
-import { type ComponentPropsWithoutRef, type FC } from "react";
+import { useEffect, type ComponentPropsWithoutRef, type FC } from "react";
 import { useNavigate } from "react-router";
 import { ref } from "valtio";
 import { useAccount } from "wagmi";
@@ -92,6 +93,12 @@ export const UploadKeyshares: FCProps = ({ ...props }) => {
     enabled: validatedShares.isSuccess,
   });
 
+  useEffect(() => {
+    if (state.selectedValidatorsCount < 1) {
+      state.selectedValidatorsCount = validators.data?.tags.valid.length ?? 0;
+    }
+  }, [state, validators.data?.tags.valid.length]);
+
   const cluster = useCluster(createClusterHash(account.address!, operatorIds));
 
   const operatorsUsability = useOperatorsUsability(
@@ -105,17 +112,20 @@ export const UploadKeyshares: FCProps = ({ ...props }) => {
 
   const submit = () => {
     state.shares =
-      validators.data?.tags.valid.map((share) => share.payload) ?? [];
+      validators.data?.tags.valid
+        .slice(0, context.selectedValidatorsCount)
+        .map((share) => share.payload) || [];
 
     if (cluster.data)
-      return navigate(`/join/${cluster.data.clusterId}/validator/funding`);
+      return navigate(`/join/validator/${cluster.data.clusterId}/funding`);
     navigate("../funding");
   };
 
   const canProceed =
     Boolean(validators.data?.tags?.valid.length) &&
     !operatorsUsability.data?.hasExceededValidatorsLimit &&
-    !operatorsUsability.data?.hasPermissionedOperators;
+    !operatorsUsability.data?.hasPermissionedOperators &&
+    context.selectedValidatorsCount > 0;
 
   return (
     <Container
@@ -179,7 +189,10 @@ export const UploadKeyshares: FCProps = ({ ...props }) => {
                 <Spacer />
                 {operatorsUsability.data?.operators?.map(
                   ({ operator, isUsable }) => (
-                    <div className="flex flex-1 max-w-8 flex-col items-center">
+                    <div
+                      className="flex flex-1 max-w-8 flex-col items-center"
+                      key={operator.id}
+                    >
                       <OperatorAvatar
                         variant="circle"
                         src={operator.logo}
@@ -213,8 +226,47 @@ export const UploadKeyshares: FCProps = ({ ...props }) => {
         </Card>
         {Boolean(validators.data?.sharesWithStatuses?.length) && (
           <Card className="flex-1">
-            <div className="flex justify-between">
-              <Text variant="headline4">Selected Validators</Text>
+            <div className="flex items-center gap-1 justify-between">
+              <Text variant="headline4" className="flex-1">
+                Selected Validators
+              </Text>
+              <div className="flex items-center gap-1 justify-between">
+                <Button
+                  disabled={context.selectedValidatorsCount <= 1}
+                  variant="secondary"
+                  onClick={() => state.selectedValidatorsCount--}
+                >
+                  -
+                </Button>
+                <Input
+                  className="w-16"
+                  value={context.selectedValidatorsCount}
+                  onChange={(ev) => {
+                    const value = ev.target.value;
+                    if (/^\d+$/.test(value)) {
+                      const number = Number(value);
+                      if (
+                        number > (validators.data?.tags?.valid?.length ?? 0)
+                      ) {
+                        state.selectedValidatorsCount =
+                          validators.data?.tags?.valid?.length ?? 0;
+                      } else {
+                        state.selectedValidatorsCount = number;
+                      }
+                    }
+                  }}
+                />
+                <Button
+                  disabled={
+                    context.selectedValidatorsCount ===
+                    (validators.data?.tags?.valid?.length ?? 0)
+                  }
+                  onClick={() => state.selectedValidatorsCount++}
+                  variant="secondary"
+                >
+                  +
+                </Button>
+              </div>
             </div>
             {Boolean(validators.data?.tags?.["incorrect-nonce"].length) && (
               <Alert variant="error">
@@ -233,35 +285,62 @@ export const UploadKeyshares: FCProps = ({ ...props }) => {
                 </AlertDescription>
               </Alert>
             )}
-            <Table gridTemplateColumns="1fr auto" className="flex-1">
-              <TableHeader className="sticky top-0 bg-gray-50">
+            <Table
+              gridTemplateColumns="1fr auto"
+              className="flex-1 max-h-[580px]"
+            >
+              <TableHeader className="sticky z-10 top-0 bg-gray-50">
                 <TableCell>Public key</TableCell>
                 <TableCell>Status</TableCell>
               </TableHeader>
-              {validators.data?.sharesWithStatuses?.map((validator) => (
-                <TableRow key={validator.share.data.publicKey}>
-                  <TableCell className="flex gap-1 items-center">
-                    <Text>
-                      {shortenAddress(validator.share.payload.publicKey)}
-                    </Text>
-                    <CopyBtn text={validator.share.payload.publicKey} />
-                  </TableCell>
-                  <TableCell>
-                    {validator.status !== "valid" && (
-                      <Badge
-                        size="sm"
-                        variant={
-                          validator.status === "registered"
-                            ? "warning"
-                            : "error"
-                        }
-                      >
-                        {validator.status}
-                      </Badge>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
+              {(() => {
+                let selectedValidatorsCount = 0;
+
+                return validators.data?.sharesWithStatuses?.map((validator) => {
+                  const selected =
+                    validator.status === "valid" &&
+                    selectedValidatorsCount < context.selectedValidatorsCount;
+                  if (selected) selectedValidatorsCount++;
+                  console.log(
+                    "selectedValidatorsCount:",
+                    selectedValidatorsCount,
+                  );
+                  console.log("selected:", selected);
+                  return (
+                    <TableRow
+                      key={validator.share.data.publicKey}
+                      className={cn({
+                        "bg-primary-50 font-bold border border-primary-500":
+                          selected,
+                      })}
+                    >
+                      <TableCell className="flex gap-1 items-center">
+                        <Text>
+                          {shortenAddress(validator.share.payload.publicKey)}
+                        </Text>
+                        <CopyBtn
+                          className="z-0"
+                          text={validator.share.payload.publicKey}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        {validator.status !== "valid" && (
+                          <Badge
+                            size="sm"
+                            variant={
+                              validator.status === "registered"
+                                ? "success"
+                                : "error"
+                            }
+                          >
+                            {validator.status}
+                          </Badge>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  );
+                });
+              })()}
             </Table>
             <Button
               isLoading={cluster.isLoading}

@@ -27,7 +27,7 @@ export const RegisterValidatorSuccess: FC = () => {
   if (!operatorIds.length) return <Navigate to="/clusters" />;
 
   return (
-    <Container variant="vertical">
+    <Container variant="vertical" className="py-6">
       <Card>
         <Text variant="headline4">Welcome to the SSV Network!</Text>
         <Text variant="body-2-medium">
