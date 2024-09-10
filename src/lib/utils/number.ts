@@ -32,6 +32,8 @@ const units = {
   hours: 3600000,
   days: 86400000,
   weeks: 604800000,
+  months: 2629746000,
+  years: 31556952000,
 } as const;
 
 export const ms = (value: number, unit: keyof typeof units): number => {

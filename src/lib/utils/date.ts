@@ -27,3 +27,21 @@ export const humanizeDuration = (duration: number) =>
             : minutesFormat,
     },
   );
+
+export const humanizeFundingDuration = (duration: number) =>
+  formatDuration(
+    intervalToDuration({
+      start: 0,
+      end: duration,
+    }),
+    {
+      format:
+        duration > ms(1, "years")
+          ? ["years"]
+          : duration > ms(1, "months")
+            ? ["months"]
+            : duration > ms(1, "days")
+              ? ["days"]
+              : ["hours"],
+    },
+  );

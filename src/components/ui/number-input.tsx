@@ -55,7 +55,7 @@ export const NumberInput: NumberInputFC = forwardRef<HTMLInputElement, Props>(
       if (hasMax && parsed > max) {
         setShowMaxSet(true);
         onChange(max);
-        return setDisplayValue(formatBigintInput(max));
+        return setDisplayValue(formatBigintInput(max, decimals));
       }
 
       if (!allowNegative && parsed < 0) {
@@ -63,13 +63,13 @@ export const NumberInput: NumberInputFC = forwardRef<HTMLInputElement, Props>(
         return setDisplayValue("0");
       }
 
-      setDisplayValue(displayValue ?? formatBigintInput(parsed));
+      setDisplayValue(displayValue ?? formatBigintInput(parsed, decimals));
       onChange(parsed);
     };
 
     if (
-      formatBigintInput(value) !==
-      formatBigintInput(parseUnits(displayValue, decimals))
+      formatBigintInput(value, decimals) !==
+      formatBigintInput(parseUnits(displayValue, decimals), decimals)
     ) {
       setValue(value);
     }

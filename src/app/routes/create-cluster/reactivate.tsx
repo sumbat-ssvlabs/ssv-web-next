@@ -1,7 +1,9 @@
+import { ClusterFundingSummary } from "@/components/cluster/cluster-funding-summary";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
+import { Divider } from "@/components/ui/divider";
 import {
   Form,
   FormControl,
@@ -10,9 +12,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Loading } from "@/components/ui/Loading";
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
-import { Spinner } from "@/components/ui/spinner";
+import { NumberInput } from "@/components/ui/number-input";
 import { Text } from "@/components/ui/text";
 import { toast } from "@/components/ui/use-toast";
 import { WithAllowance } from "@/components/with-allowance/with-allowance";
@@ -33,7 +35,6 @@ import { useReactivate } from "@/lib/contract-interactions/write/use-reactivate"
 import { setOptimisticData } from "@/lib/react-query";
 import { bigintifyNumbers, stringifyBigints } from "@/lib/utils/bigint";
 import { formatClusterData } from "@/lib/utils/cluster";
-import { formatSSV } from "@/lib/utils/number";
 import { sumOperatorsFee } from "@/lib/utils/operator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isEmpty, merge } from "lodash-es";
@@ -129,7 +130,7 @@ export const ReactivateCluster: FCProps = ({ ...props }) => {
   if (cluster.data && !cluster.data.isLiquidated)
     return <Navigate to={`/clusters/${cluster.data?.clusterId}`} replace />;
 
-  if (operators.isPending) return <Spinner />;
+  if (operators.isPending) return <Loading />;
 
   return (
     <Container variant="vertical" className="py-6">
@@ -165,11 +166,15 @@ export const ReactivateCluster: FCProps = ({ ...props }) => {
             name="days"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>
-                  {formatSSV(fundingCost.data?.total ?? 0n)} SSV
-                </FormLabel>
+                <FormLabel>Days</FormLabel>
                 <FormControl>
-                  <Input type="number" {...field} />
+                  <NumberInput
+                    {...field}
+                    value={BigInt(field.value)}
+                    decimals={0}
+                    max={36500n}
+                    onChange={(value) => field.onChange(value.toString())}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -191,6 +196,12 @@ export const ReactivateCluster: FCProps = ({ ...props }) => {
               </AlertDescription>
             </Alert>
           </Collapse>
+          <Divider />
+          <ClusterFundingSummary
+            operators={operators.data ?? []}
+            validatorsAmount={cluster.data?.validatorCount ?? 1}
+            fundingDays={days}
+          />
           <WithAllowance amount={fundingCost.data?.total ?? 0n}>
             <Button
               isActionBtn
