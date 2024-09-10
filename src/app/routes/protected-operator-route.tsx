@@ -5,6 +5,7 @@ import type { ComponentPropsWithoutRef, FC } from "react";
 import { Navigate } from "react-router-dom";
 import { isAddressEqual } from "viem";
 import { useAccount } from "wagmi";
+import { Loading } from "@/components/ui/Loading";
 
 export const ProtectedOperatorRoute: FC<ComponentPropsWithoutRef<"div">> = ({
   ...props
@@ -22,12 +23,7 @@ export const ProtectedOperatorRoute: FC<ComponentPropsWithoutRef<"div">> = ({
   )
     return <Navigate to="../not-your-operator" />;
 
-  if (operator.isLoading)
-    return (
-      <div className="flex flex-col items-center justify-center gap-6 h-full  pb-6">
-        <img src="/images/ssv-loader.svg" className="size-28" />
-      </div>
-    );
+  if (operator.isLoading) return <Loading />;
 
   return props.children;
 };

@@ -1,3 +1,4 @@
+import { Loading } from "@/components/ui/Loading";
 import { useCluster } from "@/hooks/cluster/use-cluster";
 import { useClusterPageParams } from "@/hooks/cluster/use-cluster-page-params";
 import { isUndefined } from "lodash-es";
@@ -12,12 +13,7 @@ export const ProtectedClusterRoute: FC<ComponentPropsWithoutRef<"div">> = ({
 
   if (isUndefined(clusterHash)) return <Navigate to="../not-found" />;
   if (cluster.isError) return <Navigate to="../not-found" />;
-  if (cluster.isLoading)
-    return (
-      <div className="flex flex-col items-center justify-center gap-6 h-full  pb-6">
-        <img src="/images/ssv-loader.svg" className="size-36" />
-      </div>
-    );
+  if (cluster.isLoading) return <Loading />;
 
   return props.children;
 };
