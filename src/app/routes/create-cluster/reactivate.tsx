@@ -11,6 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import { Spinner } from "@/components/ui/spinner";
 import { Text } from "@/components/ui/text";
 import { toast } from "@/components/ui/use-toast";
@@ -131,7 +132,8 @@ export const ReactivateCluster: FCProps = ({ ...props }) => {
   if (operators.isPending) return <Spinner />;
 
   return (
-    <Container>
+    <Container variant="vertical" className="py-6">
+      <NavigateBackBtn />
       <Form {...form}>
         <Card as="form" onSubmit={submit} {...props}>
           <Text variant="headline4">Reactivate Cluster</Text>

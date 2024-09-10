@@ -19,7 +19,7 @@ export const buttonVariants = cva(
           "border dark:border-white/10 hover:bg-accent hover:text-accent-foreground",
         secondary:
           "bg-primary-50 text-primary-500 hover:bg-primary-100 active:bg-primary-200",
-        ghost: "hover:bg-gray-300 disabled:text-red-500",
+        ghost: "hover:bg-gray-300 ",
         success:
           "bg-success-100 text-success-500  hover:bg-success-300 active:bg-success-500",
         subtle:
