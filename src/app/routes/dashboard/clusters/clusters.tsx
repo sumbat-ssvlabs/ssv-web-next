@@ -11,7 +11,7 @@ import { usePaginatedAccountClusters } from "@/hooks/cluster/use-paginated-accou
 import { useIsNewAccount } from "@/hooks/account/use-is-new-account";
 
 export const Clusters: FC<ComponentPropsWithoutRef<"div">> = () => {
-  const { clusters, pagination } = usePaginatedAccountClusters();
+  const { clusters, pagination, query } = usePaginatedAccountClusters();
   const navigate = useNavigate();
   const { hasClusters } = useIsNewAccount();
 
@@ -41,7 +41,7 @@ export const Clusters: FC<ComponentPropsWithoutRef<"div">> = () => {
         <ClusterTable
           clusters={clusters}
           pagination={pagination}
-          isEmpty={pagination.total === 0}
+          isEmpty={query.isSuccess && pagination.total === 0}
           onClusterClick={(cluster) => navigate(cluster.clusterId)}
         />
       </Container>

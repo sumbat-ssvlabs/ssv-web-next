@@ -51,7 +51,7 @@ import { ProtectedRoute } from "@/app/routes/protected-route";
 import { BulkActionGuard } from "@/guard/bulk-action-guard";
 import { RegisterOperatorGuard } from "@/guard/register-operator-guards";
 import { RegisterValidatorGuard } from "@/guard/register-validator-guard";
-import { RootRedirection } from "@/app/routes/root-redirection";
+import { Redirector } from "@/app/routes/root-redirection";
 
 import type { RouteObject } from "react-router-dom";
 import { createBrowserRouter, Outlet } from "react-router-dom";
@@ -70,7 +70,7 @@ const routes = [
     children: [
       {
         index: true,
-        element: <RootRedirection />,
+        element: <Redirector />,
       },
       {
         path: "join",
@@ -437,11 +437,21 @@ export const router: ReturnType<typeof createBrowserRouter> =
   createBrowserRouter(routes);
 
 export const locationState = proxy({
-  current: router.state.location.pathname,
-  previous: router.state.location.pathname,
+  current: router.state.location,
+  previous: router.state.location,
+  history: [router.state.location],
 });
 
 router.subscribe((state) => {
   locationState.previous = locationState.current;
-  locationState.current = state.location.pathname;
+  locationState.current = state.location;
+
+  console.log("state.historyAction:", state.historyAction);
+  if (state.historyAction === "PUSH") {
+    locationState.history.push(state.location);
+  } else if (state.historyAction === "POP") {
+    locationState.history.pop();
+  } else if (state.historyAction === "REPLACE") {
+    locationState.history[locationState.history.length - 1] = state.location;
+  }
 });

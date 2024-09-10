@@ -23,6 +23,8 @@ export const useIsNewAccount = () => {
   return {
     isLoading,
     isNewAccount,
+    clusters,
+    operators,
     hasClusters,
     hasOperators,
     accountRoutePath,

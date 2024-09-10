@@ -4,14 +4,28 @@ import { Card } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
+import { useMatchHistory } from "@/hooks/use-match-history";
+import { useClusterPageParams } from "@/hooks/cluster/use-cluster-page-params";
 
 type Props = {
   variant?: "create" | "add";
 };
 
 export const DistributionMethod: FC<Props> = ({ variant = "create" }) => {
+  const { clusterHash } = useClusterPageParams();
+
+  const selectOperatorsLocation = useMatchHistory(
+    "/join/validator/select-operators",
+  );
+
+  const prevPath = selectOperatorsLocation
+    ? selectOperatorsLocation.pathname + selectOperatorsLocation.search
+    : `/clusters/${clusterHash}`;
+
   return (
     <Container variant="vertical" className="py-6">
+      <NavigateBackBtn to={prevPath} />
       <Card className="font-medium">
         <Text variant="headline4">Generate Validator KeyShares</Text>
         <Text>

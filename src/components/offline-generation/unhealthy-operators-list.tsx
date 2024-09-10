@@ -28,8 +28,11 @@ export const UnhealthyOperatorsList: FC<
         {operators.map((operator) => {
           const isHealthy = health.find((h) => h.id === operator.id)?.isHealthy;
           return (
-            <div className="flex justify-between items-center p-4 py-3 rounded-xl border border-gray-300">
-              <OperatorDetails key={operator.id} operator={operator} />
+            <div
+              className="flex justify-between items-center p-4 py-3 rounded-xl border border-gray-300"
+              key={operator.id}
+            >
+              <OperatorDetails operator={operator} />
               <Badge size="sm" variant={isHealthy ? "success" : "error"}>
                 {isHealthy ? "DKG Enabled" : "DKG Disabled"}
               </Badge>

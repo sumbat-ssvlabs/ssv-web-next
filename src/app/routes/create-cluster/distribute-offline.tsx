@@ -14,9 +14,13 @@ import { Link } from "react-router-dom";
 import { DockerInstructions } from "@/components/offline-generation/docker-instructions";
 import { SSVKeysInstructions } from "@/components/offline-generation/ssv-keys-instructions";
 import { useSearchParams } from "react-router-dom";
+import { useClusterPageParams } from "@/hooks/cluster/use-cluster-page-params";
+import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 
 export const DistributeOffline: FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const inCluster = Boolean(useClusterPageParams().clusterHash);
+
   const selectedOption = searchParams.get("option") as
     | "existing"
     | "new"
@@ -43,7 +47,8 @@ export const DistributeOffline: FC = () => {
     isNew && health.data?.some(({ isHealthy }) => !isHealthy);
 
   return (
-    <Container size="lg" variant="vertical">
+    <Container size="lg" variant="vertical" className="py-6">
+      <NavigateBackBtn by="path" to="../distribution-method" />
       <Card className="w-full">
         <Text variant="headline4">
           How do you want to generate your keyshares?
@@ -71,14 +76,16 @@ export const DistributeOffline: FC = () => {
               operators={operators.data ?? []}
               health={health.data ?? []}
             />
-            <Button
-              as={Link}
-              to="../select-operators?has_dkg_address=true"
-              size="xl"
-              className="w-full"
-            >
-              Change Operators
-            </Button>
+            {!inCluster && (
+              <Button
+                as={Link}
+                to="../select-operators?has_dkg_address=true"
+                size="xl"
+                className="w-full"
+              >
+                Change Operators
+              </Button>
+            )}
           </>
         )}
         {selectedOption === "new" &&

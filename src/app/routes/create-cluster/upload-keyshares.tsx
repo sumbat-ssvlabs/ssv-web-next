@@ -18,6 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/grid-table";
+import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import { Spacer } from "@/components/ui/spacer";
 import { Spinner } from "@/components/ui/spinner";
 import { Text } from "@/components/ui/text";
@@ -118,156 +119,161 @@ export const UploadKeyshares: FCProps = ({ ...props }) => {
 
   return (
     <Container
-      variant="horizontal"
+      variant="vertical"
       size={validators.data?.sharesWithStatuses?.length ? "xl" : "default"}
       className="h-full py-6"
     >
-      <Card className="flex-1 h-fit" {...props}>
-        <Text variant="headline4">Enter KeyShares File</Text>
-        <FileUploader
-          dropzoneOptions={{
-            maxFiles: 1,
-            maxSize: 1024 * 1024 * 4,
-            multiple: false,
-            accept: {
-              "application/json": [".json"],
-            },
-          }}
-          value={context.files as File[]}
-          onValueChange={(files) => {
-            state.files = files ? ref(files) : null;
-          }}
-          className="relative bg-background rounded-lg p-2"
-        >
-          <FileInput className="outline-dashed outline-1 outline-white">
-            <FileSvgDraw
-              isLoading={validatedShares.isLoading || validators.isLoading}
-            />
-            <div className="flex items-center justify-center flex-col pt-3 pb-4 w-full px-3 "></div>
-          </FileInput>
-          <FileUploaderContent>
-            {context.files &&
-              context.files.length > 0 &&
-              context.files.map((file, i) => (
-                <FileUploaderItem key={i} index={i}>
-                  <Paperclip className="h-4 w-4 stroke-current" />
-                  <span>{file.name}</span>
-                </FileUploaderItem>
-              ))}
-          </FileUploaderContent>
-        </FileUploader>
-        <KeysharesErrorAlert error={validatedShares.error} />
+      <NavigateBackBtn by="history" />
+      <div className="flex gap-6 w-full">
+        <Card className="flex-1 h-fit" {...props}>
+          <Text variant="headline4">Enter KeyShares File</Text>
+          <FileUploader
+            dropzoneOptions={{
+              maxFiles: 1,
+              maxSize: 1024 * 1024 * 4,
+              multiple: false,
+              accept: {
+                "application/json": [".json"],
+              },
+            }}
+            value={context.files as File[]}
+            onValueChange={(files) => {
+              state.files = files ? ref(files) : null;
+            }}
+            className="relative bg-background rounded-lg p-2"
+          >
+            <FileInput className="outline-dashed outline-1 outline-white">
+              <FileSvgDraw
+                isLoading={validatedShares.isLoading || validators.isLoading}
+              />
+              <div className="flex items-center justify-center flex-col pt-3 pb-4 w-full px-3 "></div>
+            </FileInput>
+            <FileUploaderContent>
+              {context.files &&
+                context.files.length > 0 &&
+                context.files.map((file, i) => (
+                  <FileUploaderItem key={i} index={i}>
+                    <Paperclip className="h-4 w-4 stroke-current" />
+                    <span>{file.name}</span>
+                  </FileUploaderItem>
+                ))}
+            </FileUploaderContent>
+          </FileUploader>
+          <KeysharesErrorAlert error={validatedShares.error} />
 
-        {validators.data?.sharesWithStatuses && (
-          <div className="space-y-2">
-            <Text variant="body-3-medium" className="text-gray-500">
-              Keyshares Summary
-            </Text>
-            <div className="flex items-center w-full gap-2 justify-between">
-              <Text variant="body-2-medium">Validators</Text>
-              <Text variant="body-2-medium">
-                {validators.data?.sharesWithStatuses?.length}
+          {validators.data?.sharesWithStatuses && (
+            <div className="space-y-2">
+              <Text variant="body-3-medium" className="text-gray-500">
+                Keyshares Summary
               </Text>
+              <div className="flex items-center w-full gap-2 justify-between">
+                <Text variant="body-2-medium">Validators</Text>
+                <Text variant="body-2-medium">
+                  {validators.data?.sharesWithStatuses?.length}
+                </Text>
+              </div>
+              <div className="flex gap-2">
+                <Text variant="body-2-medium" className="pr-2">
+                  Operators
+                </Text>
+                <Spacer />
+                {operatorsUsability.data?.operators?.map(
+                  ({ operator, isUsable }) => (
+                    <div className="flex flex-1 max-w-8 flex-col items-center">
+                      <OperatorAvatar
+                        variant="circle"
+                        src={operator.logo}
+                        className={cn("border", {
+                          "border-error-500": !isUsable,
+                          "border-transparent": isUsable,
+                        })}
+                      />
+                      <Text
+                        className={cn("text-[10px] text-gray-500 font-medium", {
+                          "text-error-500": !isUsable,
+                        })}
+                      >
+                        ID:{operator.id.toString()}
+                      </Text>
+                    </div>
+                  ),
+                )}
+              </div>
             </div>
-            <div className="flex gap-2">
-              <Text variant="body-2-medium" className="pr-2">
-                Operators
-              </Text>
-              <Spacer />
-              {operatorsUsability.data?.operators?.map(
-                ({ operator, isUsable }) => (
-                  <div className="flex flex-1 max-w-8 flex-col items-center">
-                    <OperatorAvatar
-                      variant="circle"
-                      src={operator.logo}
-                      className={cn("border", {
-                        "border-error-500": !isUsable,
-                        "border-transparent": isUsable,
-                      })}
-                    />
-                    <Text
-                      className={cn("text-[10px] text-gray-500 font-medium", {
-                        "text-error-500": !isUsable,
-                      })}
-                    >
-                      ID:{operator.id.toString()}
-                    </Text>
-                  </div>
-                ),
-              )}
-            </div>
-          </div>
-        )}
+          )}
 
-        {operatorsUsability.data?.hasPermissionedOperators && (
-          <Alert variant="warning">
-            <AlertDescription>
-              One of your chosen operators is a permissioned operator. Please
-              select an alternative operator.
-            </AlertDescription>
-          </Alert>
-        )}
-      </Card>
-      {Boolean(validators.data?.sharesWithStatuses?.length) && (
-        <Card className="flex-1">
-          <div className="flex justify-between">
-            <Text variant="headline4">Selected Validators</Text>
-          </div>
-          {Boolean(validators.data?.tags?.["incorrect-nonce"].length) && (
-            <Alert variant="error">
+          {operatorsUsability.data?.hasPermissionedOperators && (
+            <Alert variant="warning">
               <AlertDescription>
-                Validators within this file have an incorrect{" "}
-                <Button
-                  as="a"
-                  variant="link"
-                  target="_blank"
-                  href="https://docs.ssv.network/developers/tools/cluster-scanner#_x7nzjlwu00d0"
-                >
-                  registration nonce
-                </Button>
-                . Please split the validator keys to new key shares aligned with
-                the correct one.
+                One of your chosen operators is a permissioned operator. Please
+                select an alternative operator.
               </AlertDescription>
             </Alert>
           )}
-          <Table gridTemplateColumns="1fr auto" className="flex-1">
-            <TableHeader className="sticky top-0 bg-gray-50">
-              <TableCell>Public key</TableCell>
-              <TableCell>Status</TableCell>
-            </TableHeader>
-            {validators.data?.sharesWithStatuses?.map((validator) => (
-              <TableRow key={validator.share.data.publicKey}>
-                <TableCell className="flex gap-1 items-center">
-                  <Text>
-                    {shortenAddress(validator.share.payload.publicKey)}
-                  </Text>
-                  <CopyBtn text={validator.share.payload.publicKey} />
-                </TableCell>
-                <TableCell>
-                  {validator.status !== "valid" && (
-                    <Badge
-                      size="sm"
-                      variant={
-                        validator.status === "registered" ? "warning" : "error"
-                      }
-                    >
-                      {validator.status}
-                    </Badge>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
-          </Table>
-          <Button
-            isLoading={cluster.isLoading}
-            size="xl"
-            onClick={submit}
-            disabled={!canProceed}
-          >
-            Next
-          </Button>
         </Card>
-      )}
+        {Boolean(validators.data?.sharesWithStatuses?.length) && (
+          <Card className="flex-1">
+            <div className="flex justify-between">
+              <Text variant="headline4">Selected Validators</Text>
+            </div>
+            {Boolean(validators.data?.tags?.["incorrect-nonce"].length) && (
+              <Alert variant="error">
+                <AlertDescription>
+                  Validators within this file have an incorrect{" "}
+                  <Button
+                    as="a"
+                    variant="link"
+                    target="_blank"
+                    href="https://docs.ssv.network/developers/tools/cluster-scanner#_x7nzjlwu00d0"
+                  >
+                    registration nonce
+                  </Button>
+                  . Please split the validator keys to new key shares aligned
+                  with the correct one.
+                </AlertDescription>
+              </Alert>
+            )}
+            <Table gridTemplateColumns="1fr auto" className="flex-1">
+              <TableHeader className="sticky top-0 bg-gray-50">
+                <TableCell>Public key</TableCell>
+                <TableCell>Status</TableCell>
+              </TableHeader>
+              {validators.data?.sharesWithStatuses?.map((validator) => (
+                <TableRow key={validator.share.data.publicKey}>
+                  <TableCell className="flex gap-1 items-center">
+                    <Text>
+                      {shortenAddress(validator.share.payload.publicKey)}
+                    </Text>
+                    <CopyBtn text={validator.share.payload.publicKey} />
+                  </TableCell>
+                  <TableCell>
+                    {validator.status !== "valid" && (
+                      <Badge
+                        size="sm"
+                        variant={
+                          validator.status === "registered"
+                            ? "warning"
+                            : "error"
+                        }
+                      >
+                        {validator.status}
+                      </Badge>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </Table>
+            <Button
+              isLoading={cluster.isLoading}
+              size="xl"
+              onClick={submit}
+              disabled={!canProceed}
+            >
+              Next
+            </Button>
+          </Card>
+        )}
+      </div>
     </Container>
   );
 };

@@ -1,3 +1,4 @@
+import { Redirector } from "@/app/routes/root-redirection";
 import robotRocket from "@/assets/images/robot-rocket.svg";
 import { ConnectWalletBtn } from "@/components/connect-wallet/connect-wallet-btn";
 import { Card } from "@/components/ui/card";
@@ -17,10 +18,10 @@ export const ConnectWallet: FC<ComponentPropsWithoutRef<"div">> = () => {
     useIsNewAccount();
 
   if (isConnected) {
+    return <Redirector />;
     if (isLoading) return <Loading />;
     if (isNewAccount) return <Navigate to="/join" replace />;
     const match = matchPath("/:dashboard", location.state?.pathname ?? "/");
-    console.log("match?.params.dashboard:", match?.params.dashboard);
     const isGoingToOperators = match?.params.dashboard === "operators";
     const isGoingToClusters = match?.params.dashboard === "clusters";
 
@@ -41,7 +42,7 @@ export const ConnectWallet: FC<ComponentPropsWithoutRef<"div">> = () => {
           operator.
         </Text>
       </div>
-      <img src={robotRocket} className="w-[420px] mx-auto" />
+      <img src={robotRocket} className="h-[274px] mx-auto" />
       <ConnectWalletBtn size="xl" />
     </Card>
   );

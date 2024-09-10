@@ -21,8 +21,8 @@ type FCProps = FC<
 
 export const Preparation: FCProps = ({ className, ...props }) => {
   return (
-    <Container variant="vertical">
-      <NavigateBackBtn variant="ghost" to="/clusters" />
+    <Container variant="vertical" className="py-6">
+      <NavigateBackBtn to="/clusters" />
       <Card className={cn(className)} {...props}>
         <Text variant="headline4">Run a Distributed Validator</Text>
         <Text variant="body-2-medium" className="text-gray-700">
