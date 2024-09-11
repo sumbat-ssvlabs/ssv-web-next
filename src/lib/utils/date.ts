@@ -29,6 +29,7 @@ export const humanizeDuration = (duration: number) =>
   );
 
 export const humanizeFundingDuration = (duration: number) => {
+  console.log("duration:", duration);
   return formatDistance(0, duration, {
     includeSeconds: false,
     addSuffix: false,

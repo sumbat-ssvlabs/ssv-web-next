@@ -1,6 +1,7 @@
 import { endpoint } from "@/api";
 import { api } from "@/lib/api-client";
 import { add0x } from "@/lib/utils/strings";
+import type { Address } from "abitype";
 
 export interface IsRegisteredValidatorResponse {
   type: string;
@@ -38,5 +39,11 @@ export interface IsRegisteredValidatorResponse {
 export const getIsRegisteredValidator = async (publicKey: string) => {
   return await api.get<IsRegisteredValidatorResponse>(
     endpoint("validators/isRegisteredValidator", add0x(publicKey)),
+  );
+};
+
+export const getAllValidators = async (clusterHash: string | Address) => {
+  return await api.get<IsRegisteredValidatorResponse>(
+    endpoint("validators/validatorsByClusterHash", add0x(clusterHash)),
   );
 };

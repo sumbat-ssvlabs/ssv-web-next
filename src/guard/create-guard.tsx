@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import type { RoutePaths } from "@/app/routes/router";
+import type { AppRoutePaths } from "@/app/routes/router";
 import { reset } from "@/lib/utils/valtio";
 import type { ReactNode } from "react";
 import React, { useMemo } from "react";
@@ -20,7 +20,7 @@ type GuardFn<T extends object> = (
 
 export const createGuard = <T extends object>(
   defaultState: T,
-  guard: Partial<Record<RoutePaths, GuardFn<T>>> = {},
+  guard: Partial<Record<AppRoutePaths, GuardFn<T>>> = {},
   resetStateOnUnmount = true,
 ) => {
   const state = proxy<T>(defaultState);

@@ -61,7 +61,7 @@ export const EstimatedOperationalRunway: EstimatedOperationalRunwayFC = ({
         >
           <Text variant="headline4">
             {humanizeFundingDuration(
-              ms(Number(clusterRunway?.runway) ?? 0, "days"),
+              ms(Number(clusterRunway?.runway ?? 0), "days"),
             )}
           </Text>
           {clusterRunway?.hasDelta && (
