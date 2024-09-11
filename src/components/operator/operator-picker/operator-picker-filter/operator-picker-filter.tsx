@@ -47,7 +47,7 @@ export const OperatorPickerFilter: FCProps = ({
             <BiFilterAlt className="mr-2" />
             <Text>Filters</Text>
             {count > 0 && (
-              <span className="ml-2 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-blue-500 rounded-full">
+              <span className="ml-2 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-primary-500 rounded-full">
                 {count}
               </span>
             )}

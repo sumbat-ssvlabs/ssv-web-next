@@ -7,7 +7,7 @@ import { Tooltip } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils/tw";
 import type { ComponentPropsWithoutRef, FC } from "react";
 import { BiCheck } from "react-icons/bi";
-import { TbInfoSquareRoundedFilled } from "react-icons/tb";
+import { FaCircleInfo } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 
 export type PreparationProps = {
@@ -42,13 +42,18 @@ export const Preparation: FCProps = ({ className, ...props }) => {
               content={
                 <Text variant="body-2-medium">
                   Don't have a validator?{" "}
-                  <Link className="link" to="/launchpad">
+                  <Button
+                    as={Link}
+                    className="link"
+                    variant="link"
+                    to="/join/launchpad"
+                  >
                     Create via Ethereum Launchpad
-                  </Link>
+                  </Button>
                 </Text>
               }
             >
-              <TbInfoSquareRoundedFilled className="text-gray-500" />
+              <FaCircleInfo className="text-gray-500" />
             </Tooltip>
           </div>
           <div className="flex items-center gap-2">
@@ -62,7 +67,7 @@ export const Preparation: FCProps = ({ className, ...props }) => {
           <Button as={Link} to="select-operators" size="xl">
             Generate new key shares
           </Button>
-          <Button as={Link} to="offline" size="xl" variant="secondary">
+          <Button as={Link} to="keyshares" size="xl" variant="secondary">
             I already have key shares
           </Button>
         </div>

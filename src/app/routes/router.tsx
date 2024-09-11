@@ -56,6 +56,7 @@ import { Redirector } from "@/app/routes/root-redirection";
 import type { RouteObject } from "react-router-dom";
 import { createBrowserRouter, Outlet } from "react-router-dom";
 import { proxy, useSnapshot } from "valtio";
+import { Launchpad } from "@/app/routes/create-cluster/launchpad";
 
 const routes = [
   {
@@ -79,6 +80,10 @@ const routes = [
           {
             index: true,
             element: <Join />,
+          },
+          {
+            path: "launchpad",
+            element: <Launchpad />,
           },
           {
             path: "operator",
