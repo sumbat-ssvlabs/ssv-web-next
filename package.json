@@ -12,13 +12,12 @@
     "preview": "vite preview",
     "preinstall": "git config --global url.\"https://\".insteadOf git+ssh://git@",
     "type-check": "tsc -b",
-    "lint-staged": "lint-staged"
+    "lint-staged": "pnpm run type-check && lint-staged"
   },
   "lint-staged": {
     "src/**/*.{ts,tsx,js,json}": [
       "prettier --write --log-level silent",
       "eslint --fix",
-      "bash -c tsc -b",
       "git add"
     ]
   },
