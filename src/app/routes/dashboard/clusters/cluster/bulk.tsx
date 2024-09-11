@@ -31,7 +31,7 @@ export const Bulk: FC<{ type: "remove" | "exit" }> = ({ type }) => {
     100,
   );
 
-  const isAllChecked = selectedPublicKeys.length === total;
+  const isAllChecked = Boolean(total) && selectedPublicKeys.length === total;
   const canProceed = selectedPublicKeys.length > 0;
 
   return (
