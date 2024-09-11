@@ -31,7 +31,7 @@ export const ClustersTableRow: FCProps = ({ cluster, className, ...props }) => {
   return (
     <TableRow
       key={cluster.id}
-      className={cn("cursor-pointer max-h-7", className, {
+      className={cn("cursor-pointer", className, {
         "bg-warning-200": runway.data?.isAtRisk,
         "bg-error-50": isLiquidated,
       })}

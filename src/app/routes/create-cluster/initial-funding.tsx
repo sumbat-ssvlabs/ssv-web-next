@@ -29,6 +29,7 @@ import { useOperators } from "@/hooks/operator/use-operators";
 import { sumOperatorsFees } from "@/lib/utils/operator";
 import { useNavigate } from "react-router";
 import { ClusterFundingSummary } from "@/components/cluster/cluster-funding-summary";
+import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 
 export type InitialFundingProps = {
   // TODO: Add props or remove this type
@@ -81,7 +82,8 @@ export const InitialFunding: FCProps = ({ ...props }) => {
   }
 
   return (
-    <Container>
+    <Container variant="vertical" className="py-6">
+      <NavigateBackBtn by="history" />
       <Form {...form}>
         <Card as="form" onSubmit={submit} {...props}>
           <Text variant="headline4">Select your validator funding period</Text>

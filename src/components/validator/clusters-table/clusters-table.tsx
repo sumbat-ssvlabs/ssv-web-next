@@ -16,12 +16,14 @@ import { Tooltip } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { TbLayoutGridAdd } from "react-icons/tb";
+import { Loading } from "@/components/ui/Loading";
 
 export type ClusterTableProps = {
   clusters: Cluster[];
   onClusterClick: (cluster: Cluster) => void;
   pagination: IPagination;
   isEmpty?: boolean;
+  isLoading?: boolean;
 };
 
 type FCProps = FC<
@@ -30,6 +32,7 @@ type FCProps = FC<
 >;
 
 export const ClusterTable: FCProps = ({
+  isLoading,
   clusters,
   onClusterClick,
   pagination,
@@ -86,6 +89,8 @@ export const ClusterTable: FCProps = ({
           })}
         </TableBody>
       </Table>
+
+      {isLoading && <Loading />}
       {isEmpty ? (
         <div className="flex flex-col items-center justify-center gap-4 w-full bg-gray-50 py-16 rounded-b-2xl">
           <TbLayoutGridAdd

@@ -145,7 +145,7 @@ export const ExternalContract: FC = () => {
   });
 
   return (
-    <Container variant="vertical" size="lg">
+    <Container variant="vertical" size="lg" className="py-6">
       <Form {...form}>
         <NavigateBackBtn />
         <Card>

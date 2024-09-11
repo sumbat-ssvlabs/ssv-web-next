@@ -169,7 +169,6 @@ export const ReactivateCluster: FCProps = ({ ...props }) => {
                 <FormLabel>Days</FormLabel>
                 <FormControl>
                   <NumberInput
-                    {...field}
                     value={BigInt(field.value)}
                     decimals={0}
                     max={36500n}

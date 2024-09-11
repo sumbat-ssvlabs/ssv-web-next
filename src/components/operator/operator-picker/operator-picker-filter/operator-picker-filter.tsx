@@ -8,6 +8,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Text } from "@/components/ui/text";
 
 export type OperatorPickerFilterProps = {
   onChange: (filters: {
@@ -30,12 +31,26 @@ export const OperatorPickerFilter: FCProps = ({
   className,
   ...props
 }) => {
+  const count = Number(isVerifiedChecked) + Number(isDKGChecked);
   return (
     <div className={cn(className, "flex gap-2")} {...props}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button size="lg" variant="outline" className="pl-4">
-            <BiFilterAlt className="mr-4" /> Filters
+          <Button
+            size="lg"
+            variant={count > 0 ? "secondary" : "outline"}
+            className={cn("pl-4", {
+              "border border-primary-500": count > 0,
+              "pr-4": count > 0,
+            })}
+          >
+            <BiFilterAlt className="mr-2" />
+            <Text>Filters</Text>
+            {count > 0 && (
+              <span className="ml-2 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-blue-500 rounded-full">
+                {count}
+              </span>
+            )}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>

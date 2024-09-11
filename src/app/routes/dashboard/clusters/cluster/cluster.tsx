@@ -88,7 +88,7 @@ export const Cluster: FC = () => {
               </Text>
             )}
           </div>
-          {Boolean(cluster.data?.validatorCount) && (
+          {Boolean(cluster.data?.validatorCount) && balance.isSuccess && (
             <>
               <Divider />
               <EstimatedOperationalRunway />

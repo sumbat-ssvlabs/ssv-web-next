@@ -50,7 +50,7 @@ export const OperatorStatus: FC = () => {
   };
 
   return (
-    <Container variant="vertical" size="lg">
+    <Container variant="vertical" size="lg" className="py-6">
       <NavigateBackBtn />
       <Card>
         <div className="flex flex-col gap-8 w-full">

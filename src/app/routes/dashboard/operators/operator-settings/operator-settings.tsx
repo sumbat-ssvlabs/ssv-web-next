@@ -21,7 +21,10 @@ export const OperatorSettings: FC<ComponentPropsWithoutRef<"div">> = () => {
   return (
     <Container variant="vertical" className="mt-6" size="lg">
       <NavigateBackBtn>{operator?.name}</NavigateBackBtn>
-      <Card variant="unstyled" className="not-last:border-b">
+      <Card
+        variant="unstyled"
+        className="not-last:border-b not-last:border-gray-100 overflow-hidden"
+      >
         <PermissionSettingsItem
           className="pt-8"
           title={

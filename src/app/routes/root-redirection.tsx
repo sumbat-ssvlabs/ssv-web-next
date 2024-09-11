@@ -1,7 +1,7 @@
 import { locationState } from "@/app/routes/router";
 import { Loading } from "@/components/ui/Loading";
 import { useIsNewAccount } from "@/hooks/account/use-is-new-account";
-import { matchPath, Navigate } from "react-router";
+import { Navigate } from "react-router";
 
 export const Redirector = () => {
   const {
@@ -13,22 +13,24 @@ export const Redirector = () => {
     hasOperators,
   } = useIsNewAccount();
 
-  const clusterMatch = matchPath(
-    "/clusters/:id",
-    locationState.previous.pathname,
-  );
-  const operatorMatch = matchPath(
-    "/operators/:id",
-    locationState.previous.pathname,
-  );
+  const referral =
+    locationState.previous.pathname + locationState.previous.search;
+
+  const clusterMatch = referral.match(/clusters/);
+  const operatorMatch = referral.match(/operators/);
 
   if (clusters.query.isLoading) return <Loading />;
 
   if (clusterMatch && clusters.query.isSuccess && hasClusters)
-    return <Navigate to={clusterMatch?.pathname} replace />;
+    return <Navigate to={referral} replace />;
 
-  if (operatorMatch && operators.query.isSuccess && hasOperators)
-    return <Navigate to={operatorMatch?.pathname} replace />;
+  if (
+    operatorMatch &&
+    clusters.query.isSuccess &&
+    operators.query.isSuccess &&
+    hasOperators
+  )
+    return <Navigate to={referral} replace />;
 
   if (clusters.query.isSuccess && hasClusters)
     return <Navigate to={"/clusters"} replace />;

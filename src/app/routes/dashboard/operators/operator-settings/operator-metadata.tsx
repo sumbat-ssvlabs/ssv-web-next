@@ -11,7 +11,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input, inputVariants } from "@/components/ui/input";
-import { FancyMultiSelect } from "@/components/ui/multi-select";
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import {
   Select,
@@ -42,6 +41,7 @@ import { useForm } from "react-hook-form";
 import { FaCircleInfo } from "react-icons/fa6";
 import { useNavigate } from "react-router";
 import { z } from "zod";
+import { MultipleSelector } from "@/components/ui/multi-select2";
 
 const sanitizedString = z.string().regex(/^[a-zA-Z0-9_!$#’|\s]*$/, {
   message: "Only letters, numbers, and special characters are allowed.",
@@ -70,13 +70,30 @@ export const OperatorMetadata: FC<ComponentPropsWithoutRef<"div">> = ({
   const sign = useSignOperatorMetadata();
 
   const { data: operator } = useOperator();
-  const { data: operatorLocations } = useOperatorLocations();
-  const { data: eth1NodeClientOptions } = useOperatorNodes(1);
-  const { data: eth2NodeClientOptions } = useOperatorNodes(2);
+
+  const operatorLocations = useOperatorLocations();
+  const eth1NodeClientOptions = useOperatorNodes(1);
+  const eth2NodeClientOptions = useOperatorNodes(2);
+
+  const isEth1NodeClientOptionsDisabled =
+    eth1NodeClientOptions.isLoading ||
+    eth1NodeClientOptions.isError ||
+    (eth1NodeClientOptions.isSuccess &&
+      eth1NodeClientOptions.data?.length === 0);
+
+  const isEth2NodeClientOptionsDisabled =
+    eth2NodeClientOptions.isLoading ||
+    eth2NodeClientOptions.isError ||
+    (eth2NodeClientOptions.isSuccess &&
+      eth2NodeClientOptions.data?.length === 0);
 
   const defaults = {
     ...operator,
-    mev_relays: operator?.mev_relays?.split(",").filter(Boolean) ?? [],
+    mev_relays:
+      operator?.mev_relays
+        ?.split(",")
+        .map((val) => val.trim())
+        .filter(Boolean) ?? [],
   };
 
   const form = useForm<
@@ -111,7 +128,7 @@ export const OperatorMetadata: FC<ComponentPropsWithoutRef<"div">> = ({
   };
 
   return (
-    <Container variant="vertical" className={cn(className)} {...props}>
+    <Container variant="vertical" className={cn(className, "py-6")} {...props}>
       <NavigateBackBtn />
       <Form {...form}>
         <Card as="form" className="w-full" onSubmit={form.handleSubmit(submit)}>
@@ -148,6 +165,7 @@ export const OperatorMetadata: FC<ComponentPropsWithoutRef<"div">> = ({
               </FormItem>
             )}
           /> */}
+
           <FormField
             control={form.control}
             name="description"
@@ -181,10 +199,11 @@ export const OperatorMetadata: FC<ComponentPropsWithoutRef<"div">> = ({
               <FormItem>
                 <FormLabel>Description</FormLabel>
                 <FormControl>
-                  <FancyMultiSelect
+                  <MultipleSelector
+                    placeholder="MEV Relays"
+                    items={MEV_RELAY_OPTIONS}
                     selected={field.value}
                     onChange={field.onChange}
-                    options={MEV_RELAY_OPTIONS}
                   />
                 </FormControl>
                 <FormMessage />
@@ -208,7 +227,7 @@ export const OperatorMetadata: FC<ComponentPropsWithoutRef<"div">> = ({
                       <SelectValue placeholder="Select your server geolocation" />
                     </SelectTrigger>
                     <SelectContent className="font">
-                      {operatorLocations?.map((country) => (
+                      {operatorLocations.data?.map((country) => (
                         <SelectItem
                           key={country["iso_3166-2"]}
                           value={country.name}
@@ -228,58 +247,83 @@ export const OperatorMetadata: FC<ComponentPropsWithoutRef<"div">> = ({
             control={form.control}
             name="eth1_node_client"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Execution Client</FormLabel>
-                <FormControl>
-                  <Select
-                    value={field.value}
-                    onValueChange={(value) => field.onChange(value)}
-                  >
-                    <SelectTrigger
-                      className={inputVariants({ className: "text-base" })}
+              <Tooltip
+                asChild
+                content={
+                  isEth1NodeClientOptionsDisabled
+                    ? "Could not fetch execution clients, please try again later"
+                    : undefined
+                }
+                hasArrow
+              >
+                <FormItem>
+                  <FormLabel>Execution Client</FormLabel>
+                  <FormControl>
+                    <Select
+                      disabled={isEth1NodeClientOptionsDisabled}
+                      value={field.value}
+                      onValueChange={(value) => field.onChange(value)}
                     >
-                      <SelectValue placeholder="Geth, Nethermind, Besu..." />
-                    </SelectTrigger>
-                    <SelectContent className="font">
-                      {eth1NodeClientOptions?.map((node) => (
-                        <SelectItem key={node} value={node}>
-                          {node}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+                      <SelectTrigger
+                        className={inputVariants({ className: "text-base" })}
+                      >
+                        <SelectValue placeholder="Geth, Nethermind, Besu..." />
+                      </SelectTrigger>
+                      <SelectContent className="font">
+                        {eth1NodeClientOptions.data?.map((node) => (
+                          <SelectItem key={node} value={node}>
+                            {node}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              </Tooltip>
             )}
           />
           <FormField
             control={form.control}
             name="eth2_node_client"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Consensus Client</FormLabel>
-                <FormControl>
-                  <Select
-                    value={field.value}
-                    onValueChange={(value) => field.onChange(value)}
-                  >
-                    <SelectTrigger
-                      className={inputVariants({ className: "text-base" })}
+              <Tooltip
+                asChild
+                content={
+                  isEth2NodeClientOptionsDisabled
+                    ? "Could not fetch consensus clients, please try again later"
+                    : undefined
+                }
+                hasArrow
+              >
+                <FormItem>
+                  <FormLabel>Consensus Client</FormLabel>
+                  <FormControl>
+                    <Select
+                      disabled={isEth2NodeClientOptionsDisabled}
+                      value={field.value}
+                      onValueChange={(value) => field.onChange(value)}
                     >
-                      <SelectValue placeholder="Prism, Lighthouse, Teku..." />
-                    </SelectTrigger>
-                    <SelectContent className="font">
-                      {eth2NodeClientOptions?.map((node) => (
-                        <SelectItem key={node} value={node}>
-                          {node}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+                      <SelectTrigger
+                        className={inputVariants({ className: "text-base" })}
+                      >
+                        <SelectValue
+                          placeholder="Prism, Lighthouse, Teku..."
+                          className="text-gray-200"
+                        />
+                      </SelectTrigger>
+                      <SelectContent className="font">
+                        {eth2NodeClientOptions.data?.map((node) => (
+                          <SelectItem key={node} value={node}>
+                            {node}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              </Tooltip>
             )}
           />
           <FormField

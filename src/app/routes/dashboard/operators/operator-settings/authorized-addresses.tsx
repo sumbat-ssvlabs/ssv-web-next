@@ -62,7 +62,7 @@ export const AuthorizedAddresses = () => {
   useBlocker(isPending);
 
   return (
-    <Container variant="vertical" size="lg" className="max-h-full">
+    <Container variant="vertical" size="lg" className="max-h-full py-10">
       <Form {...addManager.form}>
         <NavigateBackBtn />
         {unsavedChangesBlocker.state === "blocked" ? (

@@ -41,6 +41,7 @@ export const Clusters: FC<ComponentPropsWithoutRef<"div">> = () => {
         <ClusterTable
           clusters={clusters}
           pagination={pagination}
+          isLoading={query.isPending}
           isEmpty={query.isSuccess && pagination.total === 0}
           onClusterClick={(cluster) => navigate(cluster.clusterId)}
         />

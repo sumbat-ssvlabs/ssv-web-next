@@ -55,7 +55,7 @@ import { Redirector } from "@/app/routes/root-redirection";
 
 import type { RouteObject } from "react-router-dom";
 import { createBrowserRouter, Outlet } from "react-router-dom";
-import { proxy } from "valtio";
+import { proxy, useSnapshot } from "valtio";
 
 const routes = [
   {
@@ -451,7 +451,7 @@ export const locationState = proxy({
 });
 
 router.subscribe((state) => {
-  locationState.previous = locationState.current;
+  locationState.previous = JSON.parse(JSON.stringify(locationState.current));
   locationState.current = state.location;
 
   if (state.historyAction === "PUSH") {
@@ -462,3 +462,7 @@ router.subscribe((state) => {
     locationState.history[locationState.history.length - 1] = state.location;
   }
 });
+
+export const useLocationState = () => {
+  return useSnapshot(locationState);
+};

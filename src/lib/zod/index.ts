@@ -5,7 +5,10 @@ export const httpsURLSchema = z
   .string()
   .trim()
   .url("URL must start with https://")
-  .refine((url) => url.startsWith("https://"), "URL must start with https://");
+  .refine(
+    (url) => tryCatch(() => new URL(url).protocol === "https:", false),
+    "URL must start with https://",
+  );
 
 export const dgkURLSchema = z
   .string()

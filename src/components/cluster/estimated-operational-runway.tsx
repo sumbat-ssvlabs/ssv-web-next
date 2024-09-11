@@ -8,6 +8,8 @@ import { useClusterPageParams } from "@/hooks/cluster/use-cluster-page-params";
 import { EstimatedOperationalRunwayAlert } from "@/components/cluster/estimated-operational-runway-alert";
 import { bigintAbs } from "@/lib/utils/bigint";
 import { useClusterState } from "@/hooks/cluster/use-cluster-state";
+import { humanizeFundingDuration } from "@/lib/utils/date";
+import { ms } from "@/lib/utils/number";
 
 export type EstimatedOperationalRunwayProps = {
   clusterHash?: string;
@@ -57,7 +59,11 @@ export const EstimatedOperationalRunway: EstimatedOperationalRunwayFC = ({
             "text-error-500": clusterRunway?.isAtRisk,
           })}
         >
-          <Text variant="headline4">{clusterRunway?.runwayDisplay} </Text>
+          <Text variant="headline4">
+            {humanizeFundingDuration(
+              ms(Number(clusterRunway?.runway) ?? 0, "days"),
+            )}
+          </Text>
           {clusterRunway?.hasDelta && (
             <Span
               className={cn({
