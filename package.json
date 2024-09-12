@@ -12,7 +12,8 @@
     "preview": "vite preview",
     "preinstall": "git config --global url.\"https://\".insteadOf git+ssh://git@",
     "type-check": "tsc -b",
-    "lint-staged": "pnpm run type-check && lint-staged"
+    "lint-staged": "pnpm run type-check && lint-staged",
+    "commit": "cz"
   },
   "lint-staged": {
     "src/**/*.{ts,tsx,js,json}": [
@@ -20,11 +21,6 @@
       "eslint --fix",
       "git add"
     ]
-  },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
   },
   "husky": {
     "hooks": {
