@@ -28,9 +28,6 @@ import "@fontsource/manrope/800.css";
 //   };
 // }
 
-// import "@/workers/create-keystore-payload";
-// import "@/workers/extract-keystore-data";
-
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <WagmiProvider config={config}>
     <PersistQueryClientProvider
@@ -39,11 +36,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     >
       <RainbowKitProvider>
         {/* {import.meta.env.DEV && (
-            <ReactQueryDevtools
-              buttonPosition="bottom-right"
-              client={queryClient}
-            />
-          )} */}
+          <ReactQueryDevtools
+            buttonPosition="bottom-right"
+            client={queryClient}
+          />
+        )} */}
         <RouterProvider router={router} />
         <Toaster />
         <Text

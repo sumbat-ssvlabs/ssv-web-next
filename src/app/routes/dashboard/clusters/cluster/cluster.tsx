@@ -32,6 +32,7 @@ export const Cluster: FC = () => {
     balance: { watch: true },
     isLiquidated: { watch: true },
   });
+  console.log("balance.data:", balance.data);
 
   const operatorsUsability = useOperatorsUsability({
     account: account.address!,
@@ -88,13 +89,21 @@ export const Cluster: FC = () => {
               </Text>
             )}
           </div>
-          {Boolean(cluster.data?.validatorCount) && balance.isSuccess && (
+          {Boolean(cluster.data?.validatorCount) && (
             <>
               <Divider />
-              <EstimatedOperationalRunway />
+              {balance.isLoading ? (
+                <div className="space-y-1">
+                  <Skeleton className="h-6 w-[208px] " />
+                  <Skeleton className="h-7 w-24 " />
+                </div>
+              ) : (
+                <EstimatedOperationalRunway />
+              )}
               <Divider />
             </>
           )}
+
           {isLiquidated.data ? (
             <Button as={Link} to="reactivate" size="xl">
               Reactivate Cluster

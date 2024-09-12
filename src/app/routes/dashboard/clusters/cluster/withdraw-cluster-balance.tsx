@@ -29,19 +29,19 @@ import { useNavigate } from "react-router-dom";
 import { useLiquidateCluster } from "@/hooks/cluster/use-liquidate-cluster";
 import { setOptimisticData } from "@/lib/react-query";
 import { getClusterQueryOptions } from "@/hooks/cluster/use-cluster";
+import { useActiveTransactionState } from "@/hooks/app/use-transaction-state";
 
 const schema = z.object({
   amount: z.bigint().positive(),
 });
 
 export const WithdrawClusterBalance: FC = () => {
+  const transaction = useActiveTransactionState();
   const navigate = useNavigate();
   const params = useClusterPageParams();
 
   const withdraw = useWithdrawClusterBalance(params.clusterHash!);
   const liquidate = useLiquidateCluster(params.clusterHash!);
-
-  const isWriting = withdraw.isPending || liquidate.isPending;
 
   const clusterBalance = useClusterBalance(params.clusterHash!, {
     watch: true,
@@ -174,7 +174,7 @@ export const WithdrawClusterBalance: FC = () => {
             type="submit"
             size="xl"
             disabled={!isChanged || disabled}
-            isLoading={isWriting}
+            isLoading={transaction.isPending}
             variant={isLiquidating ? "destructive" : "default"}
           >
             {isLiquidating ? "Liquidate" : "Withdraw"}

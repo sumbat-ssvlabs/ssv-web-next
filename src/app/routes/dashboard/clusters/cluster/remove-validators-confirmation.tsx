@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Container } from "@/components/ui/container";
+import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import { Text } from "@/components/ui/text";
 import { useBulkActionContext } from "@/guard/bulk-action-guard";
 import {
@@ -88,51 +89,54 @@ export const RemoveValidatorsConfirmation: FC = () => {
 
   return (
     <Container
-      variant="horizontal"
+      variant="vertical"
       size="xl"
       className="p-6 font-medium w-[1096px]"
     >
-      <Card className="flex-[1.7]">
-        <Text variant="headline4">Remove validators</Text>
-        <Text className="text-gray-600">
-          Removing your validator will cause your operators to stop managing it
-          in your behalf, which will result in its inactivation (penalties on
-          the Beacon Chain).
-        </Text>
-        <Text className="text-gray-600">
-          Please note that this action only applies to its removal from our
-          network and does not exit your validator from the Beacon Chain.
-        </Text>
-        <Alert variant="warning">
-          <AlertDescription>
-            To avoid slashing, it is advised to wait at least 2 epochs prior to
-            running the validator on an alternative service.
-          </AlertDescription>
-        </Alert>
-        <label htmlFor="agree-1" className="flex gap-3 pt-6">
-          <Checkbox
-            checked={agree1}
-            id="agree-1"
-            className="mt-1"
-            onCheckedChange={(checked: boolean) => setAgree1(checked)}
-          />
-          <Text>
-            I understand that my validator will be removed from the network and
-            it will stop attesting on the beacon chain
+      <NavigateBackBtn by="history" />
+      <div className="flex w-full gap-6">
+        <Card className="flex-[1.7]">
+          <Text variant="headline4">Remove validators</Text>
+          <Text className="text-gray-600">
+            Removing your validator will cause your operators to stop managing
+            it in your behalf, which will result in its inactivation (penalties
+            on the Beacon Chain).
           </Text>
-        </label>
-        <Button
-          size="xl"
-          disabled={!agree1}
-          onClick={remove}
-          isLoading={isPending}
-        >
-          Remove validators
-        </Button>
-      </Card>
-      <Card className="flex-[1] h-fit">
-        <ValidatorsBulkSummary publicKeys={selectedPublicKeys} />
-      </Card>
+          <Text className="text-gray-600">
+            Please note that this action only applies to its removal from our
+            network and does not exit your validator from the Beacon Chain.
+          </Text>
+          <Alert variant="warning">
+            <AlertDescription>
+              To avoid slashing, it is advised to wait at least 2 epochs prior
+              to running the validator on an alternative service.
+            </AlertDescription>
+          </Alert>
+          <label htmlFor="agree-1" className="flex gap-3 pt-6">
+            <Checkbox
+              checked={agree1}
+              id="agree-1"
+              className="mt-1"
+              onCheckedChange={(checked: boolean) => setAgree1(checked)}
+            />
+            <Text>
+              I understand that my validator will be removed from the network
+              and it will stop attesting on the beacon chain
+            </Text>
+          </label>
+          <Button
+            size="xl"
+            disabled={!agree1}
+            onClick={remove}
+            isLoading={isPending}
+          >
+            Remove validators
+          </Button>
+        </Card>
+        <Card className="flex-[1] h-fit">
+          <ValidatorsBulkSummary publicKeys={selectedPublicKeys} />
+        </Card>
+      </div>
     </Container>
   );
 };

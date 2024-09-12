@@ -40,9 +40,13 @@ export const useClusterState = (
     watch: isLiquidated.data ? false : opts.balance?.watch,
     retry: isLiquidated.data ? false : undefined,
     refetchOnWindowFocus: false,
-    placeholderData: keepPreviousData,
+    placeholderData: (prev) =>
+      isLiquidated.data ? 0n : keepPreviousData(prev),
     enabled: Boolean(
-      account.address && cluster.data && (opts.balance?.enabled ?? true),
+      account.address &&
+        cluster.data &&
+        (opts.balance?.enabled ?? true) &&
+        !isLiquidated.data,
     ),
   });
 

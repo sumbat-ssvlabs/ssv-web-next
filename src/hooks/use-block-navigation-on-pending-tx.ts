@@ -1,7 +1,7 @@
-import { useTransactionModal } from "@/signals/modal";
+import { useActiveTransactionState } from "@/hooks/app/use-transaction-state";
 import { useBlocker } from "react-router";
 
 export const useBlockNavigationOnPendingTx = () => {
-  const { isOpen } = useTransactionModal();
-  useBlocker(isOpen);
+  const state = useActiveTransactionState();
+  useBlocker(state.isPending);
 };

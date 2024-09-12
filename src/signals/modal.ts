@@ -44,3 +44,5 @@ export const useTransactionModal = createModalSignal<{
   variant?: "default" | "2-step";
   step: "pending" | "indexing";
 }>();
+
+export const useIsWaitingForTx = () => useTransactionModal().isOpen;
