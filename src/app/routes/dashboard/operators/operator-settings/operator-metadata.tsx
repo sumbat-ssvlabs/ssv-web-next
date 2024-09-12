@@ -49,7 +49,9 @@ const sanitizedString = z.string().regex(/^[a-zA-Z0-9_!$#’|\s]*$/, {
 
 export const metadataScheme = z.object({
   logo: operatorLogoSchema.default(""),
-  name: sanitizedString.min(3),
+  name: sanitizedString
+    .min(3, "Operator name must be at least 3 characters")
+    .max(30, "Operator name must be at most 30 characters"),
   description: sanitizedString.optional().default(""),
   eth1_node_client: sanitizedString.optional().default(""),
   eth2_node_client: sanitizedString.optional().default(""),
@@ -139,7 +141,7 @@ export const OperatorMetadata: FC<ComponentPropsWithoutRef<"div">> = ({
               <FormItem>
                 <FormLabel>Operator name</FormLabel>
                 <FormControl>
-                  <Input placeholder="shadcn" {...field} />
+                  <Input placeholder="" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
