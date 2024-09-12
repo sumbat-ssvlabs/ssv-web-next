@@ -88,7 +88,7 @@ export const FormLabel = React.forwardRef<
     <Label
       ref={ref}
       className={cn(
-        "font-semibold text-sm text-gray-500",
+        "font-semibold text-sm text-gray-500 w-fit",
         {
           "text-destructive": !!error,
         },
