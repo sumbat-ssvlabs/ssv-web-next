@@ -124,6 +124,9 @@ export const Cluster: FC = () => {
             <Text variant="headline4" className="text-gray-500">
               Validators
             </Text>
+            <Badge size="sm" variant="primary" className="h-fit">
+              {cluster.data?.validatorCount}
+            </Badge>
             <Spacer />
             <ValidatorsActionsMenu isLiquidated={Boolean(isLiquidated.data)} />
             <Tooltip content={getTooltipContent()}>
