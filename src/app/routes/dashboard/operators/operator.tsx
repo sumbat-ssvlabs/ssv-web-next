@@ -109,9 +109,35 @@ export const Operator: FC<ComponentPropsWithoutRef<"div">> = ({ ...props }) => {
                 <IncreaseOperatorFeeStatusBadge />
               </div>
               <Text variant="headline3">{formatSSV(yearlyFee)} SSV</Text>
-              <Button as={Link} to="fee/update" variant="secondary" size="xl">
-                Update Fee
-              </Button>
+              <Tooltip
+                asChild
+                content={
+                  fee.data === 0n ? (
+                    <Text>
+                      Operators with a fee of 0 cannot change their fee.{" "}
+                      <Button
+                        as="a"
+                        variant="link"
+                        size="xl"
+                        target="_blank"
+                        href="https://docs.ssv.network/learn/operators/update-fee#_nn1qsdauoghf"
+                      >
+                        Read more on operator fees
+                      </Button>
+                    </Text>
+                  ) : undefined
+                }
+              >
+                <Button
+                  as={Link}
+                  disabled={fee.isLoading || fee.data === 0n}
+                  to="fee/update"
+                  variant="secondary"
+                  size="xl"
+                >
+                  Update Fee
+                </Button>
+              </Tooltip>
             </Card>
           </div>
           <Card className="flex-[2] h-full max-h-[800px] overflow-auto">
