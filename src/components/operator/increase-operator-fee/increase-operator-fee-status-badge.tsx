@@ -48,7 +48,7 @@ export const IncreaseOperatorFeeStatusBadge: FC<
       case "expired":
         return (
           <Text variant="body-3-semibold">
-            {format(declaredFee.data.approvalEndTimeMS, "dd MMM")}
+            {format(declaredFee.data.approvalEndTimeMS, "dd MMM yyyy")}
           </Text>
         );
     }

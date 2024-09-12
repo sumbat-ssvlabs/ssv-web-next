@@ -14,6 +14,7 @@ import { roundOperatorFee } from "@/lib/utils/bigint";
 import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
 import { setOptimisticData } from "@/lib/react-query";
 import { getOperatorQueryOptions } from "@/hooks/operator/use-operator";
+import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 
 export const DecreaseOperatorFee: FC = () => {
   const navigate = useNavigate();
@@ -42,14 +43,15 @@ export const DecreaseOperatorFee: FC = () => {
               return { ...operator, fee: blockFee.toString() };
             },
           );
-          return navigate("../success");
+          return () => navigate("../success");
         },
       }),
     );
   };
 
   return (
-    <Container variant="vertical">
+    <Container variant="vertical" className="py-6">
+      <NavigateBackBtn />
       <Card>
         <Text variant="headline4">Update Fee</Text>
         <Text>Your new operator annual fee will be updated to.</Text>

@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 export const OperatorFeeUpdated: FC = () => {
   const state = useUpdateOperatorFeeContext();
   return (
-    <Container variant="vertical">
+    <Container variant="vertical" className="py-6">
       <Card>
         <Text variant="headline4">Update Fee</Text>
         <Text>
