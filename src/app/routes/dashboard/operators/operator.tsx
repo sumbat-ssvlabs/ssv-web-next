@@ -25,12 +25,14 @@ export const Operator: FC<ComponentPropsWithoutRef<"div">> = ({ ...props }) => {
   const params = useOperatorPageParams();
   const operatorId = BigInt(params.operatorId!);
   const operator = useOperator(operatorId!);
+  console.log("operator:", operator);
 
   const earnings = useGetOperatorEarnings({ id: operatorId });
 
   const fee = useGetOperatorFee({ operatorId });
   const yearlyFee = getYearlyFee(fee.data ?? 0n);
   const balance = earnings.data ?? 0n;
+  console.log("operator.data:", operator.data);
   if (!operator.data) return null;
 
   return (
@@ -50,12 +52,7 @@ export const Operator: FC<ComponentPropsWithoutRef<"div">> = ({ ...props }) => {
                 <Text variant="body-3-medium" className="text-gray-500">
                   Name
                 </Text>
-                <OperatorDetails
-                  operator={{
-                    id: 1,
-                    name: "",
-                  }}
-                />
+                <OperatorDetails operator={operator.data} />
               </div>{" "}
               <div className="flex flex-col gap-2">
                 <Tooltip content="Is the operator performing duties for the majority of its validators for the last 2 epochs.">
