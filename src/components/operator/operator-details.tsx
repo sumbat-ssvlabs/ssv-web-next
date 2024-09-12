@@ -8,10 +8,16 @@ import type { ComponentPropsWithoutRef, FC } from "react";
 import { FaCircleInfo } from "react-icons/fa6";
 import { Tooltip } from "@/components/ui/tooltip.tsx";
 import { FaPowerOff } from "react-icons/fa";
+import VerifiedSVG from "@/assets/images/verified.svg?react";
 
 export type OperatorDetailsProps = {
   operator: Pick<Operator, "id" | "name"> &
-    Partial<Pick<Operator, "logo" | "is_private" | "id_str" | "is_deleted">>;
+    Partial<
+      Pick<
+        Operator,
+        "logo" | "is_private" | "id_str" | "is_deleted" | "verified_operator"
+      >
+    >;
 };
 
 type FCProps = FC<
@@ -29,7 +35,13 @@ export const OperatorDetails: FCProps = ({ operator, className, ...props }) => {
       />
       <div className="flex flex-col h-full justify-between">
         <div className="flex gap-2 items-center">
-          <Text variant="body-2-medium">{operator.name}</Text>
+          <Text variant="body-2-medium">
+            {operator.name}{" "}
+            {operator.verified_operator && !operator.is_deleted ? (
+              <VerifiedSVG className="inline" />
+            ) : null}
+          </Text>
+
           {operator.is_deleted ? (
             <div className="flex gap-2">
               <div className="size-5 rounded bg-error-100 flex items-center justify-center">

@@ -43,7 +43,7 @@ interface TooltipProps
 
 const Tooltip: React.FC<TooltipProps> = ({
   children,
-  asChild,
+  asChild = true,
   delayDuration,
   content,
   open,
@@ -55,7 +55,9 @@ const Tooltip: React.FC<TooltipProps> = ({
   return (
     <TooltipProvider>
       <TooltipRoot delayDuration={delayDuration || 300} open={open}>
-        <TooltipTrigger asChild={asChild}>{children}</TooltipTrigger>
+        <TooltipTrigger asChild={asChild} type="button">
+          {children}
+        </TooltipTrigger>
         <TooltipContent className={cn(className)} {...props}>
           {hasArrow && <TooltipArrow className="fill-gray-700" />}
           {content}

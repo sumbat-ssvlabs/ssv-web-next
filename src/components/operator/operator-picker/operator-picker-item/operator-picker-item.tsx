@@ -19,6 +19,7 @@ import { Link } from "react-router-dom";
 import type { Address } from "viem";
 import { isAddressEqual } from "viem";
 import { useAccount } from "wagmi";
+import VerifiedSVG from "@/assets/images/verified.svg?react";
 
 export type OperatorPickerItemProps = {
   operator: Operator;
@@ -101,7 +102,10 @@ export const OperatorPickerItem: FCProps = ({
                 title={operator.name}
                 variant="body-3-medium"
               >
-                {operator.name}
+                {operator.name}{" "}
+                {operator.verified_operator && (
+                  <VerifiedSVG className="inline" />
+                )}
               </Text>
               <Text variant="caption-medium" className="text-gray-500">
                 ID: {operator.id}

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Minus } from "lucide-react";
 import { formatSSV } from "@/lib/utils/number";
 import { getYearlyFee } from "@/lib/utils/operator";
+import VerifiedSVG from "@/assets/images/verified.svg?react";
 
 export type SelectedOperatorItemProps = {
   operator: Operator;
@@ -45,7 +46,8 @@ export const SelectedOperatorItem: SelectedOperatorItemFC = ({
               title={operator.name}
               variant="body-3-medium"
             >
-              {operator.name}
+              {operator.name}{" "}
+              {operator.verified_operator && <VerifiedSVG className="inline" />}
             </Text>
             <Text title={operator.name} variant="body-3-medium">
               {formatSSV(getYearlyFee(BigInt(operator.fee)))} SSV
