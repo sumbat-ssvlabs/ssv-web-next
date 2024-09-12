@@ -1,14 +1,14 @@
 import { tryCatch } from "@/lib/utils/tryCatch";
 import { z } from "zod";
 
+const protocolRegex = /^(http|https?:\/\/)/;
 export const httpsURLSchema = z
   .string()
   .trim()
-  .url("URL must start with https://")
-  .refine(
-    (url) => tryCatch(() => new URL(url).protocol === "https:", false),
-    "URL must start with https://",
-  );
+  .transform<string>((url) =>
+    !protocolRegex.test(url) ? `https://${url}` : url,
+  )
+  .pipe(z.string().url("Invalid URL"));
 
 export const dgkURLSchema = z
   .string()

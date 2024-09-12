@@ -199,7 +199,7 @@ export const OperatorMetadata: FC<ComponentPropsWithoutRef<"div">> = ({
             name="mev_relays"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Description</FormLabel>
+                <FormLabel>Mev Relays</FormLabel>
                 <FormControl>
                   <MultipleSelector
                     placeholder="MEV Relays"
