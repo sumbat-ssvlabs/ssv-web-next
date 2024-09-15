@@ -3,7 +3,7 @@ import { queryOptions, useQuery } from "@tanstack/react-query";
 import type { QueryConfig } from "@/lib/react-query";
 import { getAccount } from "@/api/account";
 import type { Address } from "abitype";
-import { useAccount } from "wagmi";
+import { useAccount } from "@/hooks/account/use-account";
 import { ms } from "@/lib/utils/number";
 
 export const getSSVAccountQueryOptions = (account?: Address) => {

@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils/tw";
 import { PlusIcon } from "lucide-react";
 import type { FC } from "react";
 import { Link } from "react-router-dom";
-import { useAccount } from "wagmi";
+import { useAccount } from "@/hooks/account/use-account";
 
 export const Cluster: FC = () => {
   const account = useAccount();

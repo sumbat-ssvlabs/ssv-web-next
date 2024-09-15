@@ -19,7 +19,7 @@ import { shortenAddress } from "@/lib/utils/strings";
 import { type FC } from "react";
 import { useNavigate } from "react-router";
 import { encodeAbiParameters, parseAbiParameters } from "viem";
-import { useAccount } from "wagmi";
+import { useAccount } from "@/hooks/account/use-account";
 import { useRegisterOperatorContext } from "@/guard/register-operator-guards";
 
 export const RegisterOperatorConfirmation: FC = () => {

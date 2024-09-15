@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import { OSName } from "@/lib/utils/os";
 import { generateSSVKeysCMD } from "@/lib/utils/keyshares";
 import { useSSVAccount } from "@/hooks/use-ssv-account";
-import { useAccount } from "wagmi";
+import { useAccount } from "@/hooks/account/use-account";
 import type { Operator } from "@/types/api";
 import { useCopyToClipboard } from "react-use";
 import { LuCheck, LuCopy } from "react-icons/lu";

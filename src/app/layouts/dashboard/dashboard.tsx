@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils/tw";
 import { useIsRestoring } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import type { ComponentPropsWithRef, FC } from "react";
-import { useAccount } from "wagmi";
+import { useAccount } from "@/hooks/account/use-account";
 
 export const DashboardLayout: FC<ComponentPropsWithRef<"div">> = ({
   children,

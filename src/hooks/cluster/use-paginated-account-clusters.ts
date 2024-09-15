@@ -3,7 +3,7 @@ import { createDefaultPagination } from "@/lib/utils/api";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 import type { Address } from "abitype";
 import { useSearchParams } from "react-router-dom";
-import { useAccount } from "wagmi";
+import { useAccount } from "@/hooks/account/use-account";
 
 export const getPaginatedAccountClustersQueryOptions = (
   account: Address | undefined,

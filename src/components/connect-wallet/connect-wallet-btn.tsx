@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { ChevronDown } from "lucide-react";
 import type { FC } from "react";
-import { useAccount } from "wagmi";
+import { useAccount } from "@/hooks/account/use-account";
+import { shortenAddress } from "@/lib/utils/strings";
 
 type WalletType = "ledger" | "trezor" | "walletconnect" | "metamask";
 
@@ -21,12 +22,11 @@ const getWalletIconSrc = (connectorName?: string) => {
   );
 };
 export const ConnectWalletBtn: FC<ButtonProps> = (props) => {
-  const { connector } = useAccount();
+  const account = useAccount();
 
   return (
     <ConnectButton.Custom>
       {({
-        account,
         chain,
         openAccountModal,
         openChainModal,
@@ -77,10 +77,10 @@ export const ConnectWalletBtn: FC<ButtonProps> = (props) => {
           >
             <img
               className="size-6"
-              src={getWalletIconSrc(connector?.name)}
+              src={getWalletIconSrc(account.connector?.name)}
               alt={`Connected to ${account.address}`}
             />
-            {account.displayName}
+            {shortenAddress(account.address ?? "")}
           </Button>
         );
       }}

@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useAccount } from "wagmi";
+import { useAccount } from "@/hooks/account/use-account";
 
 export const useLinks = () => {
   const { chain } = useAccount();

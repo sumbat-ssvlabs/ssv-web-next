@@ -2,7 +2,7 @@ import type { FC } from "react";
 import { Container } from "@/components/ui/container";
 import { Card } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
-import { useAccount } from "wagmi";
+import { useAccount } from "@/hooks/account/use-account";
 import { shortenAddress } from "@/lib/utils/strings";
 import { FaCircleInfo } from "react-icons/fa6";
 import { useOperators } from "@/hooks/operator/use-operators";

@@ -11,7 +11,7 @@ import { type ComponentPropsWithoutRef, type FC } from "react";
 import { Link } from "react-router-dom";
 import { useCluster } from "@/hooks/cluster/use-cluster";
 import { createClusterHash } from "@/lib/utils/cluster";
-import { useAccount } from "wagmi";
+import { useAccount } from "@/hooks/account/use-account";
 import { SelectedOperators } from "@/components/operator/operator-picker/selected-operators";
 import { useSearchOperators } from "@/hooks/use-search-operators";
 import { Alert, AlertDescription } from "@/components/ui/alert";

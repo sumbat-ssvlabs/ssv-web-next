@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils/tw";
 import type { ButtonProps } from "@/components/ui/button";
 import { Button } from "@/components/ui/button";
 import { useSSVNetworkDetails } from "@/hooks/use-ssv-network-details";
-import { useAccount, useBlockNumber, useReadContract } from "wagmi";
+import { useBlockNumber, useReadContract } from "wagmi";
 import { TokenABI } from "@/lib/abi/token";
 import { useApprove } from "@/lib/contract-interactions/erc-20/write/use-approve";
 import React, { useMemo } from "react";
@@ -13,6 +13,7 @@ import { globals } from "@/config";
 import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
 import { keepPreviousData } from "@tanstack/react-query";
 import { isUndefined } from "lodash-es";
+import { useAccount } from "@/hooks/account/use-account";
 
 export type WithAllowanceProps = {
   size?: ButtonProps["size"];

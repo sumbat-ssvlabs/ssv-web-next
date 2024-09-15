@@ -27,7 +27,7 @@ import {
 import { tryCatch } from "@/lib/utils/tryCatch";
 import { useSetFeeRecipientAddress } from "@/lib/contract-interactions/write/use-set-fee-recipient-address";
 import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
-import { useAccount } from "wagmi";
+import { useAccount } from "@/hooks/account/use-account";
 import { setOptimisticData } from "@/lib/react-query";
 
 const schema = z.object({

@@ -6,7 +6,7 @@ import { Span, Text } from "@/components/ui/text";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { isAddress } from "viem";
-import { useAccount } from "wagmi";
+import { useAccount } from "@/hooks/account/use-account";
 import {
   Form,
   FormControl,

@@ -5,7 +5,7 @@ import type {
 } from "@/lib/contract-interactions/utils/useWaitForTransactionReceipt";
 import { useLiquidate } from "@/lib/contract-interactions/write/use-liquidate";
 import { formatClusterData } from "@/lib/utils/cluster";
-import { useAccount } from "wagmi";
+import { useAccount } from "@/hooks/account/use-account";
 
 export const useLiquidateCluster = (clusterHash: string) => {
   const account = useAccount();

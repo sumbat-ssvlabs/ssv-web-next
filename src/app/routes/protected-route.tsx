@@ -1,6 +1,6 @@
 import type { ComponentPropsWithoutRef, FC } from "react";
 import { Navigate } from "react-router-dom";
-import { useAccount } from "wagmi";
+import { useAccount } from "@/hooks/account/use-account";
 
 export const ProtectedRoute: FC<ComponentPropsWithoutRef<"div">> = ({
   ...props

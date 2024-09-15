@@ -9,7 +9,7 @@ import { useRegisterValidatorContext } from "@/guard/register-validator-guard";
 import { useSSVAccount } from "@/hooks/use-ssv-account";
 import { useQuery } from "@tanstack/react-query";
 import type { Address } from "abitype";
-import { useAccount } from "wagmi";
+import { useAccount } from "@/hooks/account/use-account";
 import { isAddress } from "viem";
 import { useCopyToClipboard } from "react-use";
 import { stringifyBigints } from "@/lib/utils/bigint";

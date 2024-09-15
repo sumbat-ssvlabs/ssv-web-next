@@ -1,6 +1,6 @@
 import { useCluster } from "@/hooks/cluster/use-cluster";
 import { useGetBalance } from "@/lib/contract-interactions/read/use-get-balance";
-import { useAccount } from "wagmi";
+import { useAccount } from "@/hooks/account/use-account";
 import { formatClusterData } from "@/lib/utils/cluster";
 import { useMemo } from "react";
 import { keepPreviousData } from "@tanstack/react-query";

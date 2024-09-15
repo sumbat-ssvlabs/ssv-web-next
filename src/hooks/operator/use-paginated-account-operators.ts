@@ -5,7 +5,7 @@ import { queryOptions, useQuery } from "@tanstack/react-query";
 import type { Address } from "abitype";
 import { unionBy } from "lodash-es";
 import { useSearchParams } from "react-router-dom";
-import { useAccount } from "wagmi";
+import { useAccount } from "@/hooks/account/use-account";
 
 export const getPaginatedAccountOperatorsQueryOptions = (
   address: Address | undefined,

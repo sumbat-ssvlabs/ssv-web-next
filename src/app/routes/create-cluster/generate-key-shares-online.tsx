@@ -25,7 +25,7 @@ import { type ComponentPropsWithoutRef, type FC } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { ref } from "valtio";
-import { useAccount } from "wagmi";
+import { useAccount } from "@/hooks/account/use-account";
 import { z } from "zod";
 
 export type GenerateKeySharesOnlineProps = {

@@ -4,7 +4,7 @@ import { ConnectWalletBtn } from "@/components/connect-wallet/connect-wallet-btn
 import { Card } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
 import type { ComponentPropsWithoutRef, FC } from "react";
-import { useAccount } from "wagmi";
+import { useAccount } from "@/hooks/account/use-account";
 
 export const ConnectWallet: FC<ComponentPropsWithoutRef<"div">> = () => {
   const { isConnected } = useAccount();

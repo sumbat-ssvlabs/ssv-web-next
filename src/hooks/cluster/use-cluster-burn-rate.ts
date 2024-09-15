@@ -1,5 +1,5 @@
 import { useGetBurnRate } from "@/lib/contract-interactions/read/use-get-burn-rate";
-import { useAccount } from "wagmi";
+import { useAccount } from "@/hooks/account/use-account";
 import { useCluster } from "./use-cluster";
 import { formatClusterData } from "@/lib/utils/cluster";
 

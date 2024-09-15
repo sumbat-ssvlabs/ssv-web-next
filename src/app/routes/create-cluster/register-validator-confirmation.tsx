@@ -20,7 +20,7 @@ import {
   formatClusterData,
   getDefaultClusterData,
 } from "@/lib/utils/cluster";
-import { useAccount } from "wagmi";
+import { useAccount } from "@/hooks/account/use-account";
 import {
   getClusterQueryOptions,
   useCluster,

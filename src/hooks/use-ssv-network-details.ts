@@ -1,9 +1,10 @@
 import { isAddress } from "viem";
-import { useAccount, useChainId } from "wagmi";
+import { useChainId } from "wagmi";
 import { z } from "zod";
 
 import { config } from "@/wagmi/config";
 import { getAccount, getChainId } from "@wagmi/core";
+import { useAccount } from "@/hooks/account/use-account";
 
 const networks = import.meta.env.VITE_SSV_NETWORKS;
 

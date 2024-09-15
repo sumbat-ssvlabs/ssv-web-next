@@ -18,7 +18,7 @@ import { LuLogIn } from "react-icons/lu";
 import { Link } from "react-router-dom";
 import type { Address } from "viem";
 import { isAddressEqual } from "viem";
-import { useAccount } from "wagmi";
+import { useAccount } from "@/hooks/account/use-account";
 import VerifiedSVG from "@/assets/images/verified.svg?react";
 
 export type OperatorPickerItemProps = {

@@ -55,13 +55,13 @@ export const metadataScheme = z.object({
   description: sanitizedString.optional().default(""),
   eth1_node_client: sanitizedString.optional().default(""),
   eth2_node_client: sanitizedString.optional().default(""),
-  location: sanitizedString.optional().default(""),
+  location: z.string().optional().default(""),
   mev_relays: z.array(sanitizedString).transform((val) => val.join(", ")),
   setup_provider: sanitizedString.optional().default(""),
-  dkg_address: z.union([z.literal(""), dgkURLSchema]),
   twitter_url: z.union([z.literal(""), httpsURLSchema]),
   website_url: z.union([z.literal(""), httpsURLSchema]),
   linkedin_url: z.union([z.literal(""), httpsURLSchema]),
+  dkg_address: z.union([z.literal(""), dgkURLSchema]),
 }) satisfies z.ZodObject<Record<OperatorMetadataFields, z.ZodTypeAny>>;
 
 export const OperatorMetadata: FC<ComponentPropsWithoutRef<"div">> = ({
@@ -374,7 +374,7 @@ export const OperatorMetadata: FC<ComponentPropsWithoutRef<"div">> = ({
             render={({ field }) => (
               <FormItem>
                 <Tooltip
-                  content={`The IP address or domain name of the machine running the operator DKG client, along with the port number ("3030" is the default port). Example: "http://192.168.1.1:3030 or "http://my.example.com:3030"`}
+                  content={`The IP address or domain name of the machine running the operator DKG client, along with the port number ("3030" is the default port). Example: "https://192.168.1.1:3030 or "https://my.example.com:3030"`}
                 >
                   <FormLabel className="flex gap-2 items-center">
                     <Text>DKG Endpoint</Text>

@@ -4,7 +4,7 @@ import { isUndefined } from "lodash-es";
 import type { ComponentPropsWithoutRef, FC } from "react";
 import { Navigate } from "react-router-dom";
 import { isAddressEqual } from "viem";
-import { useAccount } from "wagmi";
+import { useAccount } from "@/hooks/account/use-account";
 import { Loading } from "@/components/ui/Loading";
 import { AnimatePresence, motion } from "framer-motion"; // Add this import
 // Add this import

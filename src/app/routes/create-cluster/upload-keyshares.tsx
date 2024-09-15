@@ -38,7 +38,7 @@ import { Paperclip } from "lucide-react";
 import { useEffect, type ComponentPropsWithoutRef, type FC } from "react";
 import { useNavigate } from "react-router";
 import { ref } from "valtio";
-import { useAccount } from "wagmi";
+import { useAccount } from "@/hooks/account/use-account";
 
 export type GenerateKeySharesOfflineProps = {
   // TODO: Add props or remove this type

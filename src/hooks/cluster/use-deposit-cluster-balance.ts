@@ -1,6 +1,6 @@
 import { useDeposit } from "@/lib/contract-interactions/write/use-deposit";
 import { useCluster } from "@/hooks/cluster/use-cluster";
-import { useAccount } from "wagmi";
+import { useAccount } from "@/hooks/account/use-account";
 import { formatClusterData } from "@/lib/utils/cluster";
 
 export const useDepositClusterBalance = (hash: string) => {
