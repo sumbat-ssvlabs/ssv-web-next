@@ -36,7 +36,7 @@ export const NumberInput: NumberInputFC = forwardRef<HTMLInputElement, Props>(
       decimals = 18,
       allowNegative = false,
       onChange,
-      displayDecimals = 4,
+      displayDecimals = 7,
       ...props
     },
     ref,

@@ -43,7 +43,7 @@ export const SetOperatorFee: FC<ComponentPropsWithoutRef<"div">> = () => {
               message: "Fee must be lower than 200 SSV",
             });
           }
-          if (isPrivate) return;
+          if (isPrivate && value === parseEther("0")) return;
 
           if (value === parseEther("0"))
             return ctx.addIssue({
