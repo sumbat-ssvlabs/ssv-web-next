@@ -39,7 +39,7 @@ export const useRunway = ({
       minimumLiquidationCollateral,
     ].map((v) => serialize(v)),
     queryFn: async () => {
-      const burnRateSnapshot = _burnRate * validators;
+      const burnRateSnapshot = _burnRate * (validators || 1n);
       const burnRateWithDelta = _burnRate * (validators + deltaValidators);
 
       const collateralSnapshot = bigintMax(

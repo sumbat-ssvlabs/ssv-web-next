@@ -17,24 +17,19 @@ export const useClusterRunway = (
   const params = useClusterPageParams();
   const clusterHash = hash ?? params.clusterHash;
 
-  const { data: cluster, isLoading: isClusterLoading } =
-    useCluster(clusterHash);
+  const cluster = useCluster(clusterHash);
+  const balance = useClusterBalance(clusterHash!, { watch: opts.watch });
+  const burnRate = useClusterBurnRate(clusterHash!, {
+    deltaValidators: opts.deltaValidators,
+  });
 
-  const { data: balance = 0n, isLoading: isBalanceLoading } = useClusterBalance(
-    clusterHash!,
-    { watch: opts.watch },
-  );
-
-  const { data: burnRate = 0n, isLoading: isBurnRateLoading } =
-    useClusterBurnRate(clusterHash!);
-
-  const burnRatePerValidator = burnRate / BigInt(cluster?.validatorCount || 1);
-  const isLoading = isClusterLoading || isBalanceLoading || isBurnRateLoading;
+  const isLoading =
+    cluster.isLoading || balance.isLoading || burnRate.isLoading;
 
   const runway = useRunway({
-    balance: balance,
-    burnRate: burnRatePerValidator,
-    validators: BigInt(cluster?.validatorCount ?? 0),
+    balance: balance.data ?? 0n,
+    burnRate: burnRate.data?.burnRatePerBlock ?? 0n,
+    validators: BigInt(cluster.data?.validatorCount ?? 0),
     deltaValidators: opts.deltaValidators,
     deltaBalance: opts.deltaBalance,
   });
