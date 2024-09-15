@@ -5,7 +5,7 @@ import { Text } from "@/components/ui/text";
 import { FeeChange } from "@/components/ui/fee-change";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useReduceOperatorFee } from "@/lib/contract-interactions/write/use-reduce-operator-fee";
 import { useUpdateOperatorFeeContext } from "@/guard/register-operator-guards";
 import { useOperatorPageParams } from "@/hooks/operator/use-operator-page-params";
@@ -29,6 +29,7 @@ export const DecreaseOperatorFee: FC = () => {
     const blockFee = roundOperatorFee(
       state.newYearlyFee / globals.BLOCKS_PER_YEAR,
     );
+
     reduceOperatorFee.write(
       {
         operatorId: BigInt(operatorId),
@@ -59,16 +60,38 @@ export const DecreaseOperatorFee: FC = () => {
           previousFee={state.previousYearlyFee}
           newFee={state.newYearlyFee}
         />
-        <Alert variant="warning">
-          <AlertDescription>
-            Keep in mind that the process of increasing your fee is different
-            than decreasing it, and returning back to your current fee in the
-            future would take longer.{" "}
-            <Button as={Link} variant="link">
-              Read more on fee changes
-            </Button>
-          </AlertDescription>
-        </Alert>
+        {state.newYearlyFee === 0n ? (
+          <Alert variant="warning">
+            <AlertDescription>
+              Please note that operators who have set their fee to 0 will not
+              have the option to increase or modify their fee in the future.{" "}
+              <Button
+                as="a"
+                variant="link"
+                href="https://docs.ssv.network/learn/operators/update-fee"
+                target="_blank"
+              >
+                Read more on fee changes
+              </Button>
+            </AlertDescription>
+          </Alert>
+        ) : (
+          <Alert variant="warning">
+            <AlertDescription>
+              Keep in mind that the process of increasing your fee is different
+              than decreasing it, and returning back to your current fee in the
+              future would take longer.{" "}
+              <Button
+                as="a"
+                variant="link"
+                href="https://docs.ssv.network/learn/operators/update-fee"
+                target="_blank"
+              >
+                Read more on fee changes
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
         <Button
           size="xl"
           isLoading={reduceOperatorFee.isPending}

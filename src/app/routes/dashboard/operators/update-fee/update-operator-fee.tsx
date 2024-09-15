@@ -13,6 +13,7 @@ import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import { NumberInput } from "@/components/ui/number-input";
 import { Text } from "@/components/ui/text";
 import { useUpdateOperatorFeeContext } from "@/guard/register-operator-guards";
+import { useOperator } from "@/hooks/operator/use-operator";
 import { useOperatorFeeLimits } from "@/hooks/operator/use-operator-fee-limits";
 import { useOperatorDeclaredFee } from "@/hooks/operator/use-operator-fee-periods";
 import { useOperatorPageParams } from "@/hooks/operator/use-operator-page-params";
@@ -32,17 +33,44 @@ export const UpdateOperatorFee: FC<ComponentPropsWithoutRef<"div">> = ({
 }) => {
   const { operatorId } = useOperatorPageParams();
   const navigate = useNavigate();
+
   const { min, max, isLoading, operatorYearlyFee } = useOperatorFeeLimits();
+  const { data: operator } = useOperator();
 
   const schema = z.object({
-    yearlyFee: z
-      .bigint()
-      .min(min, `Fee must be higher than ${formatUnits(min, 18)} SSV`)
-      .max(max, `You can only increase your fee up to ${formatUnits(max, 18)}`),
+    yearlyFee: z.bigint().superRefine((value, ctx) => {
+      if (operator?.is_private && value === 0n) return;
+      if (!operator?.is_private && value === 0n) {
+        return ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `You must set your operator as private before updating your fee to 0.`,
+        });
+      }
+
+      if (value < min) {
+        return ctx.addIssue({
+          code: z.ZodIssueCode.too_small,
+          minimum: min,
+          type: "bigint",
+          inclusive: true,
+          message: `Fee must be at least ${formatUnits(min, 18)} SSV`,
+        });
+      }
+      if (value > max) {
+        return ctx.addIssue({
+          code: z.ZodIssueCode.too_big,
+          maximum: max,
+          type: "bigint",
+          inclusive: true,
+          message: `You can only increase your fee up to ${formatUnits(max, 18)} SSV`,
+        });
+      }
+    }),
   });
 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
+    mode: "all",
     defaultValues: {
       yearlyFee: operatorYearlyFee,
     },
