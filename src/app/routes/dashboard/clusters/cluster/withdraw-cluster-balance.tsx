@@ -20,7 +20,6 @@ import { useClusterRunway } from "@/hooks/cluster/use-cluster-runway";
 import { useClusterPageParams } from "@/hooks/cluster/use-cluster-page-params";
 import { Divider } from "@/components/ui/divider";
 import { isBigIntChanged, stringifyBigints } from "@/lib/utils/bigint";
-import { useClusterBalance } from "@/hooks/cluster/use-cluster-balance";
 import { formatSSV } from "@/lib/utils/number";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useWithdrawClusterBalance } from "@/hooks/cluster/use-withdraw-cluster-balance";
@@ -30,6 +29,7 @@ import { useLiquidateCluster } from "@/hooks/cluster/use-liquidate-cluster";
 import { setOptimisticData } from "@/lib/react-query";
 import { getClusterQueryOptions } from "@/hooks/cluster/use-cluster";
 import { useActiveTransactionState } from "@/hooks/app/use-transaction-state";
+import { useClusterState } from "@/hooks/cluster/use-cluster-state";
 
 const schema = z.object({
   amount: z.bigint().positive(),
@@ -43,9 +43,12 @@ export const WithdrawClusterBalance: FC = () => {
   const withdraw = useWithdrawClusterBalance(params.clusterHash!);
   const liquidate = useLiquidateCluster(params.clusterHash!);
 
-  const clusterBalance = useClusterBalance(params.clusterHash!, {
-    watch: true,
-  });
+  const { balance: clusterBalance, cluster } = useClusterState(
+    params.clusterHash!,
+    {
+      balance: { watch: true },
+    },
+  );
 
   const [hasAgreed, setHasAgreed] = useState(false);
 
@@ -151,9 +154,13 @@ export const WithdrawClusterBalance: FC = () => {
               </FormItem>
             )}
           />
-          <Divider />
-          <EstimatedOperationalRunway deltaBalance={-amount} />
-          <Divider />
+          {Boolean(cluster.data?.validatorCount) && (
+            <>
+              <Divider />
+              <EstimatedOperationalRunway deltaBalance={-amount} />
+              <Divider />
+            </>
+          )}
 
           {showRiskCheckbox && (
             <label className="flex items-center gap-2" id="understand">

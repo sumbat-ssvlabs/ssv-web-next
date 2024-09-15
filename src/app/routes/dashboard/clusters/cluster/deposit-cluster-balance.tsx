@@ -25,7 +25,10 @@ import { useDepositClusterBalance } from "@/hooks/cluster/use-deposit-cluster-ba
 import { useNavigate } from "react-router-dom";
 import { useSSVBalance } from "@/hooks/use-ssv-balance";
 import { formatSSV } from "@/lib/utils/number";
-import { getClusterQueryOptions } from "@/hooks/cluster/use-cluster";
+import {
+  getClusterQueryOptions,
+  useCluster,
+} from "@/hooks/cluster/use-cluster";
 import { WithAllowance } from "@/components/with-allowance/with-allowance";
 import { merge } from "lodash-es";
 
@@ -39,6 +42,7 @@ export const DepositClusterBalance: FC = () => {
   const navigate = useNavigate();
 
   const { data: ssvBalance } = useSSVBalance();
+  const { data: cluster } = useCluster(params.clusterHash!);
 
   const form = useForm({
     defaultValues: { value: 0n },
@@ -117,9 +121,14 @@ export const DepositClusterBalance: FC = () => {
               </FormItem>
             )}
           />
-          <Divider />
-          <EstimatedOperationalRunway deltaBalance={value} />
-          <Divider />
+          {Boolean(cluster?.validatorCount) && (
+            <>
+              <Divider />
+              <EstimatedOperationalRunway deltaBalance={value} />
+              <Divider />
+            </>
+          )}
+
           <WithAllowance size="xl" amount={value ?? 0n}>
             <Button
               type="submit"
