@@ -8,6 +8,8 @@ import { useIsRestoring } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import type { ComponentPropsWithRef, FC } from "react";
 import { useAccount } from "@/hooks/account/use-account";
+import { useMaintenance } from "@/hooks/app/use-maintenance";
+import { Navigate } from "react-router";
 
 export const DashboardLayout: FC<ComponentPropsWithRef<"div">> = ({
   children,
@@ -16,6 +18,12 @@ export const DashboardLayout: FC<ComponentPropsWithRef<"div">> = ({
   const isRestoring = useIsRestoring();
   const account = useAccount();
   useBlockNavigationOnPendingTx();
+  const { isMaintenancePage } = useMaintenance();
+
+  if (isMaintenancePage) {
+    return <Navigate to="/maintenance" replace />;
+  }
+
   return (
     <>
       <AnimatePresence>

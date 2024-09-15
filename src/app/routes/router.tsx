@@ -11,6 +11,7 @@ import { joinRoutes } from "./router/route-definitions/join-routes";
 import { clustersRoutes } from "./router/route-definitions/clusters-routes";
 import { operatorsRoutes } from "./router/route-definitions/operators-routes";
 import type { RoutePaths, WritableRoutePaths } from "./router/route-types";
+import { Maintenance } from "@/app/routes/maintenance";
 
 const routes = [
   {
@@ -43,6 +44,10 @@ const routes = [
         <ConnectWallet />
       </DashboardLayout>
     ),
+  },
+  {
+    path: "/maintenance",
+    element: <Maintenance />,
   },
 ] as const satisfies RouteObject[];
 
