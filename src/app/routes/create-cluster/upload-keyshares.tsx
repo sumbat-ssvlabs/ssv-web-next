@@ -239,7 +239,8 @@ export const UploadKeyshares: FCProps = ({ ...props }) => {
                   -
                 </Button>
                 <Input
-                  className="w-16"
+                  className="w-16 px-0"
+                  inputProps={{ className: "text-center" }}
                   value={context.selectedValidatorsCount}
                   onChange={(ev) => {
                     const value = ev.target.value;

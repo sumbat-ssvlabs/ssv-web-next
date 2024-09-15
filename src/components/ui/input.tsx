@@ -12,10 +12,14 @@ export interface InputProps
   leftSlot?: React.ReactNode;
   rightSlot?: React.ReactNode;
   isLoading?: boolean;
+  inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, isLoading, leftSlot, rightSlot, ...props }, ref) => {
+  (
+    { className, type, isLoading, leftSlot, rightSlot, inputProps, ...props },
+    ref,
+  ) => {
     return (
       <div
         className={cn(
@@ -29,8 +33,12 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <Slot>{isLoading ? <Spinner /> : leftSlot}</Slot>
         <input
           type={type}
-          className="w-full h-full flex-1 bg-transparent outline-none"
           {...props}
+          {...inputProps}
+          className={cn(
+            inputProps?.className,
+            "w-full h-full flex-1 bg-transparent outline-none",
+          )}
           ref={ref}
         />
         <Slot>{rightSlot}</Slot>
