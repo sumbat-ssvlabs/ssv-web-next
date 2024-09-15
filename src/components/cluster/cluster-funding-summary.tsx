@@ -29,8 +29,6 @@ export const ClusterFundingSummary: ClusterFundingSummaryFC = ({
     fundingDays,
   });
 
-  console.log('ms(fundingDays, "days"):', ms(fundingDays, "days"));
-  console.log("fundingDays:", humanizeFundingDuration(ms(fundingDays, "days")));
   if (cost.isLoading) {
     return (
       <div className="flex justify-center items-center p-8">

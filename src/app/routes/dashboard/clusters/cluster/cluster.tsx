@@ -32,7 +32,6 @@ export const Cluster: FC = () => {
     balance: { watch: true },
     isLiquidated: { watch: true },
   });
-  console.log("balance.data:", balance.data);
 
   const operatorsUsability = useOperatorsUsability({
     account: account.address!,

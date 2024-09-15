@@ -13,7 +13,6 @@ import { Input } from "@/components/ui/input";
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import { Spinner } from "@/components/ui/spinner";
 import { Tooltip } from "@/components/ui/tooltip";
-import { toast } from "@/components/ui/use-toast";
 import { globals } from "@/config";
 import {
   getOperatorQueryOptions,
@@ -33,6 +32,7 @@ import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { FaCircleInfo } from "react-icons/fa6";
 import { IoDocumentTextOutline } from "react-icons/io5";
+import { useNavigate } from "react-router";
 import { isAddress, isAddressEqual, zeroAddress } from "viem";
 import { z } from "zod";
 
@@ -41,6 +41,8 @@ type FormValues = {
 };
 
 export const ExternalContract: FC = () => {
+  const navigate = useNavigate();
+
   const { data: operator } = useOperator();
   const whitelistingContractAddress =
     operator?.whitelisting_contract !== globals.DEFAULT_ADDRESS_WHITELIST
@@ -108,11 +110,11 @@ export const ExternalContract: FC = () => {
     if (!isChanged || !operator?.id) return;
 
     const options = withTransactionModal({
+      successToast: {
+        title: "Transaction confirmed",
+        description: new Date().toLocaleString(),
+      },
       onMined: () => {
-        toast({
-          title: "External contract updated",
-          description: new Date().toLocaleString(),
-        });
         setOptimisticData(
           getOperatorQueryOptions(operator.id).queryKey,
           (operator) => {
@@ -123,6 +125,7 @@ export const ExternalContract: FC = () => {
             };
           },
         );
+        return () => navigate("..");
       },
     });
 

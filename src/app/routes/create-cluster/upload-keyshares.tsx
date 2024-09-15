@@ -301,11 +301,6 @@ export const UploadKeyshares: FCProps = ({ ...props }) => {
                     validator.status === "valid" &&
                     selectedValidatorsCount < context.selectedValidatorsCount;
                   if (selected) selectedValidatorsCount++;
-                  console.log(
-                    "selectedValidatorsCount:",
-                    selectedValidatorsCount,
-                  );
-                  console.log("selected:", selected);
                   return (
                     <TableRow
                       key={validator.share.data.publicKey}

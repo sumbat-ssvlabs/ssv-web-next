@@ -25,14 +25,12 @@ export const Operator: FC<ComponentPropsWithoutRef<"div">> = ({ ...props }) => {
   const params = useOperatorPageParams();
   const operatorId = BigInt(params.operatorId!);
   const operator = useOperator(operatorId!);
-  console.log("operator:", operator);
 
   const earnings = useGetOperatorEarnings({ id: operatorId });
 
   const fee = useGetOperatorFee({ operatorId });
   const yearlyFee = getYearlyFee(fee.data ?? 0n);
   const balance = earnings.data ?? 0n;
-  console.log("operator.data:", operator.data);
   if (!operator.data) return null;
 
   return (
