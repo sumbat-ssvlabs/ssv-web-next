@@ -40,7 +40,7 @@ export const DistributeOffline: FC = () => {
   const selectedOperators = useSelectedOperatorIds();
   const operators = useOperators(selectedOperators);
   const health = useOperatorsDKGHealth(operators.data ?? [], {
-    enabled: selectedOption === "new",
+    enabled: isNew,
   });
 
   const hasUnhealthyOperators =
@@ -63,7 +63,7 @@ export const DistributeOffline: FC = () => {
           />
           <SelectionCard
             icon={<Dkg />}
-            title="Command Line Interface"
+            title="DKG"
             description="Generate from New Key"
             selected={selectedOption === "new"}
             onClick={() => setSelectedOption("new")}
