@@ -47,6 +47,7 @@ export const ClustersTableRow: FCProps = ({ cluster, className, ...props }) => {
               const operator = useOptimisticOrProvidedOperator(o);
               return (
                 <Tooltip
+                  asChild
                   content={
                     <OperatorDetails className="dark" operator={operator} />
                   }
