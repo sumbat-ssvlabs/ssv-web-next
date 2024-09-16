@@ -90,7 +90,7 @@ export const ClusterTable: FCProps = ({
         </TableBody>
       </Table>
 
-      {isLoading && <Loading />}
+      <div className="bg-gray-50 w-full">{isLoading && <Loading />}</div>
       {isEmpty ? (
         <div className="flex flex-col items-center justify-center gap-4 w-full bg-gray-50 py-16 rounded-b-2xl">
           <TbLayoutGridAdd
