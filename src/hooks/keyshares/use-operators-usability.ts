@@ -33,6 +33,7 @@ export const useOperatorsUsability = (
 ) => {
   const { data: maxValidators = 0 } = useGetValidatorsPerOperatorLimit();
   const operators = useOperators(operatorIds);
+
   const canUse = useQuery({
     staleTime: ms(12, "seconds"),
     gcTime: ms(12, "seconds"),

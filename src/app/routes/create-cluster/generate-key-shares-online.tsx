@@ -2,12 +2,7 @@ import { getOwnerNonce } from "@/api/account";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
-import {
-  FileInput,
-  FileUploader,
-  FileUploaderContent,
-  FileUploaderItem,
-} from "@/components/ui/file-upload";
+import { JSONFileUploader } from "@/components/ui/file-upload";
 import { Input } from "@/components/ui/input";
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import {
@@ -20,13 +15,25 @@ import { useExtractKeystoreData } from "@/hooks/use-extract-keystore-data";
 import { useKeystoreValidation } from "@/hooks/use-keystores-validation";
 import { prepareOperatorsForShares } from "@/lib/utils/operator";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Paperclip } from "lucide-react";
 import { type ComponentPropsWithoutRef, type FC } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { ref } from "valtio";
 import { useAccount } from "@/hooks/account/use-account";
 import { z } from "zod";
+import { Text } from "@/components/ui/text";
+import { CiLock } from "react-icons/ci";
+import { cn } from "@/lib/utils/tw";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { FaCircleInfo } from "react-icons/fa6";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
 export type GenerateKeySharesOnlineProps = {
   // TODO: Add props or remove this type
@@ -36,47 +43,27 @@ type FCProps = FC<
   Omit<ComponentPropsWithoutRef<"div">, keyof GenerateKeySharesOnlineProps> &
     GenerateKeySharesOnlineProps
 >;
-const FileSvgDraw = () => {
-  return (
-    <>
-      <svg
-        className="w-8 h-8 mb-3 text-gray-500 dark:text-gray-400"
-        aria-hidden="true"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 20 16"
-      >
-        <path
-          stroke="currentColor"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-        />
-      </svg>
-      <p className="mb-1 text-sm text-gray-500 dark:text-gray-400">
-        <span className="font-semibold">Click to upload</span>
-        &nbsp; or drag and drop
-      </p>
-      <p className="text-xs text-gray-500 dark:text-gray-400">
-        SVG, PNG, JPG or GIF
-      </p>
-    </>
-  );
-};
 
 const schema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
 export const GenerateKeySharesOnline: FCProps = () => {
+  const navigate = useNavigate();
+
   const { address } = useAccount();
   const { state } = useRegisterValidatorContext;
   const { files, password } = useRegisterValidatorContext();
 
-  const navigate = useNavigate();
+  const form = useForm({
+    defaultValues: { password },
+    resolver: zodResolver(schema),
+  });
 
-  const { status } = useKeystoreValidation(files?.[0] as File);
+  const { status, isError, isLoading } = useKeystoreValidation(
+    files?.[0] as File,
+  );
+
   const createShares = useCreateShares();
 
   const operatorsIds = useSelectedOperatorIds();
@@ -98,81 +85,97 @@ export const GenerateKeySharesOnline: FCProps = () => {
     },
   });
 
-  const form = useForm({
-    defaultValues: { password },
-    resolver: zodResolver(schema),
-  });
+  const onSubmit = async (data: z.infer<typeof schema>) => {
+    state.password = data.password;
+    await extractKeystoreData
+      .mutateAsync({
+        file: files![0],
+        password: data.password,
+      })
+      .catch((error) => {
+        console.error(error);
+        form.setError("password", {
+          message: error.message,
+        });
+      });
+  };
 
   return (
     <Container variant="vertical" className="py-6">
       <NavigateBackBtn by="history" />
       <Card className="flex flex-col w-full">
-        <FileUploader
-          dropzoneOptions={{
-            maxFiles: 1,
-            maxSize: 1024 * 1024 * 4,
-            multiple: false,
-            accept: {
-              "application/json": [".json"],
-            },
-          }}
-          value={files as File[]}
+        <Text variant="headline4">Enter Validator Key</Text>
+        <Text variant="body-2-medium">
+          Upload your validator <b>keystore</b> file below
+        </Text>
+        <JSONFileUploader
+          files={files || []}
           onValueChange={(files) => {
             state.files = files ? ref(files) : null;
           }}
-          className="relative bg-background rounded-lg p-2"
-        >
-          <FileInput className="outline-dashed outline-1 outline-white">
-            <div className="flex items-center justify-center flex-col pt-3 pb-4 w-full ">
-              <FileSvgDraw />{" "}
-              {status !== "no-file" && (
-                <div className="text-red-500 text-xl mt-2">{status}</div>
-              )}
-            </div>
-          </FileInput>
-          <FileUploaderContent>
-            {files &&
-              files.length > 0 &&
-              files.map((file, i) => (
-                <FileUploaderItem key={i} index={i}>
-                  <Paperclip className="h-4 w-4 stroke-current" />
-                  <span>{file.name}</span>
-                </FileUploaderItem>
-              ))}
-          </FileUploaderContent>
-        </FileUploader>
-        <form
-          className="flex flex-col gap-4"
-          onSubmit={form.handleSubmit(async (data) => {
-            state.password = data.password;
-            await extractKeystoreData.mutateAsync({
-              file: files![0],
-              password: data.password,
-            });
-          })}
-        >
-          <Input
-            defaultValue={password}
-            disabled={status !== "validator-not-registered"}
-            type="password"
-            className="mt-4"
-            {...form.register("password")}
-          />
-          <div className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-            {extractKeystoreData.error?.message}
-          </div>
-          <Button
-            size="xl"
-            type="submit"
-            disabled={
-              status !== "validator-not-registered" ||
-              !form.watch("password").length
-            }
-            isLoading={extractKeystoreData.isPending || operators.isPending}
+          onFileRemoved={form.reset}
+          isError={isError}
+          isLoading={isLoading}
+          loadingText="Validating keystore file..."
+        />
+        <Form {...form}>
+          <form
+            className="flex flex-col gap-6"
+            onSubmit={form.handleSubmit(onSubmit)}
           >
-            Generate Key Shares
-          </Button>
-        </form>
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="font-medium text-gray-500">
+                    Keystore Password
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      disabled={status !== "validator-not-registered"}
+                      type="password"
+                      className={cn("pl-3", {
+                        "bg-gray-300 opacity-70":
+                          status !== "validator-not-registered",
+                      })}
+                      leftSlot={
+                        <CiLock
+                          className="size-6 mr-2 text-gray-500"
+                          strokeWidth="0.5"
+                        />
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Alert variant="warning">
+              <AlertDescription className="flex gap-4 items-center">
+                <FaCircleInfo className="size-8 text-warning-500" />
+                <Text>
+                  Please never perform online key splitting on testnet with a
+                  private key that you intend to use on mainnet, as doing so may
+                  put your validators at risk.
+                </Text>
+              </AlertDescription>
+            </Alert>
+            <Button
+              size="xl"
+              type="submit"
+              disabled={
+                status !== "validator-not-registered" ||
+                !form.watch("password").length
+              }
+              isLoading={extractKeystoreData.isPending || operators.isPending}
+            >
+              Generate Key Shares
+            </Button>
+          </form>
+        </Form>
       </Card>
     </Container>
   );

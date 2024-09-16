@@ -1,6 +1,6 @@
 import { isValidatorRegisteredQueryOptions } from "@/hooks/use-is-validator-registered";
 import { useSSVAccount } from "@/hooks/use-ssv-account";
-import { queryClient } from "@/lib/react-query";
+import { combineQueryStatus, queryClient } from "@/lib/react-query";
 import { ms } from "@/lib/utils/number";
 import { add0x } from "@/lib/utils/strings";
 import type { UseQueryOptions } from "@tanstack/react-query";
@@ -25,12 +25,13 @@ export const useKeysharesValidatorsList = (
   shares?: KeySharesItem[],
   options: Omit<UseQueryOptions, "queryKey" | "queryFn"> = { enabled: true },
 ) => {
-  const ssvAccount = useSSVAccount({ staleTime: 0, gcTime: 0 });
+  const ssvAccount = useSSVAccount({ staleTime: 0 });
   const sortedShares = sortBy(shares, (share) => share.data.ownerNonce);
   const [processed] = useState(0);
 
   const query = useQuery({
-    staleTime: ms(10, "seconds"),
+    staleTime: ms(1, "minutes"),
+    gcTime: ms(1, "minutes"),
     queryKey: ["validators-state", ssvAccount.data?.nonce, sortedShares],
     queryFn: async () => {
       const states = await Promise.all(
@@ -81,7 +82,10 @@ export const useKeysharesValidatorsList = (
     enabled: Boolean(ssvAccount.isSuccess && shares?.length && options.enabled),
   });
   return {
-    query,
+    query: {
+      ...query,
+      ...combineQueryStatus(query, ssvAccount),
+    },
     processedValidators: processed,
   };
 };

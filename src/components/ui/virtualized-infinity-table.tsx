@@ -67,9 +67,12 @@ export const VirtualizedInfinityTable = <T,>({
             });
           })}
 
-          {query.isFetchingNextPage && (
-            <div className="flex justify-center p-4">
-              <Spinner />
+          {(query.isFetchingNextPage || query.isRefetching) && (
+            <div className="flex justify-center gap-2 p-4">
+              <Spinner />{" "}
+              {query.isRefetching ? (
+                <Text variant="body-3-medium">Refreshing</Text>
+              ) : undefined}
             </div>
           )}
           <Trigger

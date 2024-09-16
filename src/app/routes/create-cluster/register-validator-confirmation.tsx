@@ -39,12 +39,14 @@ import { ClusterFundingSummary } from "@/components/cluster/cluster-funding-summ
 import { useClusterPageParams } from "@/hooks/cluster/use-cluster-page-params";
 import { ClusterAdditionalFundingSummary } from "@/components/cluster/cluster-additional-funding-summary";
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
+import { useActiveTransactionState } from "@/hooks/app/use-transaction-state";
 
 export const RegisterValidatorConfirmation: FC = () => {
   const inCluster = Boolean(useClusterPageParams().clusterHash);
 
   const navigate = useNavigate();
   const accountClusters = usePaginatedAccountClusters();
+  const tx = useActiveTransactionState();
 
   const account = useAccount();
   const { shares, depositAmount, fundingDays } = useRegisterValidatorContext();
@@ -60,9 +62,6 @@ export const RegisterValidatorConfirmation: FC = () => {
 
   const registerValidator = useRegisterValidator();
   const bulkRegisterValidator = useBulkRegisterValidator();
-
-  const isWriting =
-    registerValidator.isPending || bulkRegisterValidator.isPending;
 
   const handleRegisterValidator = () => {
     const clusterData = clusterQuery.data
@@ -171,9 +170,8 @@ export const RegisterValidatorConfirmation: FC = () => {
         <WithAllowance size="xl" amount={depositAmount}>
           <Button
             size="xl"
-            isLoading={isWriting}
+            isLoading={tx.isPending}
             isActionBtn
-            disabled={isWriting}
             onClick={handleRegisterValidator}
           >
             Register Validator

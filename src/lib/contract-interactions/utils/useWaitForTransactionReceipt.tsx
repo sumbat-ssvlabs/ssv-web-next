@@ -18,6 +18,8 @@ import { toast } from "@/components/ui/use-toast";
 import { wait } from "@/lib/utils/promise";
 import type { MaybePromise } from "@tanstack/react-query-persist-client";
 import { isFunction } from "lodash-es";
+import { getErrorMessage } from "@/lib/utils/wagmi";
+import { Span } from "@/components/ui/text";
 
 export type MainnetEvent = DecodeEventLogReturnType<typeof MainnetV4SetterABI>;
 export type TestnetEvent = DecodeEventLogReturnType<typeof HoleskyV4SetterABI>;
@@ -75,10 +77,9 @@ export const withTransactionModal = <
 
       toast({
         title: "Transaction failed",
-        description:
-          "shortMessage" in error
-            ? error?.shortMessage
-            : error?.message || "Unknown error",
+        description: (
+          <Span className="whitespace-pre-wrap">{getErrorMessage(error)}</Span>
+        ),
         variant: "destructive",
       });
     },

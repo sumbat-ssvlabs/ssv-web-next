@@ -368,6 +368,7 @@ type JSONFileUploaderProps = {
   isLoading?: boolean;
   loadingText?: string;
   isError?: boolean;
+  onFileRemoved?: () => void;
 };
 export const JSONFileUploader = ({
   files,
@@ -375,6 +376,7 @@ export const JSONFileUploader = ({
   isLoading,
   loadingText,
   isError,
+  onFileRemoved,
 }: JSONFileUploaderProps) => {
   const Icon = isError
     ? BsFillFileEarmarkXFill
@@ -408,7 +410,7 @@ export const JSONFileUploader = ({
               })}
             />
           )}
-          {loadingText ? (
+          {isLoading && loadingText ? (
             <Text variant="body-2-medium" className="text-gray-500">
               {loadingText}
             </Text>
@@ -441,6 +443,7 @@ export const JSONFileUploader = ({
                   ev.preventDefault();
                   ev.stopPropagation();
                   onValueChange(null);
+                  onFileRemoved?.();
                 }}
               >
                 Remove

@@ -47,6 +47,7 @@ export const useKeystoreSchemaValidation = (
     queryKey: ["keystore-schema-validation", file],
     queryFn: () => validateKeyStoreFileSchema(file!),
     enabled: Boolean(file),
+    retry: false,
     ...options,
   });
 };

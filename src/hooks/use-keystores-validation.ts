@@ -38,6 +38,8 @@ export const useKeystoreValidation = (file: File | null) => {
   ]);
 
   return {
+    isError: ["invalid-schema", "validator-registered"].includes(status),
+    isLoading: ["validating-schema", "fetching-validator"].includes(status),
     status,
     schemaValidation: validation,
     isValidatorRegistered: isRegistered,

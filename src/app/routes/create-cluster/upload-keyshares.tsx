@@ -25,6 +25,7 @@ import { cn } from "@/lib/utils/tw";
 import { useEffect, type ComponentPropsWithoutRef, type FC } from "react";
 import { useNavigate } from "react-router";
 import { ref } from "valtio";
+import { Tooltip } from "@/components/ui/tooltip";
 
 export type GenerateKeySharesOfflineProps = {
   // TODO: Add props or remove this type
@@ -53,7 +54,6 @@ export const UploadKeyshares: FCProps = ({ ...props }) => {
   );
 
   const cluster = useCluster(createClusterHash(account.address!, operatorIds));
-
   const operatorsUsability = useOperatorsUsability(
     {
       account: account.address!,
@@ -142,14 +142,16 @@ export const UploadKeyshares: FCProps = ({ ...props }) => {
                       className="flex flex-1 max-w-8 flex-col items-center"
                       key={operator.id}
                     >
-                      <OperatorAvatar
-                        variant="circle"
-                        src={operator.logo}
-                        className={cn("border", {
-                          "border-error-500": !isUsable,
-                          "border-transparent": isUsable,
-                        })}
-                      />
+                      <Tooltip content={operator.validators_count}>
+                        <OperatorAvatar
+                          variant="circle"
+                          src={operator.logo}
+                          className={cn("border", {
+                            "border-error-500": !isUsable,
+                            "border-transparent": isUsable,
+                          })}
+                        />
+                      </Tooltip>
                       <Text
                         className={cn("text-[10px] text-gray-500 font-medium", {
                           "text-error-500": !isUsable,
