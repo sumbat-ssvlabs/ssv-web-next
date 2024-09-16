@@ -15,13 +15,13 @@ type Props = {
 export const DistributionMethod: FC<Props> = ({ variant = "create" }) => {
   const { clusterHash } = useClusterPageParams();
 
-  const selectOperatorsLocation = useMatchHistory(
-    "/join/validator/select-operators",
-  );
+  const operatorsRoute = useMatchHistory("/join/validator/select-operators");
 
-  const prevPath = selectOperatorsLocation
-    ? selectOperatorsLocation.pathname + selectOperatorsLocation.search
-    : `/clusters/${clusterHash}`;
+  const prevPath = clusterHash
+    ? `/clusters/${clusterHash}`
+    : operatorsRoute
+      ? operatorsRoute.pathname + operatorsRoute.search
+      : "/join/validator/select-operators";
 
   return (
     <Container variant="vertical" className="py-6">
