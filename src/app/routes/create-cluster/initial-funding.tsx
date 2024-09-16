@@ -2,7 +2,6 @@ import { useComputeFundingCost } from "@/hooks/use-compute-funding-cost";
 import type { ComponentPropsWithoutRef, FC } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { globals } from "@/config";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isEmpty } from "lodash-es";
@@ -30,6 +29,7 @@ import { sumOperatorsFees } from "@/lib/utils/operator";
 import { useNavigate } from "react-router";
 import { ClusterFundingSummary } from "@/components/cluster/cluster-funding-summary";
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
+import { NumberInput } from "@/components/ui/number-input";
 
 export type InitialFundingProps = {
   // TODO: Add props or remove this type
@@ -99,7 +99,12 @@ export const InitialFunding: FCProps = ({ ...props }) => {
               <FormItem>
                 <FormLabel>Days</FormLabel>
                 <FormControl>
-                  <Input type="number" {...field} />
+                  <NumberInput
+                    value={BigInt(field.value)}
+                    onChange={(value) => field.onChange(Number(value))}
+                    decimals={0}
+                    max={BigInt(365 * 9999)}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
