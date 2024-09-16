@@ -1,77 +1,33 @@
 import { KeysharesErrorAlert } from "@/components/keyshares/keyshares-error-alert";
 import { OperatorAvatar } from "@/components/operator/operator-avatar";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
-import { CopyBtn } from "@/components/ui/copy-btn";
-import {
-  FileInput,
-  FileUploader,
-  FileUploaderContent,
-  FileUploaderItem,
-} from "@/components/ui/file-upload";
-import {
-  Table,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/grid-table";
+import { JSONFileUploader } from "@/components/ui/file-upload";
+
+import { ValidatorsSelectionTable } from "@/components/cluster/validators-selection-table";
 import { Input } from "@/components/ui/input";
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import { Spacer } from "@/components/ui/spacer";
-import { Spinner } from "@/components/ui/spinner";
 import { Text } from "@/components/ui/text";
 import {
   useRegisterValidatorContext,
   useSelectedOperatorIds,
 } from "@/guard/register-validator-guard";
+import { useAccount } from "@/hooks/account/use-account";
 import { useCluster } from "@/hooks/cluster/use-cluster";
 import { useKeysharesValidation } from "@/hooks/keyshares/use-keyshares-validation";
 import { useKeysharesValidatorsList } from "@/hooks/keyshares/use-keyshares-validators-state-validation";
 import { useOperatorsUsability } from "@/hooks/keyshares/use-operators-usability";
 import { createClusterHash } from "@/lib/utils/cluster";
-import { shortenAddress } from "@/lib/utils/strings";
 import { cn } from "@/lib/utils/tw";
-import { Paperclip } from "lucide-react";
 import { useEffect, type ComponentPropsWithoutRef, type FC } from "react";
 import { useNavigate } from "react-router";
 import { ref } from "valtio";
-import { useAccount } from "@/hooks/account/use-account";
 
 export type GenerateKeySharesOfflineProps = {
   // TODO: Add props or remove this type
-};
-
-const FileSvgDraw = ({ isLoading }: { isLoading?: boolean }) => {
-  return (
-    <div className="flex flex-col items-center pt-8">
-      {isLoading && <Spinner />}
-      <svg
-        className="w-8 h-8 mb-3 text-gray-500 dark:text-gray-400"
-        aria-hidden="true"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 20 16"
-      >
-        <path
-          stroke="currentColor"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-        />
-      </svg>
-      <p className="mb-1 text-sm text-gray-500 dark:text-gray-400">
-        <span className="font-semibold">Click to upload</span>
-        &nbsp; or drag and drop
-      </p>
-      <p className="text-xs text-gray-500 dark:text-gray-400">
-        SVG, PNG, JPG or GIF
-      </p>
-    </div>
-  );
 };
 
 type FCProps = FC<
@@ -89,15 +45,12 @@ export const UploadKeyshares: FCProps = ({ ...props }) => {
   const validatedShares = useKeysharesValidation(context.files?.at(0) || null);
   const operatorIds = useSelectedOperatorIds();
 
-  const validators = useKeysharesValidatorsList(validatedShares.data, {
-    enabled: validatedShares.isSuccess,
-  });
-
-  useEffect(() => {
-    if (state.selectedValidatorsCount < 1) {
-      state.selectedValidatorsCount = validators.data?.tags.valid.length ?? 0;
-    }
-  }, [state, validators.data?.tags.valid.length]);
+  const { query: validators } = useKeysharesValidatorsList(
+    validatedShares.data,
+    {
+      enabled: validatedShares.isSuccess,
+    },
+  );
 
   const cluster = useCluster(createClusterHash(account.address!, operatorIds));
 
@@ -105,14 +58,25 @@ export const UploadKeyshares: FCProps = ({ ...props }) => {
     {
       account: account.address!,
       operatorIds,
-      additionalValidators: validators.data?.tags?.valid.length,
+      additionalValidators: validators.data?.tags.available.length,
     },
     { enabled: validatedShares.isSuccess },
   );
 
+  const maxAddable = Math.min(
+    operatorsUsability.data?.maxAddableValidators ?? 0,
+    validators.data?.tags.available.length ?? 0,
+  );
+
+  useEffect(() => {
+    if (state.selectedValidatorsCount < 1) {
+      state.selectedValidatorsCount = maxAddable;
+    }
+  }, [state, validators.data?.tags.available.length, maxAddable]);
+
   const submit = () => {
     state.shares =
-      validators.data?.tags.valid
+      validators.data?.tags.available
         .slice(0, context.selectedValidatorsCount)
         .map((share) => share.payload) || [];
 
@@ -122,10 +86,11 @@ export const UploadKeyshares: FCProps = ({ ...props }) => {
   };
 
   const canProceed =
-    Boolean(validators.data?.tags?.valid.length) &&
+    Boolean(validators.data?.tags.available.length) &&
     !operatorsUsability.data?.hasExceededValidatorsLimit &&
     !operatorsUsability.data?.hasPermissionedOperators &&
-    context.selectedValidatorsCount > 0;
+    context.selectedValidatorsCount > 0 &&
+    context.selectedValidatorsCount <= maxAddable;
 
   return (
     <Container
@@ -137,38 +102,22 @@ export const UploadKeyshares: FCProps = ({ ...props }) => {
       <div className="flex gap-6 w-full">
         <Card className="flex-1 h-fit" {...props}>
           <Text variant="headline4">Enter KeyShares File</Text>
-          <FileUploader
-            dropzoneOptions={{
-              maxFiles: 1,
-              maxSize: 1024 * 1024 * 4,
-              multiple: false,
-              accept: {
-                "application/json": [".json"],
-              },
-            }}
-            value={context.files as File[]}
+          <JSONFileUploader
+            files={context.files || []}
             onValueChange={(files) => {
               state.files = files ? ref(files) : null;
             }}
-            className="relative bg-background rounded-lg p-2"
-          >
-            <FileInput className="outline-dashed outline-1 outline-white">
-              <FileSvgDraw
-                isLoading={validatedShares.isLoading || validators.isLoading}
-              />
-              <div className="flex items-center justify-center flex-col pt-3 pb-4 w-full px-3 "></div>
-            </FileInput>
-            <FileUploaderContent>
-              {context.files &&
-                context.files.length > 0 &&
-                context.files.map((file, i) => (
-                  <FileUploaderItem key={i} index={i}>
-                    <Paperclip className="h-4 w-4 stroke-current" />
-                    <span>{file.name}</span>
-                  </FileUploaderItem>
-                ))}
-            </FileUploaderContent>
-          </FileUploader>
+            isError={validatedShares.isError}
+            isLoading={validatedShares.isLoading || validators.isLoading}
+            loadingText={
+              validatedShares.isLoading
+                ? "Validating keyshares..."
+                : validators.isLoading
+                  ? "Processing validators..."
+                  : undefined
+            }
+          />
+
           <KeysharesErrorAlert error={validatedShares.error} />
 
           {validators.data?.sharesWithStatuses && (
@@ -215,14 +164,22 @@ export const UploadKeyshares: FCProps = ({ ...props }) => {
             </div>
           )}
 
-          {operatorsUsability.data?.hasPermissionedOperators && (
+          {operatorsUsability.data?.hasPermissionedOperators ? (
             <Alert variant="warning">
               <AlertDescription>
                 One of your chosen operators is a permissioned operator. Please
                 select an alternative operator.
               </AlertDescription>
             </Alert>
-          )}
+          ) : maxAddable < (validators.data?.tags.available.length ?? 0) ? (
+            <Alert variant="warning">
+              <AlertDescription>
+                The number of validators you wish to onboard would exceed the
+                maximum validator capacity for one of your selected operators.
+                You may proceed with onboarding only {maxAddable} validators.
+              </AlertDescription>
+            </Alert>
+          ) : null}
         </Card>
         {Boolean(validators.data?.sharesWithStatuses?.length) && (
           <Card className="flex-1">
@@ -234,7 +191,12 @@ export const UploadKeyshares: FCProps = ({ ...props }) => {
                 <Button
                   disabled={context.selectedValidatorsCount <= 1}
                   variant="secondary"
-                  onClick={() => state.selectedValidatorsCount--}
+                  onClick={() =>
+                    (state.selectedValidatorsCount = Math.max(
+                      state.selectedValidatorsCount - 1,
+                      1,
+                    ))
+                  }
                 >
                   -
                 </Button>
@@ -246,11 +208,8 @@ export const UploadKeyshares: FCProps = ({ ...props }) => {
                     const value = ev.target.value;
                     if (/^\d+$/.test(value)) {
                       const number = Number(value);
-                      if (
-                        number > (validators.data?.tags?.valid?.length ?? 0)
-                      ) {
-                        state.selectedValidatorsCount =
-                          validators.data?.tags?.valid?.length ?? 0;
+                      if (number > maxAddable) {
+                        state.selectedValidatorsCount = maxAddable;
                       } else {
                         state.selectedValidatorsCount = number;
                       }
@@ -258,18 +217,20 @@ export const UploadKeyshares: FCProps = ({ ...props }) => {
                   }}
                 />
                 <Button
-                  disabled={
-                    context.selectedValidatorsCount ===
-                    (validators.data?.tags?.valid?.length ?? 0)
+                  disabled={context.selectedValidatorsCount === maxAddable}
+                  onClick={() =>
+                    (state.selectedValidatorsCount = Math.min(
+                      state.selectedValidatorsCount + 1,
+                      maxAddable,
+                    ))
                   }
-                  onClick={() => state.selectedValidatorsCount++}
                   variant="secondary"
                 >
                   +
                 </Button>
               </div>
             </div>
-            {Boolean(validators.data?.tags?.["incorrect-nonce"].length) && (
+            {Boolean(validators.data?.tags.incorrect.length) && (
               <Alert variant="error">
                 <AlertDescription>
                   Validators within this file have an incorrect{" "}
@@ -286,58 +247,18 @@ export const UploadKeyshares: FCProps = ({ ...props }) => {
                 </AlertDescription>
               </Alert>
             )}
-            <Table
-              gridTemplateColumns="1fr auto"
-              className="flex-1 max-h-[580px]"
-            >
-              <TableHeader className="sticky z-10 top-0 bg-gray-50">
-                <TableCell>Public key</TableCell>
-                <TableCell>Status</TableCell>
-              </TableHeader>
-              {(() => {
-                let selectedValidatorsCount = 0;
-
-                return validators.data?.sharesWithStatuses?.map((validator) => {
-                  const selected =
-                    validator.status === "valid" &&
-                    selectedValidatorsCount < context.selectedValidatorsCount;
-                  if (selected) selectedValidatorsCount++;
-                  return (
-                    <TableRow
-                      key={validator.share.data.publicKey}
-                      className={cn({
-                        "bg-primary-50 font-bold border border-primary-500":
-                          selected,
-                      })}
-                    >
-                      <TableCell className="flex gap-1 items-center">
-                        <Text>
-                          {shortenAddress(validator.share.payload.publicKey)}
-                        </Text>
-                        <CopyBtn
-                          className="z-0"
-                          text={validator.share.payload.publicKey}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        {validator.status !== "valid" && (
-                          <Badge
-                            size="sm"
-                            variant={
-                              validator.status === "registered"
-                                ? "success"
-                                : "error"
-                            }
-                          >
-                            {validator.status}
-                          </Badge>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  );
-                });
-              })()}
-            </Table>
+            <ValidatorsSelectionTable
+              taggedValidators={
+                validators.data?.tags || {
+                  registered: [],
+                  incorrect: [],
+                  available: [],
+                  all: [],
+                }
+              }
+              sharesWithStatuses={validators.data?.sharesWithStatuses || []}
+              selectedAmount={context.selectedValidatorsCount}
+            />
             <Button
               isLoading={cluster.isLoading}
               size="xl"

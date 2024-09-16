@@ -6,17 +6,20 @@ import { add0x } from "@/lib/utils/strings";
 import type { UseQueryOptions } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import { sortBy } from "lodash-es";
+import { useState } from "react";
 import type { KeySharesItem } from "ssv-keys";
 
-export type KeysharesValidatorStatus =
-  | "registered"
-  | "incorrect-nonce"
-  | "valid";
+export type KeysharesValidatorStatus = "registered" | "incorrect" | "available";
 
 export type ValidatorShareWithStatus = {
   share: KeySharesItem;
   status: KeysharesValidatorStatus;
 };
+
+export type TaggedValidators = Record<
+  KeysharesValidatorStatus | "all",
+  KeySharesItem[]
+>;
 
 export const useKeysharesValidatorsList = (
   shares?: KeySharesItem[],
@@ -24,8 +27,9 @@ export const useKeysharesValidatorsList = (
 ) => {
   const ssvAccount = useSSVAccount({ staleTime: 0, gcTime: 0 });
   const sortedShares = sortBy(shares, (share) => share.data.ownerNonce);
+  const [processed] = useState(0);
 
-  return useQuery({
+  const query = useQuery({
     staleTime: ms(10, "seconds"),
     queryKey: ["validators-state", ssvAccount.data?.nonce, sortedShares],
     queryFn: async () => {
@@ -38,8 +42,8 @@ export const useKeysharesValidatorsList = (
               ),
               staleTime: ms(10, "seconds"),
             })
-            .then(() => [share, true])
-            .catch(() => [share, false]) as Promise<[KeySharesItem, boolean]>;
+            .then(() => [share, true] as [KeySharesItem, boolean])
+            .catch(() => [share, false] as [KeySharesItem, boolean]);
         }),
       );
 
@@ -52,7 +56,7 @@ export const useKeysharesValidatorsList = (
         i++;
         return {
           share,
-          status: validNonce ? "valid" : "incorrect-nonce",
+          status: validNonce ? "available" : "incorrect",
         };
       }) as ValidatorShareWithStatus[];
 
@@ -63,10 +67,10 @@ export const useKeysharesValidatorsList = (
         },
         {
           registered: [],
-          "incorrect-nonce": [],
-          valid: [],
+          incorrect: [],
+          available: [],
           all: sortedShares,
-        } as Record<KeysharesValidatorStatus | "all", KeySharesItem[]>,
+        } as TaggedValidators,
       );
 
       return {
@@ -76,4 +80,8 @@ export const useKeysharesValidatorsList = (
     },
     enabled: Boolean(ssvAccount.isSuccess && shares?.length && options.enabled),
   });
+  return {
+    query,
+    processedValidators: processed,
+  };
 };

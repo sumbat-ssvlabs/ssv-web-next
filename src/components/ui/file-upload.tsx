@@ -18,8 +18,15 @@ import type {
 import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
 import { Trash2 as RemoveIcon } from "lucide-react";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils/tw";
+import {
+  BsFillFileEarmarkCheckFill,
+  BsFillFileEarmarkFill,
+  BsFillFileEarmarkXFill,
+} from "react-icons/bs";
+import { Span, Text } from "@/components/ui/text";
+import { Spinner } from "@/components/ui/spinner";
 
 type DirectionOptions = "rtl" | "ltr" | undefined;
 
@@ -355,3 +362,95 @@ export const FileInput = forwardRef<
 });
 
 FileInput.displayName = "FileInput";
+type JSONFileUploaderProps = {
+  files: File[];
+  onValueChange: (files: File[] | null) => void;
+  isLoading?: boolean;
+  loadingText?: string;
+  isError?: boolean;
+};
+export const JSONFileUploader = ({
+  files,
+  onValueChange,
+  isLoading,
+  loadingText,
+  isError,
+}: JSONFileUploaderProps) => {
+  const Icon = isError
+    ? BsFillFileEarmarkXFill
+    : files.length > 0
+      ? BsFillFileEarmarkCheckFill
+      : BsFillFileEarmarkFill;
+  return (
+    <FileUploader
+      dropzoneOptions={{
+        maxFiles: 1,
+        maxSize: 1024 * 1024 * 4,
+        multiple: false,
+        accept: {
+          "application/json": [".json"],
+        },
+      }}
+      value={files}
+      onValueChange={onValueChange}
+    >
+      <FileInput className="h-64 flex flex-col items-center justify-center bg-gray-100 border border-gray-300 rounded-xl">
+        <div className="flex flex-col items-center gap-4">
+          {isLoading ? (
+            <div className="size-12">
+              <Spinner className="size-12" />
+            </div>
+          ) : (
+            <Icon
+              className={cn("size-12 text-gray-500", {
+                "text-success-500": files.length > 0,
+                "text-error-500": isError,
+              })}
+            />
+          )}
+          {loadingText ? (
+            <Text variant="body-2-medium" className="text-gray-500">
+              {loadingText}
+            </Text>
+          ) : !files.length ? (
+            <Text variant="body-2-medium" className="text-gray-500">
+              Drag and drop files or{" "}
+              <Span className="text-primary-500">browse</Span>
+            </Text>
+          ) : (
+            <>
+              <FileUploaderContent>
+                {files &&
+                  files.length > 0 &&
+                  files.map((file, i) => (
+                    <Text
+                      variant="body-2-medium"
+                      className={cn("text-success-500", {
+                        "text-error-500": isError,
+                      })}
+                      key={i}
+                    >
+                      {" "}
+                      {file.name}
+                    </Text>
+                  ))}
+              </FileUploaderContent>
+              <Button
+                variant="link"
+                onClick={(ev) => {
+                  ev.preventDefault();
+                  ev.stopPropagation();
+                  onValueChange(null);
+                }}
+              >
+                Remove
+              </Button>
+            </>
+          )}
+        </div>
+      </FileInput>
+    </FileUploader>
+  );
+};
+
+JSONFileUploader.displayName = "JSONFileUploader";
