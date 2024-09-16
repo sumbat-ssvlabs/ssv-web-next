@@ -12,6 +12,7 @@ import {
 import { NavigateBackBtn } from "@/components/ui/navigate-back-btn";
 import { NumberInput } from "@/components/ui/number-input";
 import { Text } from "@/components/ui/text";
+import { Tooltip } from "@/components/ui/tooltip";
 import { useUpdateOperatorFeeContext } from "@/guard/register-operator-guards";
 import { useOperator } from "@/hooks/operator/use-operator";
 import { useOperatorFeeLimits } from "@/hooks/operator/use-operator-fee-limits";
@@ -23,6 +24,7 @@ import { cn } from "@/lib/utils/tw";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ComponentPropsWithoutRef, FC } from "react";
 import { useForm } from "react-hook-form";
+import { FaCircleInfo } from "react-icons/fa6";
 import { useNavigate } from "react-router";
 import { formatUnits } from "viem";
 import { z } from "zod";
@@ -105,9 +107,28 @@ export const UpdateOperatorFee: FC<ComponentPropsWithoutRef<"div">> = ({
               <FormItem>
                 <FormLabel className="flex w-full justify-between gap-2">
                   <Text>Annual fee</Text>
-                  <Text className="text-gray-500" variant="caption-bold">
-                    Max: {formatSSV(max)}
-                  </Text>
+                  <Tooltip
+                    content={
+                      <Text>
+                        Fee increase limits apply.{" "}
+                        <Button
+                          as="a"
+                          variant="link"
+                          href="https://docs.ssv.network/learn/operators/update-fee#fee-increase-limits"
+                          target="_blank"
+                        >
+                          Learn more
+                        </Button>
+                      </Text>
+                    }
+                  >
+                    <div className="flex items-center gap-1">
+                      <Text className="text-gray-500" variant="caption-bold">
+                        Max: {formatSSV(max)} SSV{" "}
+                      </Text>
+                      <FaCircleInfo className="inline text-gray-500 size-3" />
+                    </div>
+                  </Tooltip>
                 </FormLabel>
                 <FormControl>
                   <NumberInput

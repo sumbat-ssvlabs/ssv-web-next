@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils/tw";
 import type { ComponentWithAs } from "@/types/component";
 import { cva, type VariantProps } from "class-variance-authority";
 import type { ComponentPropsWithoutRef } from "react";
+import { forwardRef } from "react";
 
 const variants = cva("", {
   variants: {
@@ -34,34 +35,37 @@ export type TextProps = ComponentPropsWithoutRef<"p"> &
 
 type FCProps = ComponentWithAs<"p", TextProps>;
 
-export const Text: FCProps = ({
-  className,
-  variant,
-  children,
-  as,
-  ...props
-}) => {
-  const Component = as ?? "p";
-  return (
-    <Component className={cn(variants({ variant, className }))} {...props}>
-      {children}
-    </Component>
-  );
-};
+// @ts-expect-error fix this
+export const Text: FCProps = forwardRef(
+  ({ className, variant, children, as, ...props }, ref) => {
+    const Component = as ?? "p";
+    return (
+      <Component
+        ref={ref}
+        className={cn(variants({ variant, className }))}
+        {...props}
+      >
+        {children}
+      </Component>
+    );
+  },
+);
 
-export const Span: FCProps = ({
-  className,
-  variant,
-  children,
-  as,
-  ...props
-}) => {
-  const Component = as ?? "span";
-  return (
-    <Component className={cn(variants({ variant, className }))} {...props}>
-      {children}
-    </Component>
-  );
-};
+// @ts-expect-error fix this
+export const Span: FCProps = forwardRef(
+  ({ className, variant, children, as, ...props }, ref) => {
+    const Component = as ?? "span";
+    return (
+      <Component
+        ref={ref}
+        className={cn(variants({ variant, className }))}
+        {...props}
+      >
+        {children}
+      </Component>
+    );
+  },
+);
 
 Text.displayName = "Text";
+Span.displayName = "Span";
