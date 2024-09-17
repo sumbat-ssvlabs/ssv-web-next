@@ -15,7 +15,7 @@ import { useExtractKeystoreData } from "@/hooks/use-extract-keystore-data";
 import { useKeystoreValidation } from "@/hooks/use-keystores-validation";
 import { prepareOperatorsForShares } from "@/lib/utils/operator";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type ComponentPropsWithoutRef, type FC } from "react";
+import { useMemo, type ComponentPropsWithoutRef, type FC } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { ref } from "valtio";
@@ -62,6 +62,15 @@ export const GenerateKeySharesOnline: FCProps = () => {
 
   const { status, isError, isLoading } = useKeystoreValidation(
     files?.[0] as File,
+  );
+
+  const errors = useMemo(
+    () => ({
+      "invalid-schema": "Invalid keystore file",
+      "validator-registered":
+        "Validator is already registered to the network, please try a different keystore file.",
+    }),
+    [],
   );
 
   const createShares = useCreateShares();
@@ -115,6 +124,7 @@ export const GenerateKeySharesOnline: FCProps = () => {
           }}
           onFileRemoved={form.reset}
           isError={isError}
+          error={errors[status as keyof typeof errors]}
           isLoading={isLoading}
           loadingText="Validating keystore file..."
         />

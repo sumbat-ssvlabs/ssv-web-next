@@ -368,6 +368,7 @@ type JSONFileUploaderProps = {
   isLoading?: boolean;
   loadingText?: string;
   isError?: boolean;
+  error?: string;
   onFileRemoved?: () => void;
 };
 export const JSONFileUploader = ({
@@ -376,6 +377,7 @@ export const JSONFileUploader = ({
   isLoading,
   loadingText,
   isError,
+  error,
   onFileRemoved,
 }: JSONFileUploaderProps) => {
   const Icon = isError
@@ -421,22 +423,32 @@ export const JSONFileUploader = ({
             </Text>
           ) : (
             <>
-              <FileUploaderContent>
-                {files &&
-                  files.length > 0 &&
-                  files.map((file, i) => (
-                    <Text
-                      variant="body-2-medium"
-                      className={cn("text-success-500", {
-                        "text-error-500": isError,
-                      })}
-                      key={i}
-                    >
-                      {" "}
-                      {file.name}
-                    </Text>
-                  ))}
-              </FileUploaderContent>
+              {isError && error ? (
+                <Text
+                  variant="body-2-medium"
+                  className="text-red-500 text-center max-w-96"
+                >
+                  {error}
+                </Text>
+              ) : (
+                <FileUploaderContent>
+                  {files &&
+                    files.length > 0 &&
+                    files.map((file, i) => (
+                      <Text
+                        variant="body-2-medium"
+                        className={cn("text-success-500", {
+                          "text-error-500": isError,
+                        })}
+                        key={i}
+                      >
+                        {" "}
+                        {file.name}
+                      </Text>
+                    ))}
+                </FileUploaderContent>
+              )}
+
               <Button
                 variant="link"
                 onClick={(ev) => {
