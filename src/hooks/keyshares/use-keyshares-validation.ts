@@ -27,7 +27,7 @@ export const useKeysharesValidation = (
   const isEnabled = Boolean(file && options.enabled);
 
   const query = useQuery({
-    queryKey: ["keyshares-validation", file, operatorIds],
+    queryKey: ["keyshares-validation", file, file?.lastModified, operatorIds],
     queryFn: async () => {
       const shares = await createKeysharesFromFile(file!);
       const ids = validateConsistentOperatorIds(shares);
@@ -39,11 +39,21 @@ export const useKeysharesValidation = (
         );
       }
 
-      const operators = await queryFetchOperators(operatorIds).catch(() => {
-        throw new KeysharesValidationError(
-          KeysharesValidationErrors.OPERATOR_NOT_EXIST_ID,
-        );
-      });
+      const operators = await queryFetchOperators(operatorIds)
+        .then((operators) => {
+          if (operators.some((operator) => operator.is_deleted)) {
+            throw new KeysharesValidationError(
+              KeysharesValidationErrors.OPERATOR_NOT_EXIST_ID,
+            );
+          }
+          return operators;
+        })
+        .catch(() => {
+          throw new KeysharesValidationError(
+            KeysharesValidationErrors.OPERATOR_NOT_EXIST_ID,
+          );
+        });
+      console.log("operators:", operators);
 
       validateConsistentOperatorPublicKeys(shares, operators);
 
