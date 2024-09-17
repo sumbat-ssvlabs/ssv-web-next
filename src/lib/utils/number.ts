@@ -12,12 +12,12 @@ export const percentageFormatter = new Intl.NumberFormat("en-US", {
 
 export const bigintFormatter = new Intl.NumberFormat("en-US", {
   useGrouping: false,
-  maximumFractionDigits: 4,
+  maximumFractionDigits: 7,
 });
 
 export const ethFormatter = new Intl.NumberFormat("en-US", {
   useGrouping: true,
-  maximumFractionDigits: 3,
+  maximumFractionDigits: 4,
 });
 
 export const formatSSV = (num: bigint, decimals = 18) =>

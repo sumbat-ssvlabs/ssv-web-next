@@ -28,9 +28,7 @@ export const useOperatorFeeLimits = () => {
     (operatorYearlyFee * (increaseLimit.data || 0n)) / 10000n;
 
   const max = bigintMin(maxIncrease, maxOperatorYearlyFee);
-  const min = operator?.is_private
-    ? 0n
-    : globals.BLOCKS_PER_YEAR * globals.MINIMUM_OPERATOR_FEE_PER_BLOCK;
+  const min = globals.BLOCKS_PER_YEAR * globals.MINIMUM_OPERATOR_FEE_PER_BLOCK;
 
   return {
     isLoading,

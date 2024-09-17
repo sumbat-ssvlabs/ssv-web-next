@@ -19,7 +19,7 @@ import { useOperatorFeeLimits } from "@/hooks/operator/use-operator-fee-limits";
 import { useOperatorDeclaredFee } from "@/hooks/operator/use-operator-fee-periods";
 import { useOperatorPageParams } from "@/hooks/operator/use-operator-page-params";
 import { isBigIntChanged } from "@/lib/utils/bigint";
-import { formatSSV } from "@/lib/utils/number";
+import { formatBigintInput } from "@/lib/utils/number";
 import { cn } from "@/lib/utils/tw";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ComponentPropsWithoutRef, FC } from "react";
@@ -49,6 +49,7 @@ export const UpdateOperatorFee: FC<ComponentPropsWithoutRef<"div">> = ({
         });
       }
 
+      console.log("min:", min);
       if (value < min) {
         return ctx.addIssue({
           code: z.ZodIssueCode.too_small,
@@ -124,7 +125,7 @@ export const UpdateOperatorFee: FC<ComponentPropsWithoutRef<"div">> = ({
                   >
                     <div className="flex items-center gap-1">
                       <Text className="text-gray-500" variant="caption-bold">
-                        Max: {formatSSV(max)} SSV{" "}
+                        Max: {formatBigintInput(max)} SSV{" "}
                       </Text>
                       <FaCircleInfo className="inline text-gray-500 size-3" />
                     </div>

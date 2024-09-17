@@ -13,7 +13,7 @@ import { withTransactionModal } from "@/lib/contract-interactions/utils/useWaitF
 import { useRegisterOperator } from "@/lib/contract-interactions/write/use-register-operator";
 import { queryClient } from "@/lib/react-query";
 import { roundOperatorFee } from "@/lib/utils/bigint";
-import { formatSSV } from "@/lib/utils/number";
+import { formatBigintInput } from "@/lib/utils/number";
 import { createOperatorFromEvent } from "@/lib/utils/operator";
 import { shortenAddress } from "@/lib/utils/strings";
 import { type FC } from "react";
@@ -129,7 +129,7 @@ export const RegisterOperatorConfirmation: FC = () => {
             </Text>
             <div className="flex flex-col gap-0">
               <Text variant="body-2-bold">
-                {formatSSV(yearlyFee)} SSV{" "}
+                {formatBigintInput(yearlyFee)} SSV{" "}
                 <Span variant="body-3-semibold" className="text-gray-500">
                   / year
                 </Span>

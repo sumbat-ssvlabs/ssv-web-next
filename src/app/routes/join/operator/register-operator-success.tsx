@@ -21,7 +21,7 @@ export const RegisterOperatorSuccess: FC<
   }
 
   return (
-    <Container>
+    <Container className="py-6">
       <Card className="relative overflow-hidden">
         <img
           src="/images/backgroundIcon/light.svg"
@@ -42,7 +42,7 @@ export const RegisterOperatorSuccess: FC<
         <Text variant="body-2-semibold" className="text-gray-500">
           Next step:
         </Text>
-        <div className="p-4 py-8 border rounded-lg">
+        <div className="p-4 py-8 border border-gray-300 rounded-lg">
           <Button
             variant="link"
             as={Link}
