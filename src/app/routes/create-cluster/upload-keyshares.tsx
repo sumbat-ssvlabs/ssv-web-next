@@ -108,19 +108,18 @@ export const UploadKeyshares: FCProps = ({ ...props }) => {
               state.files = files ? ref(files) : null;
             }}
             isError={validatedShares.isError}
+            error={<KeysharesErrorAlert error={validatedShares.error} />}
             isLoading={validatedShares.isLoading || validators.isLoading}
             loadingText={
               validatedShares.isLoading
                 ? "Validating keyshares..."
                 : validators.isLoading
-                  ? "Processing validators..."
+                  ? `Processing ${validatedShares.data?.length} validators...`
                   : undefined
             }
           />
 
-          <KeysharesErrorAlert error={validatedShares.error} />
-
-          {validators.data?.sharesWithStatuses && (
+          {validators.data?.sharesWithStatuses.length && (
             <div className="space-y-2">
               <Text variant="body-3-medium" className="text-gray-500">
                 Keyshares Summary

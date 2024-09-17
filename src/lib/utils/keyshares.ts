@@ -1,8 +1,7 @@
 import { sortNumbers } from "@/lib/utils/number";
 import { getOperatorIds, sortOperators } from "@/lib/utils/operator";
-import { keysharesSchema } from "@/lib/zod/keyshares";
 import type { Operator } from "@/types/api";
-import { KeyShares, type KeySharesItem } from "ssv-keys";
+import { type KeySharesItem } from "ssv-keys";
 import type { Address } from "viem";
 import { getChainName } from "@/lib/utils/wagmi";
 import { getChainId } from "@wagmi/core";
@@ -13,6 +12,7 @@ export enum KeysharesValidationErrors {
   OPERATOR_NOT_MATCHING_ID,
   VALIDATOR_EXIST_ID,
   ERROR_RESPONSE_ID,
+  InvalidFileType,
   DifferentCluster,
   DuplicatedValidatorKeys,
   InconsistentOperatorPublicKeys,
@@ -29,15 +29,6 @@ export const isKeysharesError = (
   error: unknown,
 ): error is KeysharesValidationError => {
   return error instanceof KeysharesValidationError;
-};
-
-export const validateKeysharesSchema = async (
-  file: File,
-): Promise<KeySharesItem[]> => {
-  const text = await file.text();
-  const json = JSON.parse(text);
-  keysharesSchema.parse(json);
-  return (await KeyShares.fromJson(json)).list();
 };
 
 export const validateConsistentOperatorIds = (keyshares: KeySharesItem[]) => {

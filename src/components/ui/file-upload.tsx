@@ -1,6 +1,6 @@
 "use client";
 
-import type { Dispatch, SetStateAction } from "react";
+import type { Dispatch, ReactNode, SetStateAction } from "react";
 import {
   createContext,
   forwardRef,
@@ -368,7 +368,7 @@ type JSONFileUploaderProps = {
   isLoading?: boolean;
   loadingText?: string;
   isError?: boolean;
-  error?: string;
+  error?: ReactNode;
   onFileRemoved?: () => void;
 };
 export const JSONFileUploader = ({

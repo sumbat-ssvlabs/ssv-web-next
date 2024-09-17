@@ -6,7 +6,6 @@ import { add0x } from "@/lib/utils/strings";
 import type { UseQueryOptions } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import { sortBy } from "lodash-es";
-import { useState } from "react";
 import type { KeySharesItem } from "ssv-keys";
 
 export type KeysharesValidatorStatus = "registered" | "incorrect" | "available";
@@ -27,7 +26,6 @@ export const useKeysharesValidatorsList = (
 ) => {
   const ssvAccount = useSSVAccount({ staleTime: 0 });
   const sortedShares = sortBy(shares, (share) => share.data.ownerNonce);
-  const [processed] = useState(0);
 
   const query = useQuery({
     staleTime: ms(1, "minutes"),
@@ -41,7 +39,7 @@ export const useKeysharesValidatorsList = (
               ...isValidatorRegisteredQueryOptions(
                 add0x(share.data.publicKey!),
               ),
-              staleTime: ms(10, "seconds"),
+              staleTime: ms(1, "minutes"),
             })
             .then(() => [share, true] as [KeySharesItem, boolean])
             .catch(() => [share, false] as [KeySharesItem, boolean]);
@@ -86,6 +84,5 @@ export const useKeysharesValidatorsList = (
       ...query,
       ...combineQueryStatus(query, ssvAccount),
     },
-    processedValidators: processed,
   };
 };

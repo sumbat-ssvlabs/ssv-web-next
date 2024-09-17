@@ -1,4 +1,3 @@
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   KeysharesValidationError,
   KeysharesValidationErrors,
@@ -17,6 +16,8 @@ export const KeysharesErrorAlert: FC<KeysharesErrorAlertProps> = ({
     if (!(error instanceof KeysharesValidationError)) return error.message;
 
     switch (error.code) {
+      case KeysharesValidationErrors.InvalidFileType:
+        return "Invalid file type. Please ensure that the file is a valid keyshares JSON file.";
       case KeysharesValidationErrors.DifferentCluster:
         return "The file contains key shares associated with different clusters. Please ensure that all key shares are consistent with the same operator cluster.";
       case KeysharesValidationErrors.OPERATOR_NOT_EXIST_ID:
@@ -38,9 +39,5 @@ export const KeysharesErrorAlert: FC<KeysharesErrorAlertProps> = ({
     }
   };
 
-  return (
-    <Alert variant="error">
-      <AlertDescription>{renderMessage()}</AlertDescription>
-    </Alert>
-  );
+  return renderMessage();
 };

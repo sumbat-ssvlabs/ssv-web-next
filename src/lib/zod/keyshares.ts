@@ -25,7 +25,7 @@ export const shareSchema = z.object({
 });
 
 export const keysharesSchema = z.object({
-  version: z.literal("v1.1.0"),
+  version: z.string(),
   createdAt: z.string(),
   shares: z.array(shareSchema),
 }) satisfies z.ZodType<Keyshares>;

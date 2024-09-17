@@ -1,4 +1,5 @@
 import { useSelectedOperatorIds } from "@/guard/register-validator-guard";
+import { createKeysharesFromFile } from "@/hooks/keyshares/use-keyshares-schema-validation";
 import { queryFetchOperators } from "@/hooks/operator/use-operators";
 import type { UseQueryOptions } from "@/lib/react-query";
 import { KeysharesValidationError } from "@/lib/utils/keyshares";
@@ -7,7 +8,6 @@ import {
   KeysharesValidationErrors,
   validateConsistentOperatorIds,
   validateConsistentOperatorPublicKeys,
-  validateKeysharesSchema,
 } from "@/lib/utils/keyshares";
 import { sortNumbers } from "@/lib/utils/number";
 import { useQuery } from "@tanstack/react-query";
@@ -24,12 +24,14 @@ export const useKeysharesValidation = (
   },
 ) => {
   const operatorIds = useSelectedOperatorIds();
-  const isEnabled = Boolean(file && operatorIds.length && options.enabled);
-  return useQuery({
+  const isEnabled = Boolean(file && options.enabled);
+
+  const query = useQuery({
     queryKey: ["keyshares-validation", file, operatorIds],
     queryFn: async () => {
-      const shares = await validateKeysharesSchema(file!);
+      const shares = await createKeysharesFromFile(file!);
       const ids = validateConsistentOperatorIds(shares);
+      ensureValidatorsUniqueness(shares);
 
       if (!isEqual(sortNumbers(ids), sortNumbers(operatorIds))) {
         throw new KeysharesValidationError(
@@ -37,21 +39,19 @@ export const useKeysharesValidation = (
         );
       }
 
-      ensureValidatorsUniqueness(shares);
-
-      const operators = await queryFetchOperators(operatorIds).catch(
-        () => new Error("Failed to fetch operators"),
-      );
-
-      if (operators instanceof Error) {
-        throw operators;
-      }
+      const operators = await queryFetchOperators(operatorIds).catch(() => {
+        throw new KeysharesValidationError(
+          KeysharesValidationErrors.OPERATOR_NOT_EXIST_ID,
+        );
+      });
 
       validateConsistentOperatorPublicKeys(shares, operators);
+
       return shares;
     },
     retry: false,
     ...options,
     enabled: isEnabled,
   });
+  return query;
 };
