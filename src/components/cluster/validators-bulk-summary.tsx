@@ -32,8 +32,11 @@ export const ValidatorsBulkSummary: ValidatorsBulkSummaryFC = ({
         <Text variant="headline4">Summary</Text>
         <Badge variant="primary">{publicKeys.length} validators</Badge>
       </div>
-      <Table gridTemplateColumns="1fr" className="flex-1 min-h-96">
-        <TableHeader className="sticky top-0 bg-gray-50">
+      <Table
+        gridTemplateColumns="1fr"
+        className="flex-1 min-h-60 max-h-[400px]"
+      >
+        <TableHeader className="sticky top-0 bg-gray-50 z-10">
           <TableCell>Public key</TableCell>
         </TableHeader>
         {publicKeys.map((publicKey) => (

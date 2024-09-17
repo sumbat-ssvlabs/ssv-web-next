@@ -37,9 +37,7 @@ export const ClustersTableRow: FCProps = ({ cluster, className, ...props }) => {
       })}
       {...props}
     >
-      <TableCell className="font-bold">
-        {shortenAddress(cluster.clusterId, 6)}
-      </TableCell>
+      <TableCell>{shortenAddress(cluster.clusterId, 6)}</TableCell>
       <TableCell>
         <div className="flex flex-wrap gap-3">
           {cluster.operators.map((o) => {
@@ -74,7 +72,7 @@ export const ClustersTableRow: FCProps = ({ cluster, className, ...props }) => {
           runway.data?.runwayDisplay
         )}
       </TableCell>
-      <TableCell>
+      <TableCell className="whitespace-nowrap">
         {isLiquidated ? (
           <Badge size="sm" variant="error">
             Liquidated
