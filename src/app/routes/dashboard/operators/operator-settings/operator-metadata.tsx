@@ -23,7 +23,6 @@ import { Text } from "@/components/ui/text";
 import { Textarea } from "@/components/ui/textarea";
 import { Tooltip } from "@/components/ui/tooltip";
 import { useOperatorLocations } from "@/hooks/operator/use-operator-locations";
-import { useOperatorNodes } from "@/hooks/operator/use-operator-nodes";
 import { useSignOperatorMetadata } from "@/hooks/operator/use-sign-operator-metadata";
 import { useOperator } from "@/hooks/operator/use-operator";
 import {
@@ -74,20 +73,6 @@ export const OperatorMetadata: FC<ComponentPropsWithoutRef<"div">> = ({
   const { data: operator } = useOperator();
 
   const operatorLocations = useOperatorLocations();
-  const eth1NodeClientOptions = useOperatorNodes(1);
-  const eth2NodeClientOptions = useOperatorNodes(2);
-
-  const isEth1NodeClientOptionsDisabled =
-    eth1NodeClientOptions.isLoading ||
-    eth1NodeClientOptions.isError ||
-    (eth1NodeClientOptions.isSuccess &&
-      eth1NodeClientOptions.data?.length === 0);
-
-  const isEth2NodeClientOptionsDisabled =
-    eth2NodeClientOptions.isLoading ||
-    eth2NodeClientOptions.isError ||
-    (eth2NodeClientOptions.isSuccess &&
-      eth2NodeClientOptions.data?.length === 0);
 
   const defaults = {
     ...operator,
@@ -249,83 +234,67 @@ export const OperatorMetadata: FC<ComponentPropsWithoutRef<"div">> = ({
             control={form.control}
             name="eth1_node_client"
             render={({ field }) => (
-              <Tooltip
-                asChild
-                content={
-                  isEth1NodeClientOptionsDisabled
-                    ? "Could not fetch execution clients, please try again later"
-                    : undefined
-                }
-                hasArrow
-              >
-                <FormItem>
-                  <FormLabel>Execution Client</FormLabel>
-                  <FormControl>
-                    <Select
-                      disabled={isEth1NodeClientOptionsDisabled}
-                      value={field.value}
-                      onValueChange={(value) => field.onChange(value)}
+              <FormItem>
+                <FormLabel>Execution Client</FormLabel>
+                <FormControl>
+                  <Select
+                    value={field.value}
+                    onValueChange={(value) => field.onChange(value)}
+                  >
+                    <SelectTrigger
+                      className={inputVariants({ className: "text-base" })}
                     >
-                      <SelectTrigger
-                        className={inputVariants({ className: "text-base" })}
-                      >
-                        <SelectValue placeholder="Geth, Nethermind, Besu..." />
-                      </SelectTrigger>
-                      <SelectContent className="font">
-                        {eth1NodeClientOptions.data?.map((node) => (
-                          <SelectItem key={node} value={node}>
-                            {node}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              </Tooltip>
+                      <SelectValue placeholder="Geth, Nethermind, Besu..." />
+                    </SelectTrigger>
+                    <SelectContent className="font">
+                      {["Erigon", "Besu", "Nethermind", "Geth"].map((node) => (
+                        <SelectItem key={node} value={node}>
+                          {node}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
             )}
           />
           <FormField
             control={form.control}
             name="eth2_node_client"
             render={({ field }) => (
-              <Tooltip
-                asChild
-                content={
-                  isEth2NodeClientOptionsDisabled
-                    ? "Could not fetch consensus clients, please try again later"
-                    : undefined
-                }
-                hasArrow
-              >
-                <FormItem>
-                  <FormLabel>Consensus Client</FormLabel>
-                  <FormControl>
-                    <Select
-                      disabled={isEth2NodeClientOptionsDisabled}
-                      value={field.value}
-                      onValueChange={(value) => field.onChange(value)}
+              <FormItem>
+                <FormLabel>Consensus Client</FormLabel>
+                <FormControl>
+                  <Select
+                    value={field.value}
+                    onValueChange={(value) => field.onChange(value)}
+                  >
+                    <SelectTrigger
+                      className={inputVariants({ className: "text-base" })}
                     >
-                      <SelectTrigger
-                        className={inputVariants({ className: "text-base" })}
-                      >
-                        <SelectValue
-                          placeholder="Prism, Lighthouse, Teku..."
-                          className="text-gray-200"
-                        />
-                      </SelectTrigger>
-                      <SelectContent className="font">
-                        {eth2NodeClientOptions.data?.map((node) => (
-                          <SelectItem key={node} value={node}>
-                            {node}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              </Tooltip>
+                      <SelectValue
+                        placeholder="Prism, Lighthouse, Teku..."
+                        className="text-gray-200"
+                      />
+                    </SelectTrigger>
+                    <SelectContent className="font">
+                      {[
+                        "Lodestar",
+                        "Nimbus",
+                        "Teku",
+                        "Lighthouse",
+                        "Prysm",
+                      ].map((node) => (
+                        <SelectItem key={node} value={node}>
+                          {node}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
             )}
           />
           <FormField
