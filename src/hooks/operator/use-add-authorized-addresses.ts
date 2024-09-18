@@ -80,6 +80,6 @@ export const useAddAuthorizedAddresses = () => {
     hasEmptyAddresses,
     hasErrors,
     validAddresses,
-    isSubmitDisabled: hasErrors || !hasAddresses,
+    isSubmitDisabled: hasErrors || validAddresses.length === 0,
   };
 };
