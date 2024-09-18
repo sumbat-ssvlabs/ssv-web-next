@@ -5,6 +5,7 @@ import { ChevronDown } from "lucide-react";
 import type { FC } from "react";
 import { useAccount } from "@/hooks/account/use-account";
 import { shortenAddress } from "@/lib/utils/strings";
+import { Tooltip } from "@/components/ui/tooltip";
 
 type WalletType = "ledger" | "trezor" | "walletconnect" | "metamask";
 
@@ -75,12 +76,22 @@ export const ConnectWalletBtn: FC<ButtonProps> = (props) => {
             onClick={openAccountModal}
             {...props}
           >
-            <img
-              className="size-6"
-              src={getWalletIconSrc(account.connector?.name)}
-              alt={`Connected to ${account.address}`}
-            />
+            <div className="relative w-fit h-fit">
+              <img
+                className="size-6"
+                src={getWalletIconSrc(account.connector?.name)}
+                alt={`Connected to ${account.address}`}
+              />
+            </div>
             {shortenAddress(account.address ?? "")}
+            {account.isContract && (
+              <Tooltip content="Onchain wallet">
+                <img
+                  src="https://pbs.twimg.com/profile_images/1643941027898613760/gyhYEOCE_400x400.jpg"
+                  className="size-4 rounded-md"
+                />
+              </Tooltip>
+            )}
           </Button>
         );
       }}
