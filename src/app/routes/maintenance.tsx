@@ -28,7 +28,7 @@ export const Maintenance: FC = () => {
         </div>
       </div>
       <div className="flex flex-1 justify-center items-center flex-col">
-        <img src="/images/maintenance.svg" alt="Maintenance" />
+        <img src="/images/maintenance.svg" alt="Maintenance" className="w-40" />
         <Text variant="headline2" className="text-gray-700 mt-16">
           The site is currently down for maintenance
         </Text>
