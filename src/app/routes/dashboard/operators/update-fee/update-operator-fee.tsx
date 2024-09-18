@@ -79,6 +79,8 @@ export const UpdateOperatorFee: FC<ComponentPropsWithoutRef<"div">> = ({
     },
   });
 
+  const hasErrors = Boolean(form.formState.errors.yearlyFee);
+
   const declaredOperatorFee = useOperatorDeclaredFee(BigInt(operatorId!));
 
   const submit = form.handleSubmit((values) => {
@@ -157,7 +159,7 @@ export const UpdateOperatorFee: FC<ComponentPropsWithoutRef<"div">> = ({
             size="xl"
             type="submit"
             isLoading={isLoading}
-            disabled={!isChanged}
+            disabled={hasErrors || !isChanged}
           >
             Next
           </Button>
