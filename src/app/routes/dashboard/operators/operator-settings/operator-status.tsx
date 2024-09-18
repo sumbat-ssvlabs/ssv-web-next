@@ -14,8 +14,10 @@ import { useSetOperatorsPrivateUnchecked } from "@/lib/contract-interactions/wri
 import { useSetOperatorsPublicUnchecked } from "@/lib/contract-interactions/write/use-set-operators-public-unchecked";
 import { useQueryClient } from "@tanstack/react-query";
 import type { FC } from "react";
+import { useNavigate } from "react-router";
 
 export const OperatorStatus: FC = () => {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const { data: operator } = useOperator();
@@ -44,6 +46,7 @@ export const OperatorStatus: FC = () => {
             if (!data) return data;
             return { ...data, is_private: !operator.is_private };
           });
+          return () => navigate("..");
         },
       }),
     );

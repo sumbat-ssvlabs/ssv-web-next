@@ -45,4 +45,5 @@ export const useTransactionModal = createModalSignal<{
   step: "pending" | "indexing";
 }>();
 
-export const useIsWaitingForTx = () => useTransactionModal().isOpen;
+export const usePastingLimitExceededModal = createModalSignal();
+export const useUnsavedChangesModal = createModalSignal();

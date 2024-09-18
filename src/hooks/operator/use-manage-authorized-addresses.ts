@@ -8,10 +8,13 @@ import { useRemoveOperatorsWhitelists } from "@/lib/contract-interactions/write/
 import { useSetOperatorsWhitelists } from "@/lib/contract-interactions/write/use-set-operators-whitelists";
 import { mergeOperatorWhitelistAddresses } from "@/lib/utils/operator";
 import { useQueryClient } from "@tanstack/react-query";
+import type { Address } from "abitype";
+import { useNavigate } from "react-router";
 
 type Mode = "add" | "delete" | "view";
 
 export const useManageAuthorizedAddresses = (_operatorId?: string) => {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -63,8 +66,11 @@ export const useManageAuthorizedAddresses = (_operatorId?: string) => {
               delta: params.whitelistAddresses,
             });
           });
+
           addManager.form.reset();
           deleteManager.reset();
+
+          return () => navigate("..");
         },
       }),
     );
@@ -75,15 +81,11 @@ export const useManageAuthorizedAddresses = (_operatorId?: string) => {
     switch (mode) {
       case "add": {
         addManager.form.handleSubmit(({ addresses }) => {
-          const trimmedAddresses = addresses
-            .map((a) => a.value)
-            .filter((addr) => addr && addr.trim() !== "") as `0x${string}`[];
-
           update({
             mode: "add",
             params: {
               operatorIds: [BigInt(operatorId!)],
-              whitelistAddresses: trimmedAddresses,
+              whitelistAddresses: addresses.map((a) => a.value) as Address[],
             },
           });
         })(event);
@@ -94,7 +96,7 @@ export const useManageAuthorizedAddresses = (_operatorId?: string) => {
           mode: "delete",
           params: {
             operatorIds: [BigInt(operatorId!)],
-            whitelistAddresses: deleteManager.addresses as `0x${string}`[],
+            whitelistAddresses: deleteManager.addresses as Address[],
           },
         });
         break;

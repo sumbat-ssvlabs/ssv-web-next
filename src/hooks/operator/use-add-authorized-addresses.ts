@@ -24,6 +24,7 @@ export const useAddAuthorizedAddresses = () => {
             z.object({
               value: z
                 .string()
+                .trim()
                 .refine(
                   (addr): addr is `0x${string}` =>
                     addr.trim() === "" || isAddress(addr),
@@ -67,15 +68,18 @@ export const useAddAuthorizedAddresses = () => {
   });
 
   const addresses = form.watch("addresses");
+  const hasErrors = Boolean(form.formState.errors.addresses);
   const hasEmptyAddresses = addresses.some((field) => !field.value);
-  const hasAddresses =
-    addresses.filter(({ value }) => value.trim() !== "").length > 0;
+  const validAddresses = addresses.filter((field) => field.value.trim() !== "");
+  const hasAddresses = addresses.length > 0;
 
   return {
     form,
     fieldArray,
     hasAddresses,
     hasEmptyAddresses,
-    isSubmitDisabled: Boolean(form.formState.errors.addresses) || !hasAddresses,
+    hasErrors,
+    validAddresses,
+    isSubmitDisabled: hasErrors || !hasAddresses,
   };
 };

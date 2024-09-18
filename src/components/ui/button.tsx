@@ -30,6 +30,7 @@ export const buttonVariants = cva(
       colorScheme: {
         wallet:
           "bg-[#F9FBFC] hover:bg-[#F2F6FA] text-gray-900 dark:bg-[#062031] dark:hover:bg-[#011627]",
+        error: "",
       },
       size: {
         default: "h-10 px-4 py-2 font-semibold text-md rounded-lg",
@@ -50,6 +51,12 @@ export const buttonVariants = cva(
       {
         variant: "link",
         class: "p-0 h-auto inline",
+      },
+      {
+        variant: "outline",
+        colorScheme: "error",
+        class:
+          "bg-error-100 text-error-500 hover:text-error-200 hover:bg-error-300 active:bg-error-500 border-error-500",
       },
     ],
     defaultVariants: {
