@@ -10,6 +10,7 @@ import type { ComponentPropsWithRef, FC } from "react";
 import { useAccount } from "@/hooks/account/use-account";
 import { useMaintenance } from "@/hooks/app/use-maintenance";
 import { Navigate } from "react-router";
+import { MultisigTransactionModal } from "@/components/ui/multisig-transaction-modal";
 
 export const DashboardLayout: FC<ComponentPropsWithRef<"div">> = ({
   children,
@@ -60,6 +61,7 @@ export const DashboardLayout: FC<ComponentPropsWithRef<"div">> = ({
         )}
       </AnimatePresence>
       <TransactionModal />
+      <MultisigTransactionModal />
     </>
   );
 };

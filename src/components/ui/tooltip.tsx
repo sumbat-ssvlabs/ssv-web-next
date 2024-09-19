@@ -43,7 +43,7 @@ interface TooltipProps
 
 const Tooltip: React.FC<TooltipProps> = ({
   children,
-  asChild = true,
+  asChild,
   delayDuration,
   content,
   open,

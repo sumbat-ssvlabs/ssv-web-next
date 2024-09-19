@@ -5,7 +5,7 @@ import {
   coinbaseWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import type { HttpTransport } from "viem";
-import { http } from "viem";
+import { createPublicClient, http } from "viem";
 import { createConfig } from "wagmi";
 import { holesky as holeskyBase, mainnet as mainnetBase } from "wagmi/chains";
 
@@ -68,6 +68,11 @@ const connectors = connectorsForWallets(
     projectId: "c93804911b583e5cacf856eee58655e6",
   },
 );
+
+export const mainnet_private_rpc_client = createPublicClient({
+  chain: holesky,
+  transport: http(import.meta.env.VITE_PRIVATE_RPC_URL),
+});
 
 export const config = createConfig({
   chains,

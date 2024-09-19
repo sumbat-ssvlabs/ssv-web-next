@@ -1,3 +1,4 @@
+import { useAccount } from "@/hooks/account/use-account";
 import { useTransactionModal } from "@/signals/modal";
 import { useIsMutating } from "@tanstack/react-query";
 
@@ -6,17 +7,20 @@ import { useIsMutating } from "@tanstack/react-query";
  * @returns An object containing various transaction states.
  */
 export const useActiveTransactionState = () => {
+  const account = useAccount();
+
   const isWriting = Boolean(
     useIsMutating({
       mutationKey: ["writeContract"],
     }),
   );
 
-  const isWaiting = Boolean(
-    useIsMutating({
-      mutationKey: ["waitForTransactionReceipt"],
-    }),
-  );
+  const isWaiting =
+    Boolean(
+      useIsMutating({
+        mutationKey: ["waitForTransactionReceipt"],
+      }),
+    ) && !account.isContract;
 
   const { isOpen } = useTransactionModal();
 

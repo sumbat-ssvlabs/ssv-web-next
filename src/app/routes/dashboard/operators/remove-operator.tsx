@@ -35,7 +35,7 @@ export const RemoveOperator: FC = () => {
               };
             },
           );
-          navigate("/operators");
+          return () => navigate("/operators");
         },
       }),
     );

@@ -90,7 +90,7 @@ export const FeeRecipientAddress: FC<ComponentPropsWithoutRef<"div">> = () => {
               };
             },
           );
-          navigate("/clusters");
+          return () => navigate("/clusters");
         },
       }),
     );

@@ -9,10 +9,13 @@ import type {
   WaitForTransactionReceiptErrorType,
 } from "viem";
 import { decodeEventLog } from "viem";
-import { usePublicClient } from "wagmi";
+import { useChainId, usePublicClient } from "wagmi";
 
 import type { WriteContractErrorType } from "@wagmi/core";
-import { useTransactionModal } from "@/signals/modal";
+import {
+  useMultisigTransactionModal,
+  useTransactionModal,
+} from "@/signals/modal";
 import type { Toast } from "@/components/ui/use-toast";
 import { toast } from "@/components/ui/use-toast";
 import { wait } from "@/lib/utils/promise";
@@ -20,6 +23,8 @@ import type { MaybePromise } from "@tanstack/react-query-persist-client";
 import { isFunction } from "lodash-es";
 import { getErrorMessage } from "@/lib/utils/wagmi";
 import { Span } from "@/components/ui/text";
+import { mainnet_private_rpc_client } from "@/wagmi/config";
+import { isContractWallet } from "@/hooks/account/use-account";
 
 export type MainnetEvent = DecodeEventLogReturnType<typeof MainnetV4SetterABI>;
 export type TestnetEvent = DecodeEventLogReturnType<typeof HoleskyV4SetterABI>;
@@ -42,13 +47,18 @@ export const withTransactionModal = <
 >(
   options?: T,
 ) => {
+  const isContract = isContractWallet();
   return {
     onConfirmed: async (hash) => {
-      useTransactionModal.state.open({
-        hash,
-        variant: options?.variant,
-        step: "pending",
-      });
+      if (isContract) {
+        useMultisigTransactionModal.state.open();
+      } else {
+        useTransactionModal.state.open({
+          hash,
+          variant: options?.variant,
+          step: "pending",
+        });
+      }
       const fn = await options?.onConfirmed?.(hash);
       isFunction(fn) && fn();
     },
@@ -86,8 +96,15 @@ export const withTransactionModal = <
   } satisfies MutationOptions<MainnetEvent | TestnetEvent>;
 };
 
+const useClient = () => {
+  const chain = useChainId();
+  const publicClient = usePublicClient();
+  return chain === 1 ? mainnet_private_rpc_client : publicClient;
+};
+
 export const useWaitForTransactionReceipt = (key: MutationKey = []) => {
-  const client = usePublicClient();
+  const client = useClient();
+
   return useMutation({
     mutationKey: ["waitForTransactionReceipt", ...key],
     mutationFn: (hash: `0x${string}`) => {
@@ -116,7 +133,8 @@ export const useWaitForTransactionReceipt = (key: MutationKey = []) => {
 };
 
 export const useWaitForTransactionReceipt_Testnet = () => {
-  const client = usePublicClient();
+  const client = useClient();
+
   return useMutation({
     mutationKey: ["waitForTransactionReceipt"],
     mutationFn: (hash: `0x${string}`) => {

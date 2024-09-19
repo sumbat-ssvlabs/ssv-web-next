@@ -1,3 +1,4 @@
+import { queryClient } from "@/lib/react-query";
 import { useQuery } from "@tanstack/react-query";
 import type { Address } from "abitype";
 import { useMemo } from "react";
@@ -23,15 +24,15 @@ export const useAccount = () => {
     return account.address;
   }, [testWalletAddress, account]);
 
-  const isContract = useQuery({
+  const isContractWallet = useQuery({
     staleTime: Infinity,
     queryKey: ["is-contract", accountAddress],
-    queryFn: async () => {
-      const code = await publicClient!.getCode({
-        address: accountAddress!,
-      });
-      return code !== "0x";
-    },
+    queryFn: async () =>
+      publicClient!
+        .getCode({
+          address: accountAddress!,
+        })
+        .then(Boolean),
     enabled: !!accountAddress && !!publicClient,
   });
 
@@ -40,8 +41,19 @@ export const useAccount = () => {
       ({
         ...account,
         address: accountAddress,
-        isContract: isContract.data ?? false,
+        isContract: isContractWallet.data ?? false,
       }) as UseAccountReturnType<Config> & { isContract: boolean },
-    [account, accountAddress, isContract.data],
+    [account, accountAddress, isContractWallet.data],
+  );
+};
+
+export const isContractWallet = () => {
+  return Boolean(
+    queryClient
+      .getQueriesData({
+        exact: false,
+        queryKey: ["is-contract"],
+      })
+      .at(0)?.[1],
   );
 };

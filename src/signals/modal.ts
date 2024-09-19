@@ -46,3 +46,4 @@ export const useTransactionModal = createModalSignal<{
 }>();
 
 export const usePastingLimitExceededModal = createModalSignal();
+export const useMultisigTransactionModal = createModalSignal();

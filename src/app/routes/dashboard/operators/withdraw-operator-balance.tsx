@@ -17,12 +17,14 @@ import { type ComponentPropsWithoutRef, type FC } from "react";
 import { Collapse } from "react-collapse";
 import { Helmet } from "react-helmet";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
 import { z } from "zod";
 
 export const WithdrawOperatorBalance: FC<ComponentPropsWithoutRef<"div">> = ({
   className,
   ...props
 }) => {
+  const navigate = useNavigate();
   const { operatorId } = useOperatorPageParams();
 
   const { data: operator } = useOperator();
@@ -58,6 +60,7 @@ export const WithdrawOperatorBalance: FC<ComponentPropsWithoutRef<"div">> = ({
           });
           form.reset();
           operatorEarnings.refetch();
+          return () => navigate("..");
         },
       }),
     );
