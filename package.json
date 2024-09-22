@@ -10,7 +10,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 5",
     "fix": "eslint . --ext ts,tsx --fix",
     "preview": "vite preview",
-    "preinstall": "git config --global url.\"https://\".insteadOf git+ssh://git@",
+    "preinstall": "git config --global url.\"https://\".insteadOf git+ssh://git@ && only-allow pnpm",
     "type-check": "tsc -b",
     "lint-staged": "pnpm run type-check && lint-staged",
     "commit": "cz"
@@ -126,6 +126,7 @@
     "fs": "0.0.1-security",
     "husky": "^9.0.11",
     "lint-staged": "^15.2.7",
+    "only-allow": "^1.2.1",
     "postcss": "^8.4.39",
     "prettier": "^3.3.2",
     "semantic-release": "^24.0.0",
