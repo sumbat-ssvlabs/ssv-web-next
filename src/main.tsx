@@ -27,6 +27,7 @@ import "@fontsource/manrope/800.css";
 //     return this.toString();
 //   };
 // }
+console.log(import.meta.env.DEV);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <WagmiProvider config={config}>
